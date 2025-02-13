@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aricyq0.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文是斯坦福大学 cs193p 公开课程第 13集的相关笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stanford-cs193p-13｜Presenting-Views-Navigation">
+<meta property="og:url" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/index.html">
+<meta property="og:site_name" content="Serein">
+<meta property="og:description" content="本文是斯坦福大学 cs193p 公开课程第 13集的相关笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation.png">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-1.png">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-2.png">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-3.png">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-1.gif">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-2.gif">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-3.gif">
+<meta property="article:published_time" content="2025-02-13T09:21:34.000Z">
+<meta property="article:modified_time" content="2025-02-13T09:22:07.082Z">
+<meta property="article:author" content="Serein">
+<meta property="article:tag" content="cs193p">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation.png">
+
+<link rel="canonical" href="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Stanford-cs193p-13｜Presenting-Views-Navigation | Serein</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Serein</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/aricyq0" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aricyq0.github.io/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.JPEG">
+      <meta itemprop="name" content="Serein">
+      <meta itemprop="description" content="Crazy learning, crazy sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Serein">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Stanford-cs193p-13｜Presenting-Views-Navigation
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-13 17:21:34 / 修改时间：17:22:07" itemprop="dateCreated datePublished" datetime="2025-02-13T17:21:34+08:00">2025-02-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文是斯坦福大学 cs193p 公开课程第 13集的相关笔记。</p>
+<span id="more"></span>
+
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p> The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.). </p>
+</blockquote>
+<p>cs193p 课程网址: [<a target="_blank" rel="noopener" href="https://cs193p.sites.stanford.edu/2023]">https://cs193p.sites.stanford.edu/2023]</a></p>
+<h2 id="0-课程概述"><a href="#0-课程概述" class="headerlink" title="0 课程概述"></a><strong>0 课程概述</strong></h2><p>本讲主要围绕 <strong>SwiftUI 的导航（Navigation）、菜单（Menu）、表单（Form）及弹出窗口（Modal Views）</strong> 展开，特别关注 <strong>如何构建 Palette 编辑界面</strong>。其中涵盖了 <strong>contextMenu、NavigationStack、NavigationSplitView、Sheet、Popover 及 List</strong> 等 SwiftUI 组件的使用。</p>
+<hr>
+<h2 id="1-课程引入"><a href="#1-课程引入" class="headerlink" title="1. 课程引入"></a><strong>1. 课程引入</strong></h2><ul>
+<li>本讲主要是一个 <strong>大型示例演示</strong>，重点在于 <strong>如何管理 Palette（调色板）</strong>，类似于作业 A6 需要管理 Memorize 主题的方式。</li>
+<li>目标：创建一个 Palette 管理界面，用户可以：<ul>
+<li>选择 Palette</li>
+<li>编辑 Palette（修改名称、添加&#x2F;删除表情符号）</li>
+<li>通过菜单快速导航</li>
+<li>使用 NavigationStack 进行层级导航</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2-添加-“跳转”-子菜单"><a href="#2-添加-“跳转”-子菜单" class="headerlink" title="2. 添加 “跳转” 子菜单"></a><strong>2. 添加 “跳转” 子菜单</strong></h2><h3 id="2-1-创建-ContextMenu"><a href="#2-1-创建-ContextMenu" class="headerlink" title="2.1 创建 ContextMenu"></a><strong>2.1 创建 ContextMenu</strong></h3><ul>
+<li>在 App 界面底部新增 <strong>contextMenu（右键菜单）</strong>，用于 Palette 的管理。</li>
+<li><strong>第一个功能：创建子菜单跳转至 Palette</strong><ul>
+<li>需要在 <code>contextMenu</code> 里新增一个 <strong>“Go To” 子菜单</strong>，列出所有 Palette 供选择。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-2-代码实现"><a href="#2-2-代码实现" class="headerlink" title="2.2 代码实现"></a><strong>2.2 代码实现</strong></h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> chooser: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AnimatedActionButton</span>(systemImage: <span class="string">&quot;paintpalette&quot;</span>) &#123;</span><br><span class="line">            store.cursorIndex <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">        .contextMenu &#123;</span><br><span class="line">            gotoMenu</span><br><span class="line">            <span class="type">AnimatedActionButton</span>(<span class="string">&quot;New&quot;</span>, systemImage: <span class="string">&quot;plus&quot;</span>) &#123;</span><br><span class="line">                store.insert(name: <span class="string">&quot;Math&quot;</span>, emojis: <span class="string">&quot;+−×÷∝∞&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">AnimatedActionButton</span>(</span><br><span class="line">                <span class="string">&quot;Delete&quot;</span>,</span><br><span class="line">                systemImage: <span class="string">&quot;minus.circle&quot;</span>,</span><br><span class="line">                role: .destructive</span><br><span class="line">            ) &#123;</span><br><span class="line">                store.palettes.remove(at: store.cursorIndex)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> gotoMenu: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Menu</span> &#123;</span><br><span class="line">            <span class="type">ForEach</span>(store.palettes) &#123; palette <span class="keyword">in</span></span><br><span class="line">                <span class="type">AnimatedActionButton</span>(palette.name) &#123;</span><br><span class="line">					<span class="keyword">if</span> <span class="keyword">let</span> index <span class="operator">=</span> store.palettes.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> palette.id &#125;) &#123;</span><br><span class="line">						store.cursorIndex <span class="operator">=</span> index</span><br><span class="line">					&#125;		</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; label: &#123;</span><br><span class="line">            <span class="type">Label</span>(<span class="string">&quot;Go To&quot;</span>, systemImage: <span class="string">&quot;text.insert&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="2-3-运行效果"><a href="#2-3-运行效果" class="headerlink" title="2.3 运行效果"></a><strong>2.3 运行效果</strong></h3><p><img src="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation.png" alt="Standard-cs193p-13｜Presenting-Views-Navigation"></p>
+<ul>
+<li><code>Go To</code> 菜单成功展示 Palette 列表。</li>
+<li>选择某个 Palette 后，光标（cursorIndex）定位到对应 Palette，并在 UI 上进行更新。</li>
+</ul>
+<hr>
+<h2 id="3-构建-Palette-编辑界面"><a href="#3-构建-Palette-编辑界面" class="headerlink" title="3. 构建 Palette 编辑界面"></a><strong>3. 构建 Palette 编辑界面</strong></h2><h3 id="3-1-需求分析"><a href="#3-1-需求分析" class="headerlink" title="3.1 需求分析"></a><strong>3.1 需求分析</strong></h3><ul>
+<li><p>用户可以：</p>
+<ul>
+<li><strong>修改 Palette 名称</strong></li>
+<li><strong>添加&#x2F;删除表情符号</strong></li>
+</ul>
+</li>
+<li><p><strong>采用 Sheet 进行编辑弹窗</strong></p>
+</li>
+</ul>
+<h3 id="3-2-创建弹出窗口"><a href="#3-2-创建弹出窗口" class="headerlink" title="3.2 创建弹出窗口"></a><strong>3.2 创建弹出窗口</strong></h3><h4 id="3-2-1-使用-sheet"><a href="#3-2-1-使用-sheet" class="headerlink" title="3.2.1 使用 .sheet"></a>3.2.1 使用 <code>.sheet</code></h4><p><code>.sheet(isPresented:$showPaletteEditor)</code> 用于展示弹窗，<code>isPresented</code> 绑定布尔值 <code>showPaletteEditor</code>，当其为 <code>true</code> 时，弹出 <code>PaletteEditor</code> 界面。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showPaletteEditor <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">        .sheet(isPresented:<span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">            <span class="comment">// 新建一个 swiftUI 文件，命名为 PaletteEditor</span></span><br><span class="line">            <span class="type">PaletteEditor</span>()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> chooser: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AnimatedActionButton</span>(systemImage: <span class="string">&quot;paintpalette&quot;</span>) &#123;</span><br><span class="line">            store.cursorIndex <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">        .contextMenu &#123;</span><br><span class="line">            gotoMenu</span><br><span class="line">            <span class="type">AnimatedActionButton</span>(<span class="string">&quot;New&quot;</span>, systemImage: <span class="string">&quot;plus&quot;</span>) &#123;</span><br><span class="line">                store.insert(name: <span class="string">&quot;Math&quot;</span>, emojis: <span class="string">&quot;+−×÷∝∞&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">AnimatedActionButton</span>(</span><br><span class="line">                <span class="string">&quot;Delete&quot;</span>,</span><br><span class="line">                systemImage: <span class="string">&quot;minus.circle&quot;</span>,</span><br><span class="line">                role: .destructive</span><br><span class="line">            ) &#123;</span><br><span class="line">                store.palettes.remove(at: store.cursorIndex)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">AnimatedActionButton</span>(<span class="string">&quot;Edit&quot;</span>,systemImage: <span class="string">&quot;pencil&quot;</span>) &#123;</span><br><span class="line">                showPaletteEditor <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span>    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>新建一个 swiftUI 文件，用于创建 <code>PaletteEditor</code> 视图。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteEditor.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteEditor</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Text</span>(<span class="string">&quot;Palette Editor&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#<span class="type">Preview</span> &#123;</span><br><span class="line">    <span class="type">PaletteEditor</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时点击 Edit 按钮，弹出视图后的预览如下<br><img src="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-1.png" alt="Standard-cs193p-13｜Presenting-Views-Navigation-1"></p>
+<h4 id="3-2-3-使用-popover"><a href="#3-2-3-使用-popover" class="headerlink" title="3.2.3 使用 popover"></a>3.2.3 使用 <code>popover</code></h4><p>假设我们使用 <code>popover</code>，而不是 <code>sheet</code> 显示弹出窗口：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showPaletteEditor <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            .popover(isPresented:<span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">                         <span class="comment">// 新建一个 swiftUI 文件，命名为 PaletteEditor</span></span><br><span class="line">                         <span class="type">PaletteEditor</span>()</span><br><span class="line">                     &#125;</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span>    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteEditor.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteEditor</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Text</span>(<span class="string">&quot;Palette Editor&quot;</span>)</span><br><span class="line">        .frame(minWidth:<span class="number">300</span>,minHeight:<span class="number">350</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#<span class="type">Preview</span> &#123;</span><br><span class="line">    <span class="type">PaletteEditor</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>popover</code> 弹窗效果如下</p>
+<p><img src="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-2.png" alt="Standard-cs193p-13｜Presenting-Views-Navigation-2"></p>
+<p><strong>popover 和 sheet 都属于 <code>modal presentations</code>，它们会弹出 <code>PaletteEditor</code> 并要求用户立即处理这个问题。这会使得用户处于一种被迫强制执行该动作的状态，所以最好不要过多使用 <code>modal presentations</code>。</strong></p>
+<h3 id="3-3-使用-Form-组织-UI"><a href="#3-3-使用-Form-组织-UI" class="headerlink" title="3.3 使用 Form 组织 UI"></a>3.3 使用 Form 组织 UI</h3><h4 id="3-3-1-为什么使用-Form"><a href="#3-3-1-为什么使用-Form" class="headerlink" title="3.3.1 为什么使用 Form"></a>3.3.1 为什么使用 Form</h4><p><code>Form</code> 适用于 <strong>信息收集界面</strong>，能自动适配 iOS 设计风格（例如 <code>Settings</code> 界面）。</p>
+<h4 id="3-3-2-使用-VStack-组织-UI"><a href="#3-3-2-使用-VStack-组织-UI" class="headerlink" title="3.3.2 使用 VStack 组织 UI"></a>3.3.2 使用 VStack 组织 UI</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showPaletteEditor <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	   <span class="type">HStack</span> &#123;</span><br><span class="line">		   chooser</span><br><span class="line">		   view(for: store.palettes[store.cursorIndex])</span><br><span class="line">	   &#125;</span><br><span class="line">	   .sheet(isPresented:<span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">		   <span class="type">PaletteEditor</span>(palette: store.palettes[store.cursorIndex])</span><br><span class="line">	   &#125;</span><br><span class="line">	   .clipped()</span><br><span class="line">   	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteEditor.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteEditor</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> palette:<span class="type">Palette</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span>(alignment:.leading)&#123;</span><br><span class="line">            <span class="type">Text</span>(palette.name)</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Add Emojis Here&quot;</span>)</span><br><span class="line">            removeEmojis</span><br><span class="line">        &#125;</span><br><span class="line">        .frame(minWidth: <span class="number">300</span>,minHeight: <span class="number">350</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> removeEmojis: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span>(alignment: .trailing) &#123;</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Tap to Remove Emojis&quot;</span>).font(.caption).foregroundColor(.gray)</span><br><span class="line">            <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">40</span>))]) &#123;</span><br><span class="line">                <span class="type">ForEach</span>(palette.emojis.uniqued.map(<span class="type">String</span>.<span class="keyword">init</span>), id: \.<span class="keyword">self</span>) &#123; emoji <span class="keyword">in</span></span><br><span class="line">                    <span class="type">Text</span>(emoji)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>预览如下：<br><img src="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-3.png" alt="Standard-cs193p-13｜Presenting-Views-Navigation-3"></p>
+<h4 id="3-3-2-替换-VStack-为-Form"><a href="#3-3-2-替换-VStack-为-Form" class="headerlink" title="3.3.2 替换 VStack 为 Form"></a>3.3.2 替换 VStack 为 Form</h4><ul>
+<li><strong>分区（Section）</strong>：<ul>
+<li>第一部分编辑名称</li>
+<li>第二部分管理表情符号<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteEditor.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteEditor</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> palette:<span class="type">Palette</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Form</span> &#123;</span><br><span class="line">            <span class="type">Section</span>(header: <span class="type">Text</span>(<span class="string">&quot;Name&quot;</span>))&#123;</span><br><span class="line">                <span class="type">Text</span>(palette.name)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">Section</span>(header:<span class="type">Text</span>(<span class="string">&quot;Emojis&quot;</span>))&#123;</span><br><span class="line">                <span class="type">Text</span>(<span class="string">&quot;Add Emojis Here&quot;</span>)</span><br><span class="line">                removeEmojis</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .frame(minWidth: <span class="number">300</span>,minHeight: <span class="number">350</span>)</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h4 id="3-3-3-修正字体传递问题"><a href="#3-3-3-修正字体传递问题" class="headerlink" title="3.3.3 修正字体传递问题"></a><strong>3.3.3 修正字体传递问题</strong></h4><ul>
+<li>因为 <code>sheet</code> 继承了父视图的字体，使得弹出窗口的字体过大。</li>
+<li><strong>解决方案：显式设置 <code>font(nil)</code>，取消继承字体大小，恢复默认大小</strong><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//PaletteChooser.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">   	<span class="operator">...</span> </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">        .sheet(isPresented:<span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">            <span class="type">PaletteEditor</span>(palette: store.palettes[store.cursorIndex])</span><br><span class="line">                .font(<span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125; </span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>但此时它们都太小了，我们想要它在被删除时或者被点击时能够放大，字体大小与 palette 编辑器的图标大小一样，因此为它单独设置字体。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteEditor.swift</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">PaletteEditor</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">     <span class="keyword">let</span> palette:<span class="type">Palette</span></span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">let</span> emojiFont <span class="operator">=</span> <span class="type">Font</span>.system(size:<span class="number">40</span>)</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">         <span class="type">Form</span> &#123;</span><br><span class="line">             <span class="type">Section</span>(header: <span class="type">Text</span>(<span class="string">&quot;Name&quot;</span>))&#123;</span><br><span class="line">                 <span class="type">Text</span>(palette.name)</span><br><span class="line">             &#125;</span><br><span class="line">             <span class="type">Section</span>(header:<span class="type">Text</span>(<span class="string">&quot;Emojis&quot;</span>))&#123;</span><br><span class="line">                 <span class="type">Text</span>(<span class="string">&quot;Add Emojis Here&quot;</span>)</span><br><span class="line">                     .font(emojiFont)</span><br><span class="line">                 removeEmojis</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         .frame(minWidth: <span class="number">300</span>,minHeight: <span class="number">350</span>)</span><br><span class="line">     &#125;</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">var</span> removeEmojis: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">         <span class="type">VStack</span>(alignment: .trailing) &#123;</span><br><span class="line">             <span class="operator">...</span></span><br><span class="line">         &#125;</span><br><span class="line">         .font(emojiFont)</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+
+<h4 id="3-3-4-Form-绑定-palette-name-和-palette-emojis，同步编辑"><a href="#3-3-4-Form-绑定-palette-name-和-palette-emojis，同步编辑" class="headerlink" title="3.3.4 Form 绑定 palette.name 和 palette.emojis，同步编辑"></a>3.3.4 Form 绑定 <code>palette.name</code> 和 <code>palette.emojis</code>，同步编辑</h4><ul>
+<li><strong><code>Name</code> 绑定</strong>：将弹窗的 <code>Name</code> 修改为可编辑文本字段 <code>TextField</code>，创建 <code>@Binding var palette</code>  并绑定至 <code>store.palettes</code> 的某个 <code>palette</code>，可编辑文本字段 <code>Name</code> 绑定至 <code>palette.name</code></li>
+<li><strong><code>addEmojis</code> 绑定</strong>：当添加 Emoji 时，<code>palette.emojis</code> 应同步添加，并支持 <code>remove</code> 操作。</li>
+<li>**创建 <code>@FocusState</code>**：当 <code>palette.name</code> 为空时，焦点在 <code>name</code>；否则为 <code>addEmojis</code></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteEditor.swift</span></span><br><span class="line"> <span class="keyword">struct</span> <span class="title class_">PaletteEditor</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line"> 	<span class="meta">@Binding</span> <span class="keyword">var</span> palette:<span class="type">Palette</span></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">   	<span class="keyword">enum</span> <span class="title class_">Focused</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> name</span><br><span class="line">		<span class="keyword">case</span> addEmojis</span><br><span class="line">	&#125;</span><br><span class="line">	     </span><br><span class="line">	<span class="meta">@FocusState</span> <span class="keyword">private</span> <span class="keyword">var</span> focused: <span class="type">Focused</span>?</span><br><span class="line">	 <span class="operator">...</span></span><br><span class="line">     <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">         <span class="type">Form</span> &#123;</span><br><span class="line">             <span class="type">Section</span>(header: <span class="type">Text</span>(<span class="string">&quot;Name&quot;</span>))&#123;</span><br><span class="line">				 <span class="type">TextField</span>(<span class="string">&quot;Name&quot;</span>,text:<span class="variable">$palette</span>.name)</span><br><span class="line">             &#125;</span><br><span class="line">			 <span class="type">Section</span>(header: <span class="type">Text</span>(<span class="string">&quot;Emojis&quot;</span>)) &#123;</span><br><span class="line">				 <span class="type">TextField</span>(<span class="string">&quot;Add Emojis Here&quot;</span>, text: <span class="variable">$emojisToAdd</span>)</span><br><span class="line">					 .font(emojiFont)</span><br><span class="line">					 .onChange(of:emojisToAdd) &#123;</span><br><span class="line">						 palette.emojis <span class="operator">=</span> (emojisToAdd <span class="operator">+</span> palette.emojis)</span><br><span class="line">							 .filter &#123; <span class="variable">$0</span>.isEmoji &#125;</span><br><span class="line">							 .uniqued</span><br><span class="line">					 &#125;</span><br><span class="line">				 removeEmojis</span><br><span class="line">			 &#125;</span><br><span class="line">             <span class="operator">...</span></span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">         .frame(minWidth: <span class="number">300</span>,minHeight: <span class="number">350</span>)</span><br><span class="line">         .onAppear &#123;</span><br><span class="line">         	<span class="keyword">if</span> palette.name.isEmpty &#123;</span><br><span class="line">			 	focused <span class="operator">=</span> .name</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				focused <span class="operator">=</span> .addEmojis</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">	 <span class="keyword">var</span> removeEmojis: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		 <span class="type">VStack</span>(alignment: .trailing) &#123;</span><br><span class="line">			 <span class="type">Text</span>(<span class="string">&quot;Tap to Remove Emojis&quot;</span>).font(.caption).foregroundColor(.gray)</span><br><span class="line">			 <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">40</span>))]) &#123;</span><br><span class="line">				 <span class="type">ForEach</span>(palette.emojis.uniqued.map(<span class="type">String</span>.<span class="keyword">init</span>), id: \.<span class="keyword">self</span>) &#123; emoji <span class="keyword">in</span></span><br><span class="line">					 <span class="type">Text</span>(emoji)</span><br><span class="line">						 <span class="comment">// 编辑同步删除</span></span><br><span class="line">						 .onTapGesture &#123;</span><br><span class="line">							 withAnimation &#123;</span><br><span class="line">								 palette.emojis.remove(emoji.first<span class="operator">!</span>)</span><br><span class="line">								 emojisToAdd.remove(emoji.first<span class="operator">!</span>)</span><br><span class="line">							 &#125;</span><br><span class="line">						 &#125;</span><br><span class="line">				 &#125;</span><br><span class="line">			 &#125;</span><br><span class="line">		 &#125;</span><br><span class="line">		 .font(emojiFont)</span><br><span class="line">	 &#125;</span><br><span class="line">	 <span class="operator">...</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//PaletteChooser.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">   	<span class="operator">...</span> </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">			<span class="operator">...</span></span><br><span class="line">        &#125;</span><br><span class="line">        .sheet(isPresented:<span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">			<span class="comment">//此时传递的 palette 不再是原 palette（值类型）的一个 copy，而是绑定原 paletted 的一个 projectValue</span></span><br><span class="line">            <span class="type">PaletteEditor</span>(palette: <span class="variable">$store</span>.palettes[store.cursorIndex])</span><br><span class="line">                .font(<span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125; </span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-添加新的-palette"><a href="#3-4-添加新的-palette" class="headerlink" title="3.4 添加新的 palette"></a>3.4 添加新的 <code>palette</code></h3><p>即修改 <code>New</code> 按钮的动作：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">   	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> chooser: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AnimatedActionButton</span>(systemImage: <span class="string">&quot;paintpalette&quot;</span>) &#123;</span><br><span class="line">            store.cursorIndex <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">        .contextMenu &#123;</span><br><span class="line">            gotoMenu</span><br><span class="line">            <span class="type">AnimatedActionButton</span>(<span class="string">&quot;New&quot;</span>, systemImage: <span class="string">&quot;plus&quot;</span>) &#123;</span><br><span class="line">				showPaletteEditor <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                store.insert(name: <span class="string">&quot;&quot;</span>, emojis: <span class="string">&quot;&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="operator">...</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span>  </span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-展示-paletteList"><a href="#3-5-展示-paletteList" class="headerlink" title="3.5 展示 paletteList"></a>3.5 展示 <code>paletteList</code></h3><ul>
+<li>添加 <code>list</code> 按钮触发 <code>PaletteList</code> 弹窗</li>
+<li>添加 <code>PaletteList</code> 弹窗 <code>.sheet</code>，绑定 <code>@State</code>: <code>showPaletteList</code></li>
+<li>新建 swiftUI 文档 <code>PaletteList.swift</code></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showPaletteEditor <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showPaletteList <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">			<span class="operator">...</span></span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">        .sheet(isPresented: <span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">            <span class="type">PaletteEditor</span>(palette: <span class="variable">$store</span>.palettes[store.cursorIndex])</span><br><span class="line">                .font(<span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .sheet(isPresented: <span class="variable">$showPaletteList</span>) &#123;</span><br><span class="line">			<span class="type">EditablePaletteList</span>(store: store)</span><br><span class="line">				.font(<span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> chooser: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AnimatedActionButton</span>(systemImage: <span class="string">&quot;paintpalette&quot;</span>) &#123;</span><br><span class="line">            store.cursorIndex <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">        .contextMenu &#123;</span><br><span class="line">            gotoMenu</span><br><span class="line">            <span class="operator">...</span></span><br><span class="line">            <span class="type">AnimatedActionButton</span>(<span class="string">&quot;List&quot;</span>, systemImage: <span class="string">&quot;list.bullet.rectangle.portrait&quot;</span>) &#123;</span><br><span class="line">                showPaletteList <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>新建 <code>PaletteList.swift</code> 如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteList.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteList</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">List</span>(store.palettes) &#123; palette <span class="keyword">in</span></span><br><span class="line">            <span class="type">Text</span>(palette.name)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#<span class="type">Preview</span> &#123;</span><br><span class="line">    <span class="type">PaletteList</span>()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="3-6-在列表视图中使用-Navigation"><a href="#3-6-在列表视图中使用-Navigation" class="headerlink" title="3.6 在列表视图中使用 Navigation"></a><strong>3.6 在列表视图中使用 Navigation</strong></h3><ul>
+<li>在 <code>List</code> 里点击 Palette 进入详细页面，类似于 iOS <code>Settings</code> 界面。</li>
+<li><strong>使用 <code>NavigationLink</code> 进行跳转</strong></li>
+<li>在 <code>PaletteView</code> 中为跳转视图添加 <code>title</code></li>
+<li>在 <code>PaletteList</code> 视图中为 <code>List</code> 弹窗添加 <code>title</code></li>
+<li>为 <code>Emoji</code> 添加 <code>NavigationLink</code>，点击后跳转至 Emoji 放大后的新视图</li>
+</ul>
+<p>❗注意：<code>.navigationDestination</code>、<code>navigationTitle</code> 需放置在 <code>List</code> 外部，<code>NavigationStack</code> 内部。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteList.swift</span></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteList</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">NavigationStack</span> &#123;</span><br><span class="line">            <span class="type">List</span>(store.palettes) &#123; palette <span class="keyword">in</span></span><br><span class="line">                <span class="type">NavigationLink</span>(value:palette)&#123;</span><br><span class="line">                    <span class="type">Text</span>(palette.name)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            .navigationDestination(for: <span class="type">Palette</span>.<span class="keyword">self</span>) &#123; palette <span class="keyword">in</span></span><br><span class="line">                <span class="type">PaletteView</span>(palette:palette)</span><br><span class="line">            &#125;</span><br><span class="line">			.navigationTitle(<span class="string">&quot;<span class="subst">\(store.name)</span> Palette&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">   <span class="keyword">let</span> palette: <span class="type">Palette</span></span><br><span class="line">   </span><br><span class="line">   <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	   <span class="type">VStack</span> &#123;</span><br><span class="line">		  <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">40</span>))]) &#123;</span><br><span class="line">			  <span class="type">ForEach</span>(palette.emojis.uniqued.map(<span class="type">String</span>.<span class="keyword">init</span>), id: \.<span class="keyword">self</span>) &#123; emoji <span class="keyword">in</span></span><br><span class="line">				  <span class="type">NavigationLink</span>(value: emoji) &#123;</span><br><span class="line">					  <span class="type">Text</span>(emoji)</span><br><span class="line">				  &#125;</span><br><span class="line">			  &#125;</span><br><span class="line">		  &#125;</span><br><span class="line">		  .navigationDestination(for: <span class="type">String</span>.<span class="keyword">self</span>) &#123; emoji <span class="keyword">in</span></span><br><span class="line">			  <span class="type">Text</span>(emoji).font(.system(size: <span class="number">300</span>))</span><br><span class="line">		  &#125;</span><br><span class="line">		   <span class="type">Spacer</span>()</span><br><span class="line">	   &#125;</span><br><span class="line">	   .padding()</span><br><span class="line">	   .font(.largeTitle)</span><br><span class="line">	   .navigationTitle(palette.name)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p>另外， <code>Palette</code> 需遵循 <code>Hashable</code> 协议。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  Palette.swift</span></span><br><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Palette</span>: <span class="title class_ inherited__">Identifiable</span>,<span class="title class_ inherited__">Codable</span>,<span class="title class_ inherited__">Hashable</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="3-6-3-运行效果"><a href="#3-6-3-运行效果" class="headerlink" title="3.6.3 运行效果"></a><strong>3.6.3 运行效果</strong></h4><ul>
+<li><code>NavigationLink</code> 自动添加 <strong>箭头（chevron）</strong>，指示可点击。</li>
+<li>进入 Palette 详情后，<strong>标题栏（.navigationTitle）</strong> 继承 Palette 名称。<br><img src="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-1.gif" alt="Standard-cs193p-13｜Presenting-Views-Navigation-1"></li>
+</ul>
+<h3 id="3-7-使-PaletteList-列表视图可编辑"><a href="#3-7-使-PaletteList-列表视图可编辑" class="headerlink" title="3.7 使 PaletteList 列表视图可编辑"></a>3.7 使 <code>PaletteList</code> 列表视图可编辑</h3><ul>
+<li>创建一个 <code>EditablePaletteView</code></li>
+<li>使用 <code>ForEach</code> 内嵌在 <code>List</code> 中，以便添加删除，修改操作</li>
+<li>添加删除功能 <code>.onDelete</code></li>
+<li>添加移动功能 <code>.onMove</code></li>
+<li>添加工具栏放置新增按钮</li>
+<li>实现新增操作：<code>.navigationDestination</code> 中实现</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteList.swift</span></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EditablePaletteList</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@ObservedObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showCursorPalette <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="type">NavigationStack</span> &#123;</span><br><span class="line">			<span class="type">List</span> &#123;</span><br><span class="line">				<span class="type">ForEach</span>(store.palettes) &#123; palette <span class="keyword">in</span></span><br><span class="line">					<span class="type">NavigationLink</span>(value: palette.id) &#123;</span><br><span class="line">						<span class="type">VStack</span>(alignment: .leading) &#123;</span><br><span class="line">							<span class="type">Text</span>(palette.name)</span><br><span class="line">							<span class="type">Text</span>(palette.emojis).lineLimit(<span class="number">1</span>)</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				.onDelete &#123; indexSet <span class="keyword">in</span></span><br><span class="line">					withAnimation &#123;</span><br><span class="line">						store.palettes.remove(atOffsets: indexSet)</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				.onMove &#123; indexSet, newOffset <span class="keyword">in</span></span><br><span class="line">					store.palettes.move(fromOffsets: indexSet, toOffset: newOffset)</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			.navigationDestination(for: <span class="type">Palette</span>.<span class="type">ID</span>.<span class="keyword">self</span>) &#123; paletteId <span class="keyword">in</span></span><br><span class="line">				<span class="keyword">if</span> <span class="keyword">let</span> index <span class="operator">=</span> store.palettes.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> paletteId &#125;) &#123;</span><br><span class="line">					<span class="type">PaletteEditor</span>(palette: <span class="variable">$store</span>.palettes[index])</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			.navigationDestination(isPresented: <span class="variable">$showCursorPalette</span>) &#123;</span><br><span class="line">				<span class="type">PaletteEditor</span>(palette: <span class="variable">$store</span>.palettes[store.cursorIndex])</span><br><span class="line">			&#125;</span><br><span class="line">			.navigationTitle(<span class="string">&quot;<span class="subst">\(store.name)</span> Palettes&quot;</span>)</span><br><span class="line">			.toolbar &#123;</span><br><span class="line">				<span class="type">Button</span> &#123;</span><br><span class="line">					store.insert(name: <span class="string">&quot;&quot;</span>, emojis: <span class="string">&quot;&quot;</span>)</span><br><span class="line">					showCursorPalette <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">				&#125; label: &#123;</span><br><span class="line">					<span class="type">Image</span>(systemName: <span class="string">&quot;plus&quot;</span>)</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"> 		&#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>将 <code>PaletteList</code> 替换为 <code>EditablePaletteList</code></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showPaletteEditor <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showPaletteList <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">        .sheet(isPresented:<span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">            <span class="type">PaletteEditor</span>(palette: <span class="variable">$store</span>.palettes[store.cursorIndex])</span><br><span class="line">                .font(<span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .sheet(isPresented: <span class="variable">$showPaletteList</span>)&#123;</span><br><span class="line">			<span class="type">EditablePaletteList</span>(store: store)</span><br><span class="line">				.font(<span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-8-实现侧边栏多窗格（NavigationSplitView）"><a href="#3-8-实现侧边栏多窗格（NavigationSplitView）" class="headerlink" title="3.8 实现侧边栏多窗格（NavigationSplitView）"></a><strong>3.8 实现侧边栏多窗格（NavigationSplitView）</strong></h3><h3 id="3-8-1-需求"><a href="#3-8-1-需求" class="headerlink" title="3.8.1 需求"></a><strong>3.8.1 需求</strong></h3><ul>
+<li><strong>iPad 需要支持多窗口布局</strong>，即左侧是 Palette 列表，右侧是编辑界面。</li>
+<li>使用 <code>NavigationSplitView</code> 进行布局。</li>
+</ul>
+<h3 id="3-8-2-代码实现"><a href="#3-8-2-代码实现" class="headerlink" title="3.8.2 代码实现"></a><strong>3.8.2 代码实现</strong></h3><ul>
+<li><p>新建一个 swiftUI 文件 <code>PaletteManger</code> 管理所有的调色板。使用 <code>NavigationSplitView</code> 替代 <code>NavigationStack</code> 进行布局。</p>
+</li>
+<li><p>将 <code>Emoji_ArtApp.swift</code> 中的 <code>EmojiArtDocumentView</code> 改为 <code>PaletteManager</code></p>
+</li>
+<li><p>创建一个 swiftUI 文件 <code>PaletteStoreView</code>，将 List 中的内容替换为 <code>PaletteStoreView</code> 详见课程附件代码。</p>
+</li>
+<li><p>使用 List 布局 <code>stores</code>，<code>PaletteStore</code> 需符合 <code>Identifiable</code> 协议，如果不想使用这种方式，我们可以创建两个具有相同名字的 <code>PaletteStore</code>，将它们都写入相同的默认位置。</p>
+</li>
+<li><p>将所有的商店放置在左侧窗格，将该商店中的调色板放在右侧窗格。</p>
+</li>
+<li><p>取消预览 </p>
+</li>
+<li><p>在 <code>EmojiArtApp</code> 中创建多个 store</p>
+</li>
+<li><p><code>PaletteManager</code> 中 List 绑定 <code>selectedStore</code>，同时声明为 <code>@State</code>。此时要求 <code>PaletteStore</code> 符合 <code>Hashable</code> 以及 <code>Equatable</code> 协议。</p>
+</li>
+<li><p>为每个 store 添加 tag，用于突出被选择的项。</p>
+</li>
+<li><p>添加 <code>detail</code>，即第二个窗格的内容（右侧窗格）：<code>EditablePaletteList</code>，因为我们需要传递不同的 <code>store</code> 供 <code>EditablePaletteList</code> 直接使用，它需要接受动态选择的 store，而 <code>@EnvironmentObject</code> 无法动态传递不同的 store，因此我们需要将 <code>EditablePaletteList</code> 中的 <code>store</code> 由注入模式修改为非注入模式，即 <code>@EnvironmentObject</code> 修改为 <code>@ObservedObject</code>。</p>
+</li>
+<li><p>希望呈现第三个面板，在 PaletteManager 中添加 <code>content</code>，即将 paletteList 移入当前面板，此时我们希望在第二个面板中选择对应的 Palette 时，相关 Palette 的信息会呈现在第三个面板中，但是由于 <code>EditablePaletteList</code> 使用的是 <code>NavigationStack</code>，<code>NavigationDestination</code> 属性的设置仍然会使得相关信息在第二个面板中呈现(如下所示)。（当你需要额外构建第三个窗格时适用，此时不适用）<br><img src="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-2.gif" alt="Standard-cs193p-13｜Presenting-Views-Navigation-2"></p>
+</li>
+<li><p>将 <code>EditablePaletteList</code> 移至上层 <code>PaletteChooser</code> 中包裹 <code>EditablePaletteList</code> 的 <code>sheet</code> 解决上述需求；处理 Palette 详情页编辑时 PaletteList 没有选中同步修改：将 NavigationLink 绑定对象由 <code>palette</code> 改为 <code>palette.id</code> 此时如下所示。<br><img src="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/Standard-cs193p-13%EF%BD%9CPresenting-Views-Navigation-3.gif" alt="Standard-cs193p-13｜Presenting-Views-Navigation-3"></p>
+</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteManager.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteManager</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="keyword">let</span> stores: [<span class="type">PaletteStore</span>]</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 需要 PaletteStore 符合 Hashable 协议</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> selectedStore:<span class="type">PaletteStore</span>?</span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">NavigationSplitView</span> &#123;</span><br><span class="line">			<span class="comment">// 用于绑定选中的项 store</span></span><br><span class="line">            <span class="type">List</span>(stores,selection:<span class="variable">$selectedStore</span>) &#123; store <span class="keyword">in</span></span><br><span class="line">                <span class="type">PaletteStoreView</span>(store:store)</span><br><span class="line">					.tag(store)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; content: &#123;</span><br><span class="line">		   <span class="keyword">if</span> <span class="keyword">let</span> selectedStore &#123;</span><br><span class="line">			   <span class="type">EditablePaletteList</span>(store: selectedStore)</span><br><span class="line">		   &#125;</span><br><span class="line">		   <span class="type">Text</span>(<span class="string">&quot;Choose a store&quot;</span>)</span><br><span class="line">	   &#125; detail: &#123;</span><br><span class="line">		   <span class="type">Text</span>(<span class="string">&quot;Choose a palette&quot;</span>)</span><br><span class="line">	   &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteStoreView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@ObservedObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Text</span>(store.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtApp.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@main</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtApp</span>: <span class="title class_ inherited__">App</span> &#123;</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> defaultDocument <span class="operator">=</span> <span class="type">EmojiArtDocument</span>()</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> paletteStore <span class="operator">=</span> <span class="type">PaletteStore</span>(named: <span class="string">&quot;Main&quot;</span>)</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> store2 <span class="operator">=</span> <span class="type">PaletteStore</span>(named: <span class="string">&quot;Alernative&quot;</span>)</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> store3 <span class="operator">=</span> <span class="type">PaletteStore</span>(named: <span class="string">&quot;Special&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> &#123;</span><br><span class="line">        <span class="type">WindowGroup</span> &#123;</span><br><span class="line">            <span class="type">PaletteManager</span>(stores: [paletteStore,store2,store3])</span><br><span class="line">                .environmentObject(paletteStore)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteStore.swift</span></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">UserDefaults</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">palettes</span>(<span class="params">forKey</span> <span class="params">key</span>: <span class="type">String</span>) -&gt; [<span class="type">Palette</span>] &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> jsonData <span class="operator">=</span> data(forKey: key),</span><br><span class="line">           <span class="keyword">let</span> decodedPalettes <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">JSONDecoder</span>().decode([<span class="type">Palette</span>].<span class="keyword">self</span>, from: jsonData) &#123;</span><br><span class="line">            <span class="keyword">return</span> decodedPalettes</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">set</span>(<span class="keyword">_</span> <span class="params">palettes</span>: [<span class="type">Palette</span>], <span class="params">forKey</span> <span class="params">key</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> data <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">JSONEncoder</span>().encode(palettes)</span><br><span class="line">        <span class="keyword">set</span>(data, forKey: key)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">PaletteStore</span>: <span class="title class_ inherited__">Hashable</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">func</span> <span class="title function_">==</span> (<span class="params">lhs</span>: <span class="type">PaletteStore</span>, <span class="params">rhs</span>: <span class="type">PaletteStore</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        lhs.name <span class="operator">==</span> rhs.name</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">hash</span>(<span class="params">into</span> <span class="params">hasher</span>: <span class="keyword">inout</span> <span class="type">Hasher</span>) &#123;</span><br><span class="line">        hasher.combine(name)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaletteStore</span>:<span class="title class_ inherited__">ObservableObject</span>,<span class="title class_ inherited__">Identifiable</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> id :<span class="type">String</span> &#123; name &#125;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteList.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EditablePaletteList</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@ObservedObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showCursorPalette <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="type">List</span> &#123;</span><br><span class="line">			<span class="operator">...</span></span><br><span class="line">		&#125;</span><br><span class="line">        <span class="operator">...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//PaletteChooser.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">        .clipped()</span><br><span class="line">        .sheet(isPresented:<span class="variable">$showPaletteEditor</span>) &#123;</span><br><span class="line">            <span class="type">PaletteEditor</span>(palette: <span class="variable">$store</span>.palettes[store.cursorIndex])</span><br><span class="line">                .font(<span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .sheet(isPresented: <span class="variable">$showPaletteList</span>)&#123;</span><br><span class="line">            <span class="type">NavigationStack</span> &#123;</span><br><span class="line">                <span class="type">EditablePaletteList</span>(store: store)</span><br><span class="line">                    .font(<span class="literal">nil</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Serein 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Serein 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/08/Standard-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/" rel="prev" title="Standard-cs193p-12｜Persistence-Property-Wrappers">
+      <i class="fa fa-chevron-left"></i> Standard-cs193p-12｜Persistence-Property-Wrappers
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E8%AF%BE%E7%A8%8B%E6%A6%82%E8%BF%B0"><span class="nav-text">0 课程概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%AF%BE%E7%A8%8B%E5%BC%95%E5%85%A5"><span class="nav-text">1. 课程引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%B7%BB%E5%8A%A0-%E2%80%9C%E8%B7%B3%E8%BD%AC%E2%80%9D-%E5%AD%90%E8%8F%9C%E5%8D%95"><span class="nav-text">2. 添加 “跳转” 子菜单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%9B%E5%BB%BA-ContextMenu"><span class="nav-text">2.1 创建 ContextMenu</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">2.2 代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C"><span class="nav-text">2.3 运行效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9E%84%E5%BB%BA-Palette-%E7%BC%96%E8%BE%91%E7%95%8C%E9%9D%A2"><span class="nav-text">3. 构建 Palette 编辑界面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="nav-text">3.1 需求分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%88%9B%E5%BB%BA%E5%BC%B9%E5%87%BA%E7%AA%97%E5%8F%A3"><span class="nav-text">3.2 创建弹出窗口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-%E4%BD%BF%E7%94%A8-sheet"><span class="nav-text">3.2.1 使用 .sheet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-%E4%BD%BF%E7%94%A8-popover"><span class="nav-text">3.2.3 使用 popover</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E4%BD%BF%E7%94%A8-Form-%E7%BB%84%E7%BB%87-UI"><span class="nav-text">3.3 使用 Form 组织 UI</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-Form"><span class="nav-text">3.3.1 为什么使用 Form</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-%E4%BD%BF%E7%94%A8-VStack-%E7%BB%84%E7%BB%87-UI"><span class="nav-text">3.3.2 使用 VStack 组织 UI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-%E6%9B%BF%E6%8D%A2-VStack-%E4%B8%BA-Form"><span class="nav-text">3.3.2 替换 VStack 为 Form</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-3-%E4%BF%AE%E6%AD%A3%E5%AD%97%E4%BD%93%E4%BC%A0%E9%80%92%E9%97%AE%E9%A2%98"><span class="nav-text">3.3.3 修正字体传递问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-4-Form-%E7%BB%91%E5%AE%9A-palette-name-%E5%92%8C-palette-emojis%EF%BC%8C%E5%90%8C%E6%AD%A5%E7%BC%96%E8%BE%91"><span class="nav-text">3.3.4 Form 绑定 palette.name 和 palette.emojis，同步编辑</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%9A%84-palette"><span class="nav-text">3.4 添加新的 palette</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E5%B1%95%E7%A4%BA-paletteList"><span class="nav-text">3.5 展示 paletteList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E5%9C%A8%E5%88%97%E8%A1%A8%E8%A7%86%E5%9B%BE%E4%B8%AD%E4%BD%BF%E7%94%A8-Navigation"><span class="nav-text">3.6 在列表视图中使用 Navigation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-3-%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C"><span class="nav-text">3.6.3 运行效果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-%E4%BD%BF-PaletteList-%E5%88%97%E8%A1%A8%E8%A7%86%E5%9B%BE%E5%8F%AF%E7%BC%96%E8%BE%91"><span class="nav-text">3.7 使 PaletteList 列表视图可编辑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-%E5%AE%9E%E7%8E%B0%E4%BE%A7%E8%BE%B9%E6%A0%8F%E5%A4%9A%E7%AA%97%E6%A0%BC%EF%BC%88NavigationSplitView%EF%BC%89"><span class="nav-text">3.8 实现侧边栏多窗格（NavigationSplitView）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-1-%E9%9C%80%E6%B1%82"><span class="nav-text">3.8.1 需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-2-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">3.8.2 代码实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Serein"
+      src="/uploads/avatar.JPEG">
+  <p class="site-author-name" itemprop="name">Serein</p>
+  <div class="site-description" itemprop="description">Crazy learning, crazy sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Aricyq0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Aricyq0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ari.cyq@gmail.com" title="E-Mail → mailto:ari.cyq@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Serein</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">168k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:33</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
