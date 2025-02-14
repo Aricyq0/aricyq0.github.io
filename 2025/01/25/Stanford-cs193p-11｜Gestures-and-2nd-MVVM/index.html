@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aricyq0.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文是斯坦福大学 cs193p 公开课程第 11 集的相关笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stanford-cs193p-11｜Gestures-and-2nd-MVVM">
+<meta property="og:url" content="https://aricyq0.github.io/2025/01/25/Stanford-cs193p-11%EF%BD%9CGestures-and-2nd-MVVM/index.html">
+<meta property="og:site_name" content="Serein">
+<meta property="og:description" content="本文是斯坦福大学 cs193p 公开课程第 11 集的相关笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-25T13:24:28.000Z">
+<meta property="article:modified_time" content="2025-02-13T10:44:48.151Z">
+<meta property="article:author" content="Serein">
+<meta property="article:tag" content="cs193p">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://aricyq0.github.io/2025/01/25/Stanford-cs193p-11%EF%BD%9CGestures-and-2nd-MVVM/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Stanford-cs193p-11｜Gestures-and-2nd-MVVM | Serein</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Serein</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/aricyq0" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aricyq0.github.io/2025/01/25/Stanford-cs193p-11%EF%BD%9CGestures-and-2nd-MVVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.JPEG">
+      <meta itemprop="name" content="Serein">
+      <meta itemprop="description" content="Crazy learning, crazy sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Serein">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Stanford-cs193p-11｜Gestures-and-2nd-MVVM
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-01-25 21:24:28" itemprop="dateCreated datePublished" datetime="2025-01-25T21:24:28+08:00">2025-01-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-13 18:44:48" itemprop="dateModified" datetime="2025-02-13T18:44:48+08:00">2025-02-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文是斯坦福大学 cs193p 公开课程第 11 集的相关笔记。</p>
+<span id="more"></span>
+
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p>The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.).</p>
+</blockquote>
+<p>cs193p 课程网址: [<a target="_blank" rel="noopener" href="https://cs193p.sites.stanford.edu/2023]">https://cs193p.sites.stanford.edu/2023]</a></p>
+<h2 id="0-前言"><a href="#0-前言" class="headerlink" title="0. 前言"></a>0. 前言</h2><p><strong>上周</strong></p>
+<ul>
+<li>演示</li>
+<li>拖拽功能实现</li>
+</ul>
+<p><strong>今天</strong></p>
+<ul>
+<li>手势<ul>
+<li>包括移动、捏合、点击等</li>
+<li>演示：在文档中调整大小和移动</li>
+</ul>
+</li>
+<li>多个 MVVM<ul>
+<li>演示：为 Emoji Art 添加一个选择表情符号调色板的 UI（全新的 MVVM）</li>
+<li>演示：上下文菜单和 <code>.clipped</code> 视图修饰符</li>
+</ul>
+</li>
+</ul>
+<p><strong>下周</strong></p>
+<ul>
+<li>颜色(Colors)、图像(Images)</li>
+<li>表单(Sheets)、弹出窗口(Popovers)、表单(Forms)</li>
+<li>导航(Navigation)</li>
+<li>警报(Alerts)、多线程(Multithreading)、错误处理(Error handing)</li>
+</ul>
+<h2 id="1-手势"><a href="#1-手势" class="headerlink" title="1. 手势"></a>1. 手势</h2><h3 id="1-1-SwiftUI-中的手势简介"><a href="#1-1-SwiftUI-中的手势简介" class="headerlink" title="1.1 SwiftUI 中的手势简介"></a>1.1 SwiftUI 中的手势简介</h3><ul>
+<li><strong>多点触控识别</strong>：<ul>
+<li>SwiftUI 提供了内置功能，用于识别各种手势（如点击、拖动、捏合）。</li>
+<li>它简化了多点触控处理的复杂性。</li>
+<li>开发者只需定义在手势被识别时的具体操作。</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-2-在视图中识别手势"><a href="#1-2-在视图中识别手势" class="headerlink" title="1.2 在视图中识别手势"></a>1.2 在视图中识别手势</h3><ul>
+<li><p><strong>使用 <code>.gesture</code> 修饰符</strong>：</p>
+<ul>
+<li>使用 <code>.gesture(theGesture)</code> 将手势附加到视图上。</li>
+<li><code>theGesture</code> 必须遵循 <code>Gesture</code> 协议。</li>
+</ul>
+</li>
+<li><p><strong>创建手势</strong>：</p>
+<ul>
+<li>通常在 <code>var</code> 或 <code>func</code> 中定义手势：<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> theGesture: <span class="keyword">some</span> <span class="type">Gesture</span> &#123;</span><br><span class="line">    <span class="type">TapGesture</span>(count: <span class="number">2</span>) <span class="comment">// 识别双击手势</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="1-3-处理离散手势"><a href="#1-3-处理离散手势" class="headerlink" title="1.3 处理离散手势"></a>1.3 处理离散手势</h3><ul>
+<li><p><strong>什么是离散手势？</strong></p>
+<ul>
+<li>离散手势是“一次性”的手势，例如：<ul>
+<li><code>TapGesture</code>（单击或双击）。</li>
+<li><code>LongPressGesture</code>（长按，也可以作为非离散手势处理）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>为离散手势定义操作</strong>：</p>
+<ul>
+<li><p>使用 <code>.onEnded</code> 修饰符指定手势识别后的操作：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> theGesture: <span class="keyword">some</span> <span class="type">Gesture</span> &#123;</span><br><span class="line">    <span class="type">TapGesture</span>(count: <span class="number">2</span>)</span><br><span class="line">        .onEnded &#123; <span class="comment">/* 执行动作 */</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>离散手势的简化方法：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">myView.onTapGesture(count: <span class="type">Int</span>) &#123; <span class="comment">/* 执行动作 */</span> &#125;</span><br><span class="line">myView.onLongPressGesture &#123; <span class="comment">/* 执行动作 */</span> &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="1-4-处理非离散手势"><a href="#1-4-处理非离散手势" class="headerlink" title="1.4 处理非离散手势"></a>1.4 处理非离散手势</h3><ul>
+<li><p><strong>什么是非离散手势？</strong></p>
+<ul>
+<li>手势随着手指的移动逐步发生，例如：<ul>
+<li><code>DragGesture</code>（检测拖动手势）。</li>
+<li><code>MagnificationGesture</code>（捏合手势，用于缩放）。</li>
+<li><code>RotationGesture</code>（旋转手势，如拨盘操作）。</li>
+</ul>
+</li>
+<li><code>LongPressGesture</code> 也可以被视为非离散手势（例如手指按下和抬起之间的时间）。</li>
+</ul>
+</li>
+<li><p><strong>在手势进行时处理状态</strong>：</p>
+<ul>
+<li><p>使用 <code>.updating</code> 在手势进程中不断更新状态：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GestureState</span> <span class="keyword">var</span> dragOffset: <span class="type">CGSize</span> <span class="operator">=</span> .zero</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> theGesture: <span class="keyword">some</span> <span class="type">Gesture</span> &#123;</span><br><span class="line">    <span class="type">DragGesture</span>()</span><br><span class="line">        .updating(<span class="variable">$dragOffset</span>) &#123; value, dragOffset, <span class="keyword">_</span> <span class="keyword">in</span></span><br><span class="line">            dragOffset <span class="operator">=</span> value.translation</span><br><span class="line">        &#125;</span><br><span class="line">        .onEnded &#123; value <span class="keyword">in</span></span><br><span class="line">            <span class="comment">/* 基于结束时的值执行操作，例如记录最终位置 */</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>关键点</strong>：</p>
+<ul>
+<li><code>@GestureState</code> 变量用于存储手势过程中的临时状态。</li>
+<li>手势结束时，<code>@GestureState</code> 会自动重置。</li>
+<li>在 <code>.onEnded</code> 中更新永久状态（如 <code>@State</code> 或 Model）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-5-使用-onChanged-的替代方法"><a href="#1-5-使用-onChanged-的替代方法" class="headerlink" title="1.5 使用 .onChanged 的替代方法"></a>1.5 使用 <code>.onChanged</code> 的替代方法</h3><ul>
+<li><p><strong>简化手势处理</strong>：</p>
+<ul>
+<li><code>.onChanged</code> 用于跟踪手势变化，无需依赖 <code>@GestureState</code>：<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> theGesture: <span class="keyword">some</span> <span class="type">Gesture</span> &#123;</span><br><span class="line">    <span class="type">DragGesture</span>()</span><br><span class="line">        .onChanged &#123; value <span class="keyword">in</span></span><br><span class="line">            <span class="comment">/* 处理手势状态的变化，例如当前手指位置 */</span></span><br><span class="line">        &#125;</span><br><span class="line">        .onEnded &#123; value <span class="keyword">in</span></span><br><span class="line">            <span class="comment">/* 最终处理手势结束后的操作 */</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>适用于需要绝对手指位置的场景（如绘图或拖拽选择）。</li>
+</ul>
+</li>
+<li><p><strong>相对位置 vs 绝对位置</strong>：</p>
+<ul>
+<li>如果需要相对位置（例如手指移动的距离），推荐使用 <code>.updating</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-6-非离散手势处理的总结"><a href="#1-6-非离散手势处理的总结" class="headerlink" title="1.6 非离散手势处理的总结"></a>1.6 非离散手势处理的总结</h3><ol>
+<li><p><strong>手势进行时</strong>：</p>
+<ul>
+<li>使用 <code>@GestureState</code> 存储临时值（如手指位置、拖动偏移量）。</li>
+<li>使用 <code>.updating</code> 更新 <code>@GestureState</code>。</li>
+</ul>
+</li>
+<li><p><strong>手势结束时</strong>：</p>
+<ul>
+<li>在 <code>.onEnded</code> 中使用最终值更新永久状态（如 <code>@State</code> 或 Model）。</li>
+</ul>
+</li>
+<li><p><strong>视图的绘制</strong>：</p>
+<ul>
+<li>在手势进行中和结束后，结合 <code>@GestureState</code>（临时）和 <code>@State</code>&#x2F;Model（永久）更新视图。</li>
+</ul>
+</li>
+<li><p><strong>重要注意事项</strong>：</p>
+<ul>
+<li>不要在 <code>.updating</code> 中直接更新 Model 或 <code>@State</code>，仅更新 <code>@GestureState</code>。</li>
+<li>手势完成后，<code>@GestureState</code> 将自动重置。</li>
+</ul>
+</li>
+</ol>
+<h2 id="2-Demo-Gesture"><a href="#2-Demo-Gesture" class="headerlink" title="2. Demo: Gesture"></a>2. Demo: Gesture</h2><p>将 documentBody 中需要添加缩放手势的部分移出，作为 documentContents</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> documentBody: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">            <span class="type">ZStack</span> &#123;</span><br><span class="line">                <span class="comment">//希望 图片两边是白色的（最底层为白色）</span></span><br><span class="line">                <span class="type">Color</span>.white</span><br><span class="line">                documentContents(in: geometry)</span><br><span class="line">            &#125;</span><br><span class="line">            .dropDestination(for:<span class="type">Sturldata</span>.<span class="keyword">self</span>) &#123; sturldatas,location <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">return</span> drop(sturldatas,at:location, in: geometry)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">documentContents</span>(<span class="params">in</span> <span class="params">geometry</span>: <span class="type">GeometryProxy</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AsyncImage</span>(url: document.background)</span><br><span class="line">            .position(<span class="type">Emoji</span>.<span class="type">Position</span>.zero.in(geometry))</span><br><span class="line">        <span class="type">ForEach</span>(document.emojis) &#123; emoji <span class="keyword">in</span></span><br><span class="line">            <span class="type">Text</span>(emoji.string)</span><br><span class="line">                .font(emoji.font)</span><br><span class="line">                .position(emoji.position.in(geometry))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>报错：<code>Function declares an opaque return type, but has no return statements in its body from which to infer an underlying type</code>。内部有两种 View，无法确定 some View 类型。</p>
+<p>解决：添加 <code>@ViewBuilder</code> 属性包装器，此时返回的是 tupleView。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="meta">@ViewBuilder</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">documentContents</span>(<span class="params">in</span> <span class="params">geometry</span>: <span class="type">GeometryProxy</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AsyncImage</span>(url: document.background)</span><br><span class="line">            .position(<span class="type">Emoji</span>.<span class="type">Position</span>.zero.in(geometry))</span><br><span class="line">        <span class="type">ForEach</span>(document.emojis) &#123; emoji <span class="keyword">in</span></span><br><span class="line">            <span class="type">Text</span>(emoji.string)</span><br><span class="line">                .font(emoji.font)</span><br><span class="line">                .position(emoji.position.in(geometry))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>为了添加缩放，增加一些@State</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> documentBody: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">            <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">                <span class="type">ZStack</span> &#123;</span><br><span class="line">                    <span class="type">Color</span>.white</span><br><span class="line">                    documentContents(in: geometry)</span><br><span class="line">                        .scaleEffect(zoom)</span><br><span class="line">                        .offset(pan)</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                .dropDestination(for:<span class="type">Sturldata</span>.<span class="keyword">self</span>) &#123; sturldatas,location <span class="keyword">in</span></span><br><span class="line">                    <span class="keyword">return</span> drop(sturldatas,at:location, in: geometry)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> zoom:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">        <span class="comment">// @State private var pan:CGSize = .zero</span></span><br><span class="line">        <span class="comment">// CGOffset是 CGSize 的类型别名，在extensio 中被定义</span></span><br><span class="line">        <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> pan:<span class="type">CGOffset</span> <span class="operator">=</span> .zero</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续添加缩放的 gesture</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> documentBody: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">            <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">                <span class="type">ZStack</span> &#123;</span><br><span class="line">                    <span class="type">Color</span>.white</span><br><span class="line">                    documentContents(in: geometry)</span><br><span class="line">                        .scaleEffect(zoom)</span><br><span class="line">                        .offset(pan)</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">                .gesture(zoomGesture)</span><br><span class="line">                .dropDestination(for:<span class="type">Sturldata</span>.<span class="keyword">self</span>) &#123; sturldatas,location <span class="keyword">in</span></span><br><span class="line">                    <span class="keyword">return</span> drop(sturldatas,at:location, in: geometry)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">	<span class="comment">// 在手势结束时，视图会缩放</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">var</span> zoomGesture: <span class="keyword">some</span> <span class="type">Gesture</span> &#123;</span><br><span class="line">			<span class="type">MagnificationGesture</span>()</span><br><span class="line">				.onEnded &#123; endingPinchScale <span class="keyword">in</span></span><br><span class="line">					zoom <span class="operator">*=</span> endingPinchScale</span><br><span class="line">				&#125;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们想在手势缩放时，视图同步缩放，而不只是在结束时才进行缩放：使用 <code>.updating</code> gesture 来实现。</p>
+<p>类似的，实现视图的移动，但需要注意的是 <code>.gesture(zoomGesture).gesture(panGesture)</code> 不一定能正常实现。</p>
+<p>当你将两个手势分别应用在两个单独的，<code>.gesture</code> 调用中，SwiftUI 默认会对他们进行优先级判断。只有第一个手势能够捕获用户交互事件，后面的手势可能无法被触发，或者触发行为受到限制。</p>
+<p>使用 <code>.simultaneously(with:)</code> 的方式明确告诉 SwiftUI，你希望两个手势能够同时识别并触发，而不是互相排斥。这解决了手势优先级的问题，并允许 <code>zoomGesture</code> 和 <code>panGesture</code> 在用户交互时同时生效。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> documentBody: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">            <span class="type">ZStack</span> &#123;</span><br><span class="line">                <span class="comment">//希望 图片两边是白色的（最底层为白色）</span></span><br><span class="line">                <span class="type">Color</span>.white</span><br><span class="line">                documentContents(in: geometry)</span><br><span class="line">                    .scaleEffect(zoom <span class="operator">*</span> gestureZoom)</span><br><span class="line">                    .offset(pan <span class="operator">+</span> gesturePan)</span><br><span class="line">            &#125;</span><br><span class="line">            .gesture(panGesture.simultaneously(with:zoomGesture))</span><br><span class="line">            .dropDestination(for:<span class="type">Sturldata</span>.<span class="keyword">self</span>) &#123; sturldatas,location <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">return</span> drop(sturldatas,at:location, in: geometry)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> zoom:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> pan:<span class="type">CGOffset</span> <span class="operator">=</span> .zero</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GestureState</span> <span class="keyword">private</span> <span class="keyword">var</span> gestureZoom: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">    <span class="meta">@GestureState</span> <span class="keyword">private</span> <span class="keyword">var</span> gesturePan: <span class="type">CGOffset</span> <span class="operator">=</span> .zero</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> zoomGesture: <span class="keyword">some</span> <span class="type">Gesture</span> &#123;</span><br><span class="line">        <span class="type">MagnificationGesture</span>()</span><br><span class="line">            .updating(<span class="variable">$gestureZoom</span>) &#123; inMotionPinchScale, gestureZoom, <span class="keyword">_</span> <span class="keyword">in</span></span><br><span class="line">                gestureZoom <span class="operator">=</span> inMotionPinchScale</span><br><span class="line">            &#125;</span><br><span class="line">            .onEnded &#123; endingPinchScale <span class="keyword">in</span></span><br><span class="line">                zoom <span class="operator">*=</span> endingPinchScale</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> panGesture: <span class="keyword">some</span> <span class="type">Gesture</span> &#123;</span><br><span class="line">        <span class="type">DragGesture</span>()</span><br><span class="line">            .updating(<span class="variable">$gesturePan</span>) &#123; inMotionDragGestureValue, gesturePan, <span class="keyword">_</span> <span class="keyword">in</span></span><br><span class="line">                gesturePan <span class="operator">=</span> inMotionDragGestureValue.translation</span><br><span class="line">            &#125;</span><br><span class="line">            .onEnded &#123; endingDragGestureValue <span class="keyword">in</span></span><br><span class="line">				<span class="comment">// extension 中对 `+=` 进行了扩展，即 pan = pan + endingDragGestureValue.translation</span></span><br><span class="line">                pan <span class="operator">+=</span> endingDragGestureValue.translation</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>现在我们可以实现视图背景图片的缩放和平移，但当我们将 emoji 拖拽至视图，会发现 emoji 也进行等比例的缩放和平移，这是因为此时的 emoji 和背景图片处于同一个坐标系中。</p>
+<p>我们需要对 <code>emojiPosition</code> 和 <code>drop</code> 中的 emoji size 进行调整，使其正常显示。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">```swift</span><br><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">drop</span>(<span class="keyword">_</span> <span class="params">sturldatas</span>: [<span class="type">Sturldata</span>], <span class="params">at</span> <span class="params">location</span>: <span class="type">CGPoint</span>, <span class="params">in</span> <span class="params">geometry</span>: <span class="type">GeometryProxy</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">	        <span class="keyword">for</span> sturldata <span class="keyword">in</span> sturldatas &#123;</span><br><span class="line">	            <span class="keyword">switch</span> sturldata &#123;</span><br><span class="line">	            <span class="keyword">case</span> .url(<span class="keyword">let</span> url):</span><br><span class="line">	                document.setBackground(url)</span><br><span class="line">	                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	            <span class="keyword">case</span> .string(<span class="keyword">let</span> emoji):</span><br><span class="line">	                document.addEmoji(</span><br><span class="line">	                    emoji,</span><br><span class="line">	                    at: emojiPosition(at: location, in: geometry),</span><br><span class="line">	                    size: paletteEmojiSize <span class="operator">/</span> zoom</span><br><span class="line">	                )</span><br><span class="line">	                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	            <span class="keyword">default</span>:</span><br><span class="line">	                <span class="keyword">break</span></span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">emojiPosition</span>(<span class="params">at</span> <span class="params">location</span>: <span class="type">CGPoint</span>, <span class="params">in</span> <span class="params">geometry</span>: <span class="type">GeometryProxy</span>) -&gt; <span class="type">Emoji</span>.<span class="type">Position</span> &#123;</span><br><span class="line">		<span class="keyword">let</span> center <span class="operator">=</span> geometry.frame(in: .local).center</span><br><span class="line">		<span class="keyword">return</span> <span class="type">Emoji</span>.<span class="type">Position</span>(</span><br><span class="line">			x: <span class="type">Int</span>((location.x <span class="operator">-</span> center.x <span class="operator">-</span> pan.width) <span class="operator">/</span> zoom),</span><br><span class="line">			y: <span class="type">Int</span>(<span class="operator">-</span>(location.y <span class="operator">-</span> center.y <span class="operator">-</span> pan.height) <span class="operator">/</span> zoom)</span><br><span class="line">		)</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2nd-MVVM"><a href="#3-2nd-MVVM" class="headerlink" title="3. 2nd MVVM"></a>3. 2nd MVVM</h2><h3 id="3-1-model"><a href="#3-1-model" class="headerlink" title="3.1 model"></a>3.1 model</h3><p>第二个 MVVM 的 model 的核心是一个调色板和一组命名的表情符号。</p>
+<p>新建一个 swift 文件 <code>Palette.swift</code>，如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  Palette.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Palette</span>: <span class="title class_ inherited__">Identifiable</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> emojis: <span class="type">String</span></span><br><span class="line">    <span class="keyword">let</span> id <span class="operator">=</span> <span class="type">UUID</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> builtins <span class="operator">=</span> [</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Vehicles&quot;</span>, emojis: <span class="string">&quot;🚙🚗🚘🚕🚖🏎🚚🛻🚛🚐🚓🚔🚑🚒🚀✈️🛫🛬🛩🚁🛸🚲🏍🛶⛵️🚤🛥🛳⛴🚢🚂🚝🚅🚆🚊🚉🚇🛺🚜&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Sports&quot;</span>, emojis: <span class="string">&quot;🏈⚾️🏀⚽️🎾🏐🥏🏓⛳️🥅🥌🏂⛷🎳&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Music&quot;</span>, emojis: <span class="string">&quot;🎼🎤🎹🪘🥁🎺🪗🪕🎻&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Animals&quot;</span>, emojis: <span class="string">&quot;🐥🐣🐂🐄🐎🐖🐏🐑🦙🐐🐓🐁🐀🐒🦆🦅🦉🦇🐢🐍🦎🦖🦕🐅🐆🦓🦍🦧🦣🐘🦛🦏🐪🐫🦒🦘🦬🐃🦙🐐🦌🐕🐩🦮🐈🦤🦢🦩🕊🦝🦨🦡🦫🦦🦥🐿🦔&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Animal Faces&quot;</span>, emojis: <span class="string">&quot;🐵🙈🙊🙉🐶🐱🐭🐹🐰🦊🐻🐼🐻‍❄️🐨🐯🦁🐮🐷🐸🐲&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Flora&quot;</span>, emojis: <span class="string">&quot;🌲🌴🌿☘️🍀🍁🍄🌾💐🌷🌹🥀🌺🌸🌼🌻&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Weather&quot;</span>, emojis: <span class="string">&quot;☀️🌤⛅️🌥☁️🌦🌧⛈🌩🌨❄️💨☔️💧💦🌊☂️🌫🌪&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;COVID&quot;</span>, emojis: <span class="string">&quot;💉🦠😷🤧🤒&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Faces&quot;</span>, emojis: <span class="string">&quot;😀😃😄😁😆😅😂🤣🥲☺️😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🥸🤩🥳😏😞😔😟😕🙁☹️😣😖😫😩🥺😢😭😤😠😡🤯😳🥶😥😓🤗🤔🤭🤫🤥😬🙄😯😧🥱😴🤮😷🤧🤒🤠&quot;</span>)</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>UUID()</code> 是 <code>hashable</code> 的。</li>
+</ul>
+<h3 id="3-2-ViewModel"><a href="#3-2-ViewModel" class="headerlink" title="3.2 ViewModel"></a>3.2 ViewModel</h3><p>新建一个 swift 文件 <code>PaletteStore.swift</code> 如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteStore.swift</span></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaletteStore</span>:<span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// View 需要能对 Palette model 进行修改，所以此处不设置为private</span></span><br><span class="line">    <span class="meta">@Published</span> <span class="keyword">var</span> palettes:[<span class="type">Palette</span>] &#123;</span><br><span class="line">        <span class="comment">// 确保最后一个 palette 不被删除</span></span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> palettes.isEmpty, <span class="operator">!</span>oldValue.isEmpty &#123;</span><br><span class="line">                palettes <span class="operator">=</span> oldValue</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(<span class="params">named</span> <span class="params">name</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name <span class="operator">=</span> name</span><br><span class="line">        palettes <span class="operator">=</span> <span class="type">Palette</span>.builtins</span><br><span class="line">        <span class="keyword">if</span> palettes.isEmpty &#123;</span><br><span class="line">            palettes <span class="operator">=</span> [<span class="type">Palette</span>(name: <span class="string">&quot;Warning&quot;</span>, emojis: <span class="string">&quot;⚠️&quot;</span>)]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 确保 palette 索引处于可用索引空间内</span></span><br><span class="line">    <span class="meta">@Published</span> <span class="keyword">private</span> <span class="keyword">var</span> _cursorIndex <span class="operator">=</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> cursorIndex: <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123; boundsCheckedPaletteIndex(_cursorIndex) &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123; _cursorIndex <span class="operator">=</span> boundsCheckedPaletteIndex(newValue) &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">boundsCheckedPaletteIndex</span>(<span class="keyword">_</span> <span class="params">index</span>: <span class="type">Int</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> index <span class="operator">=</span> index <span class="operator">%</span> palettes.count</span><br><span class="line">        <span class="keyword">if</span> index <span class="operator">&lt;</span> <span class="number">0</span> &#123;</span><br><span class="line">            index <span class="operator">+=</span> palettes.count</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> index</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// MARK: - Adding Palettes</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// these functions are the recommended way to add Palettes to the PaletteStore</span></span><br><span class="line">    <span class="comment">// since they try to avoid duplication of Identifiable-ly identical Palettes</span></span><br><span class="line">    <span class="comment">// by first removing/replacing any Palette with the same id that is already in palettes</span></span><br><span class="line">    <span class="comment">// it does not &quot;remedy&quot; existing duplication, it just does not &quot;cause&quot; new duplication</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">insert</span>(<span class="keyword">_</span> <span class="params">palette</span>: <span class="type">Palette</span>, <span class="params">at</span> <span class="params">insertionIndex</span>: <span class="type">Int</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123; <span class="comment">// &quot;at&quot; default is cursorIndex</span></span><br><span class="line">        <span class="keyword">let</span> insertionIndex <span class="operator">=</span> boundsCheckedPaletteIndex(insertionIndex <span class="operator">??</span> cursorIndex)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> index <span class="operator">=</span> palettes.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> palette.id &#125;) &#123;</span><br><span class="line">            palettes.move(fromOffsets: <span class="type">IndexSet</span>([index]), toOffset: insertionIndex)</span><br><span class="line">            palettes.replaceSubrange(insertionIndex<span class="operator">...</span>insertionIndex, with: [palette])</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            palettes.insert(palette, at: insertionIndex)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">insert</span>(<span class="params">name</span>: <span class="type">String</span>, <span class="params">emojis</span>: <span class="type">String</span>, <span class="params">at</span> <span class="params">index</span>: <span class="type">Int</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">        insert(<span class="type">Palette</span>(name: name, emojis: emojis), at: index)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">append</span>(<span class="keyword">_</span> <span class="params">palette</span>: <span class="type">Palette</span>) &#123; <span class="comment">// at end of palettes</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> index <span class="operator">=</span> palettes.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> palette.id &#125;) &#123;</span><br><span class="line">            <span class="keyword">if</span> palettes.count <span class="operator">==</span> <span class="number">1</span> &#123;</span><br><span class="line">                palettes <span class="operator">=</span> [palette]</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                palettes.remove(at: index)</span><br><span class="line">                palettes.append(palette)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            palettes.append(palette)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">append</span>(<span class="params">name</span>: <span class="type">String</span>, <span class="params">emojis</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        append(<span class="type">Palette</span>(name: name, emojis: emojis))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-View"><a href="#3-3-View" class="headerlink" title="3.3 View"></a>3.3 View</h3><p>新建一个 swiftUI 文件，命名为 <code>PaletteChooser.swift</code>。</p>
+<p>注意到此时我们需要将 <code>PaletteChoose</code> 对象注入 <code>PaletteChooser</code> 视图中，同之前的 <code>EmojiArtDocument</code> 一样，我们需要在 <code>EmojiArtApp</code> 中创建并管理这一对象。</p>
+<p>当我们需要将该对象传递给深层嵌套的视图时，使用 <code>@ObsevedObject</code> 由父视图逐层传递的方式会过于繁琐，可以使用 <code>.environmentObject</code> 可以实现跨视图树的全局数据共享，当某个视图需要使用该对象时，使用 <code>@EnvironmentObject</code> 调用即可。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtApp.swift</span></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">@main</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtApp</span>: <span class="title class_ inherited__">App</span> &#123;</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> defaultDocument <span class="operator">=</span> <span class="type">EmojiArtDocument</span>()</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> paletteStore <span class="operator">=</span> <span class="type">PaletteStore</span>(named: <span class="string">&quot;Main&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> &#123;</span><br><span class="line">        <span class="type">WindowGroup</span> &#123;</span><br><span class="line">            <span class="type">EmojiArtDocumentView</span>(document: defaultDocument)</span><br><span class="line">                .environmentObject(paletteStore)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>PaletteChoose.swift</code> 如下：</p>
+<blockquote>
+<p>为正常预览 <code>EmojiArtDocumentView</code> 和 <code>PaletteChoose.swift</code> 预览也需要添加 <code>.environmentObject(PaletteStore(named:&quot;Preview&quot;)) </code> 才能正常预览。</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChoose.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="comment">// 将 PaletteStore 注入当前 View</span></span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> chooser: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Button</span> &#123;</span><br><span class="line"></span><br><span class="line">        &#125; label: &#123;</span><br><span class="line">            <span class="type">Image</span>(systemName: <span class="string">&quot;paintpalette&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">view</span>(<span class="params">for</span> <span class="params">palette</span>: <span class="type">Palette</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            <span class="type">Text</span>(palette.name)</span><br><span class="line">            <span class="type">ScrollingEmojis</span>(palette.emojis)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser_Previews</span>: <span class="title class_ inherited__">PreviewProvider</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> previews: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">PaletteChooser</span>()</span><br><span class="line">            .environmentObject(<span class="type">PaletteStore</span>(named: <span class="string">&quot;Preview&quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br><span class="line">#<span class="type">Preview</span> &#123;</span><br><span class="line">    <span class="type">EmojiArtDocumentView</span>(document: <span class="type">EmojiArtDocument</span>())</span><br><span class="line">        .environmentObject(<span class="type">PaletteStore</span>(named: <span class="string">&quot;Preview&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>[!note]+ 理解 <code>@StateObject</code> 、<code>@ObservedObject</code> 、<code>EnvironmentObject</code><br>在 SwiftUI 中，<code>@StateObject</code>、<code>@ObservedObject</code> 和 <code>.environmentObject</code> 是管理和共享数据的关键工具，它们负责保持和传播应用程序的状态。这三者虽然在用法上有重叠，但设计目的和应用场景不同。以下是它们之间的关系以及每个的核心功能和使用场景：</p>
+<hr>
+<p><strong>1. <code>@StateObject</code></strong></p>
+<p><strong>定义</strong></p>
+<ul>
+<li>用来在某个视图中创建并拥有一个 <strong><code>ObservableObject</code> 实例</strong>，且 SwiftUI 会自动管理它的生命周期。</li>
+<li>当 <code>@StateObject</code> 的对象发生变化时，依赖它的视图会自动刷新。</li>
+</ul>
+<p><strong>核心点</strong></p>
+<ul>
+<li><strong>谁负责拥有</strong>：<code>@StateObject</code> <strong>拥有</strong>数据对象。</li>
+<li><strong>生命周期</strong>：对象会随着视图的生命周期而存在，适合在视图的 <strong>初始化阶段</strong> 创建对象。</li>
+</ul>
+<p><strong>使用场景</strong></p>
+<ul>
+<li>在视图的生命周期内，需要管理一个独立的、持久的 <code>ObservableObject</code>。</li>
+<li>用于视图创建时初始化对象并在整个视图中保持其状态。</li>
+</ul>
+<p><strong>示例</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Counter</span>: <span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">    <span class="meta">@Published</span> <span class="keyword">var</span> count <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CounterView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">private</span> <span class="keyword">var</span> counter <span class="operator">=</span> <span class="type">Counter</span>() <span class="comment">// View 创建并拥有 Counter</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Count: <span class="subst">\(counter.count)</span>&quot;</span>)</span><br><span class="line">            <span class="type">Button</span>(<span class="string">&quot;Increment&quot;</span>) &#123;</span><br><span class="line">                counter.count <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. <code>@ObservedObject</code></strong></p>
+<p><strong>定义</strong></p>
+<ul>
+<li>用来观察一个 <strong>外部提供的 <code>ObservableObject</code> 实例</strong>。</li>
+<li>该对象由外部负责创建并注入到视图中，视图不会拥有这个对象，只是监听它的变化。</li>
+</ul>
+<p><strong>核心点</strong></p>
+<ul>
+<li><strong>谁负责拥有</strong>：<code>@ObservedObject</code> <strong>不拥有</strong>数据对象，它只是一个观察者。</li>
+<li><strong>生命周期</strong>：对象的生命周期由外部决定，视图只是监听这个对象的变化。</li>
+</ul>
+<p><strong>使用场景</strong></p>
+<ul>
+<li>当某个 <code>ObservableObject</code> 是由外部传递给视图的（通常通过初始化函数传递）。</li>
+<li>用于子视图需要观察父视图的数据对象。</li>
+</ul>
+<p><strong>示例</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Counter</span>: <span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">    <span class="meta">@Published</span> <span class="keyword">var</span> count <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ParentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">private</span> <span class="keyword">var</span> counter <span class="operator">=</span> <span class="type">Counter</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ChildView</span>(counter: counter)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ChildView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@ObservedObject</span> <span class="keyword">var</span> counter: <span class="type">Counter</span> <span class="comment">// 不拥有 Counter，仅监听变化</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Count: <span class="subst">\(counter.count)</span>&quot;</span>)</span><br><span class="line">            <span class="type">Button</span>(<span class="string">&quot;Increment&quot;</span>) &#123;</span><br><span class="line">                counter.count <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. <code>.environmentObject</code></strong></p>
+<p><strong>定义</strong></p>
+<ul>
+<li>用来将一个 <code>ObservableObject</code> 放入 SwiftUI 的环境中，以便在视图树的任何子视图中可以访问到它，而无需显式传递。</li>
+<li>类似于全局共享数据的机制，但仅限于视图树中（本地全局共享）。</li>
+</ul>
+<p><strong>核心点</strong></p>
+<ul>
+<li><strong>谁负责拥有</strong>：对象由根视图注入到环境中，子视图可以通过 <code>.environmentObject</code> 自动访问。</li>
+<li><strong>生命周期</strong>：对象的生命周期通常由视图树的更高层次负责管理。</li>
+<li><strong>传递方式</strong>：无需通过视图层层传递，视图只需声明 <code>@EnvironmentObject</code> 就能使用。</li>
+</ul>
+<p><strong>使用场景</strong></p>
+<ul>
+<li>适用于需要跨多个视图共享的全局数据，例如用户设置、会话状态等。</li>
+<li>当数据需要在整个视图树中流通时使用。</li>
+</ul>
+<p><strong>示例</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UserSettings</span>: <span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">    <span class="meta">@Published</span> <span class="keyword">var</span> username: <span class="type">String</span> <span class="operator">=</span> <span class="string">&quot;Guest&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">RootView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">private</span> <span class="keyword">var</span> settings <span class="operator">=</span> <span class="type">UserSettings</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ChildView</span>()</span><br><span class="line">            .environmentObject(settings) <span class="comment">// 注入到环境中</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ChildView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> settings: <span class="type">UserSettings</span> <span class="comment">// 自动获取环境对象</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Username: <span class="subst">\(settings.username)</span>&quot;</span>)</span><br><span class="line">            <span class="type">Button</span>(<span class="string">&quot;Change Username&quot;</span>) &#123;</span><br><span class="line">                settings.username <span class="operator">=</span> <span class="string">&quot;NewUser&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>三者的关系和区别</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>@StateObject</code></th>
+<th><code>@ObservedObject</code></th>
+<th><code>.environmentObject</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>谁负责拥有对象</strong></td>
+<td>当前视图拥有对象</td>
+<td>外部视图拥有对象</td>
+<td>环境（更高层级视图）拥有对象</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>创建和管理独立对象，用于本地视图状态</td>
+<td>观察外部传入对象</td>
+<td>跨视图树的全局数据共享</td>
+</tr>
+<tr>
+<td><strong>声明方式</strong></td>
+<td><code>@StateObject</code></td>
+<td><code>@ObservedObject</code></td>
+<td><code>@EnvironmentObject</code></td>
+</tr>
+<tr>
+<td><strong>对象的生命周期</strong></td>
+<td>由当前视图的生命周期决定</td>
+<td>由外部视图的生命周期决定</td>
+<td>由注入环境对象的根视图生命周期决定</td>
+</tr>
+<tr>
+<td><strong>数据传递方式</strong></td>
+<td>直接在视图中初始化</td>
+<td>通过视图的初始化函数传递</td>
+<td>自动从环境中注入</td>
+</tr>
+<tr>
+<td><strong>依赖管理</strong></td>
+<td>SwiftUI 自动监听对象变化并刷新视图</td>
+<td>SwiftUI 自动监听对象变化并刷新视图</td>
+<td>SwiftUI 自动监听环境对象变化并刷新视图</td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>如何选择使用？</strong></p>
+<ol>
+<li><p><strong>使用 <code>@StateObject</code>：</strong></p>
+<ul>
+<li>当某个视图需要管理自己的状态对象，并且它会随着视图一起创建和销毁。</li>
+<li>示例：某个视图中的本地计时器或局部设置。</li>
+</ul>
+</li>
+<li><p><strong>使用 <code>@ObservedObject</code>：</strong></p>
+<ul>
+<li>当视图需要观察由父视图传递进来的状态对象，但不负责管理它的生命周期。</li>
+<li>示例：父视图将共享的计数器或模型对象传递给子视图。</li>
+</ul>
+</li>
+<li><p><strong>使用 <code>.environmentObject</code>：</strong></p>
+<ul>
+<li>当需要在整个视图树中共享某个对象的状态，无需手动逐层传递。</li>
+<li>示例：应用级别的用户会话、主题设置等全局数据。</li>
+</ul>
+</li>
+</ol>
+<p>通过合理搭配这些属性，可以在 SwiftUI 中高效地管理数据流和状态更新，同时保持代码的简洁性和可维护性。</p>
+</blockquote>
+<p>接下来，将 <code>EmojiArtDocumentView.swift</code> 中的 <code>ScrollingEmojis</code> 移至 <code>PaletteChooser.swift</code>，并为 Button 定义交互，切换至下一个 palette，这里我们使用在 <code>extension.swift</code> 中定义的含动画的按钮 AnimatedActionButton。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteChooser.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PaletteChooser</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@EnvironmentObject</span> <span class="keyword">var</span> store: <span class="type">PaletteStore</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            chooser</span><br><span class="line">            view(for: store.palettes[store.cursorIndex])</span><br><span class="line">        &#125;</span><br><span class="line">		<span class="comment">// 禁止视图显示在当前 View外部</span></span><br><span class="line">        .clipped()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> chooser: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	   <span class="type">AnimatedActionButton</span>(systemImage: <span class="string">&quot;paintpalette&quot;</span>) &#123;</span><br><span class="line">		   store.cursorIndex <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">	   &#125;</span><br><span class="line">	   .contextMenu &#123;</span><br><span class="line">		   <span class="type">AnimatedActionButton</span>(<span class="string">&quot;New&quot;</span>, systemImage: <span class="string">&quot;plus&quot;</span>) &#123;</span><br><span class="line">			   store.insert(name: <span class="string">&quot;Math&quot;</span>, emojis: <span class="string">&quot;+−×÷∝∞&quot;</span>)</span><br><span class="line">		   &#125;</span><br><span class="line">		   <span class="type">AnimatedActionButton</span>(<span class="string">&quot;Delete&quot;</span>, systemImage: <span class="string">&quot;minus.circle&quot;</span>, role: .destructive) &#123;</span><br><span class="line">			   store.palettes.remove(at: store.cursorIndex)</span><br><span class="line">		   &#125;</span><br><span class="line">	   &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">view</span>(<span class="params">for</span> <span class="params">palette</span>: <span class="type">Palette</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	   <span class="type">HStack</span> &#123;</span><br><span class="line">		   <span class="type">Text</span>(palette.name)</span><br><span class="line">		   <span class="type">ScrollingEmojis</span>(palette.emojis)</span><br><span class="line">	   &#125;</span><br><span class="line">	   <span class="comment">// transition 需要两个不同的 view 消失或者出现，这里使用 id 来区别 palette ，实现 transition 动画</span></span><br><span class="line">	   .id(palette.id)</span><br><span class="line">	   .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)))</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ScrollingEmojis</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> emojis: [<span class="type">String</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(<span class="keyword">_</span> <span class="params">emojis</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.emojis <span class="operator">=</span> emojis.uniqued.map(<span class="type">String</span>.<span class="keyword">init</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ScrollView</span>(.horizontal)&#123;</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">ForEach</span>(emojis, id:\.<span class="keyword">self</span>) &#123; emoji <span class="keyword">in</span></span><br><span class="line">                    <span class="type">Text</span>(emoji)</span><br><span class="line">                        .draggable(emoji)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同时 <code>EmojiArtDocumentView.swift</code> 中的 ScrollingEmojis 改为当前视图 <code>PaletteChooser</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> (spacing:<span class="number">0</span>)&#123;</span><br><span class="line">            documentBody</span><br><span class="line">            <span class="type">PaletteChooser</span>()</span><br><span class="line">                .font(.system(size: paletteEmojiSize))</span><br><span class="line">                .padding(.horizontal)</span><br><span class="line">                .scrollIndicators(.hidden)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Serein 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Serein 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/01/24/Stanford-cs193p-10%EF%BD%9CEmojiArt/" rel="prev" title="Stanford-cs193p-10｜EmojiArt">
+      <i class="fa fa-chevron-left"></i> Stanford-cs193p-10｜EmojiArt
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/08/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/" rel="next" title="Standard-cs193p-12｜Persistence-Property-Wrappers">
+      Standard-cs193p-12｜Persistence-Property-Wrappers <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%89%8D%E8%A8%80"><span class="nav-text">0. 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%89%8B%E5%8A%BF"><span class="nav-text">1. 手势</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-SwiftUI-%E4%B8%AD%E7%9A%84%E6%89%8B%E5%8A%BF%E7%AE%80%E4%BB%8B"><span class="nav-text">1.1 SwiftUI 中的手势简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%9C%A8%E8%A7%86%E5%9B%BE%E4%B8%AD%E8%AF%86%E5%88%AB%E6%89%8B%E5%8A%BF"><span class="nav-text">1.2 在视图中识别手势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%A4%84%E7%90%86%E7%A6%BB%E6%95%A3%E6%89%8B%E5%8A%BF"><span class="nav-text">1.3 处理离散手势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%A4%84%E7%90%86%E9%9D%9E%E7%A6%BB%E6%95%A3%E6%89%8B%E5%8A%BF"><span class="nav-text">1.4 处理非离散手势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E4%BD%BF%E7%94%A8-onChanged-%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%B3%95"><span class="nav-text">1.5 使用 .onChanged 的替代方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-%E9%9D%9E%E7%A6%BB%E6%95%A3%E6%89%8B%E5%8A%BF%E5%A4%84%E7%90%86%E7%9A%84%E6%80%BB%E7%BB%93"><span class="nav-text">1.6 非离散手势处理的总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Demo-Gesture"><span class="nav-text">2. Demo: Gesture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2nd-MVVM"><span class="nav-text">3. 2nd MVVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-model"><span class="nav-text">3.1 model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-ViewModel"><span class="nav-text">3.2 ViewModel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-View"><span class="nav-text">3.3 View</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Serein"
+      src="/uploads/avatar.JPEG">
+  <p class="site-author-name" itemprop="name">Serein</p>
+  <div class="site-description" itemprop="description">Crazy learning, crazy sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Aricyq0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Aricyq0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ari.cyq@gmail.com" title="E-Mail → mailto:ari.cyq@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Serein</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">180k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:44</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
