@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aricyq0.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="是斯坦福大学 cs193p 公开课程第 15 集的相关笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stanford-cs193p-15｜Document-Architecture">
+<meta property="og:url" content="https://aricyq0.github.io/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/index.html">
+<meta property="og:site_name" content="Serein">
+<meta property="og:description" content="是斯坦福大学 cs193p 公开课程第 15 集的相关笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/Stanford-cs193p-15%EF%BD%9CDocument-Architecture-3.png">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/Stanford-cs193p-15%EF%BD%9CDocument-Architecture-2.png">
+<meta property="og:image" content="https://aricyq0.github.io/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/simulator_screenshot_8958D42A-D265-4931-BD26-03A32F6C32BF.png">
+<meta property="article:published_time" content="2025-02-19T08:12:24.000Z">
+<meta property="article:modified_time" content="2025-02-19T08:12:24.425Z">
+<meta property="article:author" content="Serein">
+<meta property="article:tag" content="cs193p">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aricyq0.github.io/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/Stanford-cs193p-15%EF%BD%9CDocument-Architecture-3.png">
+
+<link rel="canonical" href="https://aricyq0.github.io/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Stanford-cs193p-15｜Document-Architecture | Serein</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Serein</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/aricyq0" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aricyq0.github.io/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.JPEG">
+      <meta itemprop="name" content="Serein">
+      <meta itemprop="description" content="Crazy learning, crazy sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Serein">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Stanford-cs193p-15｜Document-Architecture
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-02-19 16:12:24" itemprop="dateCreated datePublished" datetime="2025-02-19T16:12:24+08:00">2025-02-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>是斯坦福大学 cs193p 公开课程第 15 集的相关笔记。</p>
+<span id="more"></span>
+
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p> The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.). </p>
+</blockquote>
+<p>cs193p 课程网址: [<a target="_blank" rel="noopener" href="https://cs193p.sites.stanford.edu/2023]">https://cs193p.sites.stanford.edu/2023]</a></p>
+<h2 id="1-App-架构与核心协议"><a href="#1-App-架构与核心协议" class="headerlink" title="1. App 架构与核心协议"></a>1. App 架构与核心协议</h2><h3 id="1-1-App-协议-App-Protocol"><a href="#1-1-App-协议-App-Protocol" class="headerlink" title="1.1 App 协议 (App Protocol)"></a>1.1 App 协议 (<code>App Protocol</code>)</h3><ul>
+<li><strong>基础特性</strong>：  <ul>
+<li>应用中唯一标记 <code>@main</code> 的结构体，作为程序入口。  </li>
+<li><code>body</code> 不返回 <code>View</code> 而是返回 <code>some Scene</code>（场景容器）。  </li>
+<li>示例代码：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MemorizeApp</span>: <span class="title class_ inherited__">App</span> &#123;</span><br><span class="line">  <span class="meta">@StateObject</span> <span class="keyword">var</span> game <span class="operator">=</span> <span class="type">EmojiMemoryGame</span>()</span><br><span class="line">  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> &#123;</span><br><span class="line">    <span class="type">WindowGroup</span> &#123;</span><br><span class="line">      <span class="type">EmojiMemoryGameView</span>(game: game)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="1-2-Scene-协议-Scene-Protocol"><a href="#1-2-Scene-协议-Scene-Protocol" class="headerlink" title="1.2 Scene 协议 (Scene Protocol)"></a>1.2 Scene 协议 (<code>Scene Protocol</code>)</h3><ul>
+<li><strong>核心作用</strong>：  <ul>
+<li>管理顶级视图的容器（如窗口、分屏视图）。  </li>
+<li>可通过 <code>@Environment(\.scenePhase)</code> 监听场景生命周期（活跃、后台等）。</li>
+</ul>
+</li>
+<li><strong>常用内置场景类型</strong>：  <ul>
+<li>**<code>WindowGroup</code>**：非文档应用（如 <code>Memorize</code>），所有窗口共享同一 ViewModel。  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">WindowGroup</span> &#123;</span><br><span class="line">  <span class="type">EmojiMemoryGameView</span>(game: game) <span class="comment">// 所有窗口共享 game 对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>**<code>DocumentGroup</code>**：文档应用（如 <code>EmojiArt</code>），每个文档独立实例化。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2-文档架构-Document-Architecture"><a href="#2-文档架构-Document-Architecture" class="headerlink" title="2. 文档架构 (Document Architecture)"></a>2. 文档架构 (Document Architecture)</h2><h3 id="2-1-DocumentGroup-的核心机制"><a href="#2-1-DocumentGroup-的核心机制" class="headerlink" title="2.1 DocumentGroup 的核心机制"></a>2.1 DocumentGroup 的核心机制</h3><ul>
+<li><strong>两种初始化方式</strong>：  <ul>
+<li><strong>新建文档</strong>：<code>DocumentGroup(newDocument: &#123; ... &#125;)</code>  </li>
+<li><strong>打开已有文档</strong>：<code>DocumentGroup(viewing: &#123; ... &#125;)</code></li>
+</ul>
+</li>
+<li><strong>代码示例</strong>：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtApp</span>: <span class="title class_ inherited__">App</span> &#123;</span><br><span class="line">  <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> &#123;</span><br><span class="line">    <span class="type">DocumentGroup</span>(newDocument: &#123; <span class="type">EmojiArtDocument</span>() &#125;) &#123; config <span class="keyword">in</span></span><br><span class="line">      <span class="type">EmojiArtDocumentView</span>(document: config.document)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>config.document</code>：系统自动管理的文档实例（需符合 <code>ReferenceFileDocument</code>）。  </li>
+<li><strong>强制要求</strong>：实现撤销功能（Undo）以保证自动保存。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-2-文档协议-FileDocument-vs-ReferenceFileDocument"><a href="#2-2-文档协议-FileDocument-vs-ReferenceFileDocument" class="headerlink" title="2.2 文档协议 (FileDocument vs ReferenceFileDocument)"></a>2.2 文档协议 (<code>FileDocument</code> vs <code>ReferenceFileDocument</code>)</h3><ul>
+<li><p>**<code>FileDocument</code>**：  </p>
+<ul>
+<li>直接读写文件，实现以下方法：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>(<span class="params">configuration</span>: <span class="type">ReadConfiguration</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> data <span class="operator">=</span> configuration.file.regularFileContents <span class="keyword">else</span> &#123; <span class="keyword">throw</span> error &#125;</span><br><span class="line">  <span class="comment">// 从 data 初始化</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">fileWrapper</span>(<span class="params">configuration</span>: <span class="type">WriteConfiguration</span>) <span class="keyword">throws</span> -&gt; <span class="type">FileWrapper</span> &#123;</span><br><span class="line">  <span class="type">FileWrapper</span>(regularFileWithContents: <span class="comment">/* 转为 Data */</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>**<code>ReferenceFileDocument</code>**（继承 <code>ObservableObject</code>）：  </p>
+<ul>
+<li>通过快照异步保存（避免阻塞主线程）：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">snapshot</span>(<span class="params">contentType</span>: <span class="type">UTType</span>) <span class="keyword">throws</span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="comment">/* 当前 Model 的 Data 表示 */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">fileWrapper</span>(<span class="params">snapshot</span>: <span class="type">Data</span>, <span class="params">configuration</span>: <span class="type">WriteConfiguration</span>) <span class="keyword">throws</span> -&gt; <span class="type">FileWrapper</span> &#123;</span><br><span class="line">  <span class="type">FileWrapper</span>(regularFileWithContents: snapshot)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="3-统一文件类型标识-UTType"><a href="#3-统一文件类型标识-UTType" class="headerlink" title="3. 统一文件类型标识 (UTType)"></a>3. 统一文件类型标识 (<code>UTType</code>)</h2><h3 id="3-1-定义自定义文件类型"><a href="#3-1-定义自定义文件类型" class="headerlink" title="3.1 定义自定义文件类型"></a>3.1 定义自定义文件类型</h3><ul>
+<li><strong>反向 DNS 命名</strong>：如 <code>edu.stanford.cs193p.emojiart</code>。  </li>
+<li><strong>Xcode 配置步骤</strong>：  <ol>
+<li>项目设置 → Info → Exported Type Identifiers：  <ul>
+<li><strong>Identifier</strong>：反向 DNS 名称。  </li>
+<li><strong>Extensions</strong>：文件扩展名（如 <code>.emojiart</code>）。  </li>
+<li><strong>Mime Types</strong>：可选 MIME 类型（如 <code>application/emojiart</code>）。</li>
+</ul>
+</li>
+<li><strong>声明文档类型所有权</strong>：在 Document Types 中设置应用为 Owner。</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-2-代码中声明支持的-UTTypes"><a href="#3-2-代码中声明支持的-UTTypes" class="headerlink" title="3.2 代码中声明支持的 UTTypes"></a>3.2 代码中声明支持的 UTTypes</h3><ul>
+<li>**扩展 <code>UTType</code>**：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extension</span> <span class="title class_">UTType</span> &#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">let</span> emojiart <span class="operator">=</span> <span class="type">UTType</span>(exportedAs: <span class="string">&quot;edu.stanford.cs193p.emojiart&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><strong>在文档协议中指定可处理类型</strong>：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">var</span> readableContentTypes: [<span class="type">UTType</span>] &#123; [.emojiart] &#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">var</span> writeableContentTypes: [<span class="type">UTType</span>] &#123; [.emojiart] &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="4-撤销机制-Undo"><a href="#4-撤销机制-Undo" class="headerlink" title="4. 撤销机制 (Undo)"></a>4. 撤销机制 (<code>Undo</code>)</h2><h3 id="4-1-集成-UndoManager"><a href="#4-1-集成-UndoManager" class="headerlink" title="4.1 集成 UndoManager"></a>4.1 集成 <code>UndoManager</code></h3><ul>
+<li><strong>获取环境中的 UndoManager</strong>：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Environment</span>(\.undoManager) <span class="keyword">var</span> undoManager  </span><br><span class="line"><span class="comment">// 通过 Intent 传递给 ViewModel  </span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="4-2-实现撤销操作"><a href="#4-2-实现撤销操作" class="headerlink" title="4.2 实现撤销操作"></a>4.2 实现撤销操作</h3><ul>
+<li><strong>注册撤销动作</strong>：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">undoablyPerform</span>(<span class="params">operation</span>: <span class="type">String</span>, <span class="params">with</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>?, <span class="params">doit</span>: () -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> oldModel <span class="operator">=</span> model</span><br><span class="line">  doit() <span class="comment">// 执行修改操作</span></span><br><span class="line">  undoManager<span class="operator">?</span>.registerUndo(withTarget: <span class="keyword">self</span>) &#123; target <span class="keyword">in</span></span><br><span class="line">    target.model <span class="operator">=</span> oldModel <span class="comment">// 撤销逻辑</span></span><br><span class="line">  &#125;</span><br><span class="line">  undoManager<span class="operator">?</span>.setActionName(operation) <span class="comment">// 设置撤销菜单名称（如“Undo Delete”）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>**支持重做 (Redo)**：  <ul>
+<li>通过递归注册 <code>undo</code>，系统自动处理 <code>redo</code>。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="5-通知系统-Notifications"><a href="#5-通知系统-Notifications" class="headerlink" title="5. 通知系统 (Notifications)"></a>5. 通知系统 (<code>Notifications</code>)</h2><h3 id="5-1-监听系统通知"><a href="#5-1-监听系统通知" class="headerlink" title="5.1 监听系统通知"></a>5.1 监听系统通知</h3><ul>
+<li>**在 View 中使用 <code>.onReceive</code>**：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.onReceive(<span class="type">NotificationCenter</span>.default.publisher(for: <span class="type">UIApplication</span>.willResignActiveNotification)) &#123; <span class="keyword">_</span> <span class="keyword">in</span></span><br><span class="line">  <span class="comment">// 处理应用进入后台</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><strong>通用订阅方法</strong>：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">var</span> observer: <span class="type">NSObjectProtocol</span>?</span><br><span class="line"> observer <span class="operator">=</span> <span class="type">NotificationCenter</span>.default.addObserver(</span><br><span class="line">   forName: .myCustomNotification,</span><br><span class="line">   object: <span class="literal">nil</span>,    <span class="comment">//the broadcaster(or nil for &quot;anyone&quot;)</span></span><br><span class="line">   queue: .main	<span class="comment">//the queue on which to dispatch the closure</span></span><br><span class="line"> ) &#123; notification <span class="keyword">in</span>	<span class="comment">//closure executed when broadcasts occur</span></span><br><span class="line"><span class="keyword">let</span> info: <span class="keyword">Any</span><span class="operator">?</span> notification.userInfo</span><br><span class="line">   <span class="comment">// 处理通知</span></span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">// 取消订阅</span></span><br><span class="line"> <span class="type">NotificationCenter</span>.default.removeObserver(observer)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="5-2-发布自定义通知"><a href="#5-2-发布自定义通知" class="headerlink" title="5.2 发布自定义通知"></a>5.2 发布自定义通知</h3><ul>
+<li><strong>代码示例</strong>：  <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NotificationCenter</span>.default.post(</span><br><span class="line">  name: .myCustomNotification,  <span class="comment">//name to notify under</span></span><br><span class="line">  object: <span class="keyword">self</span>,			<span class="comment">// who is sending the notification(usually self)</span></span><br><span class="line">  userInfo: [<span class="string">&quot;key&quot;</span>: value].   <span class="comment">//any info you want to pass to listeners</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h2 id="6-Demo"><a href="#6-Demo" class="headerlink" title="6. Demo"></a>6. Demo</h2><h3 id="6-1-添加应用图标"><a href="#6-1-添加应用图标" class="headerlink" title="6.1 添加应用图标"></a>6.1 添加应用图标</h3><p>在 <code>Assets.xcassets/AppIcon</code> 中添加 <code>1024*1024</code> 像素大小的图片作为应用程序图标。<br>![截屏2025-02-19 09.57.43](截屏2025-02-19 09.57.43.png)</p>
+<h3 id="6-2-ScaledMetric设置字体大小根据系统设置缩放"><a href="#6-2-ScaledMetric设置字体大小根据系统设置缩放" class="headerlink" title="6.2 @ScaledMetric设置字体大小根据系统设置缩放"></a>6.2 <code>@ScaledMetric</code>设置字体大小根据系统设置缩放</h3><p>当我们在系统设置中修改字体大小时，palette 色盘的 <code>Emoji</code> 大小不会缩放，因此，我们使用 <code>@Scalemetric</code> 来解决。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="meta">@ScaledMetric</span> <span class="keyword">private</span> <span class="keyword">var</span> paletteEmojiSize:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">40</span></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-创建-Emojiart-类型"><a href="#6-3-创建-Emojiart-类型" class="headerlink" title="6.3 创建 Emojiart 类型"></a>6.3 创建 <code>Emojiart</code> 类型</h3><p>我们在下图位置设置 <code>Document Type</code>，以及 <code>Expoted Type Identifiers</code><br><img src="/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/Stanford-cs193p-15%EF%BD%9CDocument-Architecture-3.png" alt="Stanford-cs193p-15｜Document-Architecture-3"></p>
+<p>此时我们运行代码，会出现黄色警告 <code>The application supports opening files, but doesn&#39;t declare whether it supports opening them in place. You can add an LSSupportsOpeningDocumentsInPlace entry or an UISupportsDocumentBrowser entry to your Info.plist to declare support.</code></p>
+<p>这意味着你的应用程序可以打开文件，但没有声明是否支持“就地打开”这些文件。就地打开（in place opening）意味着用户可以在该文件所在的位置直接打开文件，而不需要在应用程序内部进行复制或移动。系统有时需要知道你的应用是否支持这种操作。</p>
+<p>你可以通过以下步骤添加这些条目：</p>
+<ul>
+<li>打开你的 Xcode 项目。</li>
+<li>在项目导航器中找到你的 Info.plist 文件。</li>
+<li>右击，选择“Add Row”。</li>
+<li>添加 “Supports Document Browser”，并将类型设置为 Boolean，值设置为 YES，如下图所示。</li>
+</ul>
+<p><img src="/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/Stanford-cs193p-15%EF%BD%9CDocument-Architecture-2.png" alt="Stanford-cs193p-15｜Document-Architecture-2"></p>
+<p>接下来，转至 ViewModel <code>EmojiArtDocument.swift</code> ，由于已存在 <code>Document</code>，我们不会再自动保存了，故清除所有关于自动保存的代码。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Published</span> <span class="keyword">private</span> <span class="keyword">var</span> emojiArt <span class="operator">=</span> <span class="type">EmojiArt</span>() &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line"><span class="comment">//            删除</span></span><br><span class="line"><span class="comment">//            autosave()</span></span><br><span class="line">            <span class="keyword">if</span> emojiArt.background <span class="operator">!=</span> oldValue.background &#123;</span><br><span class="line">                <span class="type">Task</span> &#123;</span><br><span class="line">                    <span class="keyword">await</span> fetchBackgroundImage()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    删除自动保存代码块</span></span><br><span class="line"><span class="comment">//    private let autosaveURL: URL = URL.documentsDirectory.appendingPathComponent(&quot;Autosaved.emojiart&quot;)</span></span><br><span class="line"><span class="comment">//    </span></span><br><span class="line"><span class="comment">//    private func autosave() &#123;</span></span><br><span class="line"><span class="comment">//        save(to: autosaveURL)</span></span><br><span class="line"><span class="comment">//        print(&quot;autosaved to \(autosaveURL)&quot;)</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"><span class="comment">//    </span></span><br><span class="line"><span class="comment">//    private func save(to url: URL) &#123;</span></span><br><span class="line"><span class="comment">//        do &#123;</span></span><br><span class="line"><span class="comment">//            let data = try emojiArt.json()</span></span><br><span class="line"><span class="comment">//            try data.write(to: url)</span></span><br><span class="line"><span class="comment">//        &#125; catch let error &#123;</span></span><br><span class="line"><span class="comment">//            //error is the error throw</span></span><br><span class="line"><span class="comment">//            print(&quot;EmojiArtDocument: error while saving \(error.localizedDescription)&quot;)</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>() &#123;</span><br><span class="line"><span class="comment">//       删除</span></span><br><span class="line"><span class="comment">//        if let data = try? Data(contentsOf: autosaveURL),</span></span><br><span class="line"><span class="comment">//           let autosavedEmojiArt = try? EmojiArt(json: data) &#123;</span></span><br><span class="line"><span class="comment">//            emojiArt = autosavedEmojiArt</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在 <code>EmojiArtApp</code> 中删除其余替代商店</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtApp.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@main</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtApp</span>: <span class="title class_ inherited__">App</span> &#123;</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> defaultDocument <span class="operator">=</span> <span class="type">EmojiArtDocument</span>()</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> paletteStore <span class="operator">=</span> <span class="type">PaletteStore</span>(named: <span class="string">&quot;Main&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//    删除</span></span><br><span class="line">    <span class="comment">//    @StateObject var store2 = PaletteStore(named: &quot;Alernative&quot;)</span></span><br><span class="line">    <span class="comment">//    @StateObject var store3 = PaletteStore(named: &quot;Special&quot;)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> &#123;</span><br><span class="line">        <span class="type">WindowGroup</span> &#123;</span><br><span class="line">            <span class="type">EmojiArtDocumentView</span>(document: defaultDocument)</span><br><span class="line">                .environmentObject(paletteStore)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="6-4-DocumentGroup-实现拥有多个文档"><a href="#6-4-DocumentGroup-实现拥有多个文档" class="headerlink" title="6.4 DocumentGroup 实现拥有多个文档"></a>6.4 <code>DocumentGroup</code> 实现拥有多个文档</h3><p>此时运行代码，我们能使用多个窗口查看同一个文档，但显然不如能拥有多个文档那么灵活。</p>
+<p>因此，接下来我们要做的第一件事就是将 <code>WindowGroup</code> 改为 <code>DocumentGroup</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtApp.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@main</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtApp</span>: <span class="title class_ inherited__">App</span> &#123;</span><br><span class="line">    <span class="meta">@StateObject</span> <span class="keyword">var</span> paletteStore <span class="operator">=</span> <span class="type">PaletteStore</span>(named: <span class="string">&quot;Main&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">Scene</span> &#123;</span><br><span class="line">        <span class="type">DocumentGroup</span>(newDocument: &#123;<span class="type">EmojiArtDocument</span>()&#125;) &#123; config <span class="keyword">in</span></span><br><span class="line">            <span class="type">EmojiArtDocumentView</span>(document: config.document)</span><br><span class="line">                .environmentObject(paletteStore)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时会有两个报错，第一个为 <code>Referencing initializer &#39;init(newDocument:editor:)&#39; on &#39;DocumentGroup&#39; requires that &#39;EmojiArtDocument&#39; conform to &#39;ReferenceFileDocument&#39;</code>，即 <code>EmojiArtDocument</code> 需服从 <code>ReferenceFileDocument</code> 协议，阅读官方文档可知，<code>ReferenceFileDocument</code> 继承自 <code>ObservableObject</code> 协议，故我们可移除 <code>ObservableObject</code> 协议，仅保留 <code>ReferenceFileDocument</code> 即可。<br>接着会弹出报错 <code>Type &#39;EmojiArtDocument&#39; does not conform to protocol &#39;ReferenceFileDocument&#39;</code>，点击 “fix”即可，代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ReferenceFileDocument</span> &#123;</span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Snapshot</span> <span class="operator">=</span> <span class="operator">&lt;</span>#type#<span class="operator">&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> readableContentTypes: [<span class="type">UTType</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>(<span class="params">configuration</span>: <span class="type">ReadConfiguration</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">        <span class="operator">&lt;</span>#code#<span class="operator">&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们已经使用 <code>init</code> 来读取文档，但还未使用 <code>FileWrapper</code> 来保存文档，在生成这些内容之间它需要知道 <code>Snapshot</code> 的类型。我们可以将 <code>Snapshot</code> 作为 <code>Data</code>。接着仍然有报错 <code>Type &#39;EmojiArtDocument&#39; does not conform to protocol &#39;ReferenceFileDocument&#39;</code>，我们继续点击 <code>fix</code>，如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ReferenceFileDocument</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">snapshot</span>(<span class="params">contentType</span>: <span class="type">UTType</span>) <span class="keyword">throws</span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">        <span class="operator">&lt;</span>#code#<span class="operator">&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">fileWrapper</span>(<span class="params">snapshot</span>: <span class="type">Data</span>, <span class="params">configuration</span>: <span class="type">WriteConfiguration</span>) <span class="keyword">throws</span> -&gt; <span class="type">FileWrapper</span> &#123;</span><br><span class="line">        <span class="operator">&lt;</span>#code#<span class="operator">&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Snapshot</span> <span class="operator">=</span> <span class="type">Data</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> readableContentTypes: [<span class="type">UTType</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>(<span class="params">configuration</span>: <span class="type">ReadConfiguration</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">        <span class="operator">&lt;</span>#code#<span class="operator">&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于 <code>func snapshot</code> 已定义返回类型为 <code>Data</code>，此时不再需要类型别名 <code>typealias Snapshot = Data</code>。</p>
+<p>又存在报错 <code>Cannot find type &#39;UTType&#39; in scope</code>，使用 <code>import UniformTypeIdentifiers</code> 来解决：</p>
+<p>继续解决报错<code>&#39;static var&#39; declaration requires an initializer expression or an explicitly stated getter</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> UniformTypeIdentifiers</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ReferenceFileDocument</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">snapshot</span>(<span class="params">contentType</span>: <span class="type">UTType</span>) <span class="keyword">throws</span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">        <span class="operator">&lt;</span>#code#<span class="operator">&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">fileWrapper</span>(<span class="params">snapshot</span>: <span class="type">Data</span>, <span class="params">configuration</span>: <span class="type">WriteConfiguration</span>) <span class="keyword">throws</span> -&gt; <span class="type">FileWrapper</span> &#123;</span><br><span class="line">        <span class="operator">&lt;</span>#code#<span class="operator">&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> readableContentTypes: [<span class="type">UTType</span>] &#123;</span><br><span class="line">        [.emojiart]</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>(<span class="params">configuration</span>: <span class="type">ReadConfiguration</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">        <span class="operator">&lt;</span>#code#<span class="operator">&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着我们通过 <code>extension UTType</code> 来解决报错 <code>Type &#39;UTType&#39; has no member &#39;emojiart&#39;</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">import</span> UniformTypeIdentifiers</span><br><span class="line"></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">UTType</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">let</span> emojiart <span class="operator">=</span> <span class="type">UTType</span>(exportedAs: <span class="string">&quot;edu.stanford.cs193p.emojiart&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>至此，所有报错都已解决，接下来要做的就是填写这些灰色代码快来实现实际的功能。从顶部开始：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ReferenceFileDocument</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">snapshot</span>(<span class="params">contentType</span>: <span class="type">UTType</span>) <span class="keyword">throws</span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> emojiArt.json()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">fileWrapper</span>(<span class="params">snapshot</span>: <span class="type">Data</span>, <span class="params">configuration</span>: <span class="type">WriteConfiguration</span>) <span class="keyword">throws</span> -&gt; <span class="type">FileWrapper</span> &#123;</span><br><span class="line">        <span class="type">FileWrapper</span>(regularFileWithContents: snapshot)</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> readableContentTypes: [<span class="type">UTType</span>] &#123;</span><br><span class="line">        [.emojiart]</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">required</span> <span class="keyword">init</span>(<span class="params">configuration</span>: <span class="type">ReadConfiguration</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> data <span class="operator">=</span> configuration.file.regularFileContents &#123;</span><br><span class="line">            emojiArt <span class="operator">=</span> <span class="keyword">try</span> <span class="type">EmojiArt</span>(json: data)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="type">CocoaError</span>(.fileReadCorruptFile)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>运行效果如下：<br><img src="/2025/02/19/Stanford-cs193p-15%EF%BD%9CDocument-Architecture/simulator_screenshot_8958D42A-D265-4931-BD26-03A32F6C32BF.png" alt="simulator_screenshot_8958D42A-D265-4931-BD26-03A32F6C32BF"></p>
+<h3 id="6-5-实现-Undo"><a href="#6-5-实现-Undo" class="headerlink" title="6.5 实现 Undo"></a>6.5 实现 <code>Undo</code></h3><p>目前，我们对文档进行修改退出后，无法保存。因此我们需要先实现 <code>Undo</code> 功能，我们为 <code>setBackground</code>、<code>move</code>、<code>resize</code> 、<code>addEmoji</code> 添加撤销功能：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ReferenceFileDocument</span> &#123;</span><br><span class="line"><span class="operator">...</span></span><br><span class="line">	<span class="comment">// MARK: - Intents(s)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">undoablyPerform</span>(<span class="keyword">_</span> <span class="params">action</span>: <span class="type">String</span>, <span class="params">with</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>? <span class="operator">=</span> <span class="literal">nil</span>, <span class="params">doit</span>: () -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> oldEmojiArt <span class="operator">=</span> emojiArt</span><br><span class="line">        doit()</span><br><span class="line">        undoManager<span class="operator">?</span>.registerUndo(withTarget: <span class="keyword">self</span>) &#123; myself <span class="keyword">in</span></span><br><span class="line">            myself.undoablyPerform(action, with: <span class="literal">nil</span>) &#123;</span><br><span class="line">                myself.emojiArt <span class="operator">=</span> oldEmojiArt</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        undoManager<span class="operator">?</span>.setActionName(action)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">setBackground</span>(<span class="keyword">_</span> <span class="params">url</span>: <span class="type">URL</span>?, <span class="params">undoWith</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">        undoablyPerform(<span class="string">&quot;Set Background&quot;</span>, with: undoManager) &#123;</span><br><span class="line">            emojiArt.background <span class="operator">=</span> url</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">addEmoji</span>(<span class="keyword">_</span> <span class="params">emoji</span>: <span class="type">String</span>, <span class="params">at</span> <span class="params">position</span>: <span class="type">Emoji</span>.<span class="type">Position</span>, <span class="params">size</span>: <span class="type">CGFloat</span>, <span class="params">undoWith</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">        undoablyPerform(<span class="string">&quot;Add <span class="subst">\(emoji)</span>&quot;</span>, with: undoManager) &#123;</span><br><span class="line">            emojiArt.addEmoji(emoji, at: position, size: <span class="type">Int</span>(size))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">move</span>(<span class="keyword">_</span> <span class="params">emoji</span>: <span class="type">Emoji</span>, <span class="params">by</span> <span class="params">offset</span>: <span class="type">CGOffset</span>, <span class="params">undoWith</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">        undoablyPerform(<span class="string">&quot;Move <span class="subst">\(emoji)</span>&quot;</span>, with: undoManager) &#123;</span><br><span class="line">            <span class="keyword">let</span> existingPosition <span class="operator">=</span> emojiArt[emoji].position</span><br><span class="line">            emojiArt[emoji].position <span class="operator">=</span> <span class="type">Emoji</span>.<span class="type">Position</span>(</span><br><span class="line">                x: existingPosition.x <span class="operator">+</span> <span class="type">Int</span>(offset.width),</span><br><span class="line">                y: existingPosition.y <span class="operator">-</span> <span class="type">Int</span>(offset.height)</span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">move</span>(<span class="params">emojiWithId</span> <span class="params">id</span>: <span class="type">Emoji</span>.<span class="type">ID</span>, <span class="params">by</span> <span class="params">offset</span>: <span class="type">CGOffset</span>, <span class="params">undoWith</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> emoji <span class="operator">=</span> emojiArt[id] &#123;</span><br><span class="line">            move(emoji, by: offset, undoWith: undoManager)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">resize</span>(<span class="keyword">_</span> <span class="params">emoji</span>: <span class="type">Emoji</span>, <span class="params">by</span> <span class="params">scale</span>: <span class="type">CGFloat</span>, <span class="params">undoWith</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">        undoablyPerform(<span class="string">&quot;Resize <span class="subst">\(emoji)</span>&quot;</span>, with: undoManager) &#123;</span><br><span class="line">            emojiArt[emoji].size <span class="operator">=</span> <span class="type">Int</span>(<span class="type">CGFloat</span>(emojiArt[emoji].size) <span class="operator">*</span> scale)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">resize</span>(<span class="params">emojiWithId</span> <span class="params">id</span>: <span class="type">Emoji</span>.<span class="type">ID</span>, <span class="params">by</span> <span class="params">scale</span>: <span class="type">CGFloat</span>, <span class="params">undoWith</span> <span class="params">undoManager</span>: <span class="type">UndoManager</span>? <span class="operator">=</span> <span class="literal">nil</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> emoji <span class="operator">=</span> emojiArt[id] &#123;</span><br><span class="line">            resize(emoji, by: scale, undoWith: undoManager)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArt.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArt</span>: <span class="title class_ inherited__">Codable</span> &#123;</span><br><span class="line">   <span class="operator">...</span></span><br><span class="line">    <span class="keyword">subscript</span>(<span class="keyword">_</span> <span class="params">emojiId</span>: <span class="type">Emoji</span>.<span class="type">ID</span>) -&gt; <span class="type">Emoji</span>? &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> index <span class="operator">=</span> index(of: emojiId) &#123;</span><br><span class="line">            <span class="keyword">return</span> emojis[index]</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">subscript</span>(<span class="keyword">_</span> <span class="params">emoji</span>: <span class="type">Emoji</span>) -&gt; <span class="type">Emoji</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> index <span class="operator">=</span> index(of: emoji.id) &#123;</span><br><span class="line">                <span class="keyword">return</span> emojis[index]</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> emoji <span class="comment">// should probably throw error</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> index <span class="operator">=</span> index(of: emoji.id) &#123;</span><br><span class="line">                emojis[index] <span class="operator">=</span> newValue</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">index</span>(<span class="params">of</span> <span class="params">emojiId</span>: <span class="type">Emoji</span>.<span class="type">ID</span>) -&gt; <span class="type">Int</span>? &#123;</span><br><span class="line">        emojis.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> emojiId &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同时我们需要在 View 中调整相关的 <code>setBackground</code> 和 <code>addEmoji</code> 调用。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@Environment</span>(\.undoManager) <span class="keyword">var</span> undoManager</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">drop</span>(<span class="keyword">_</span> <span class="params">sturldatas</span>: [<span class="type">Sturldata</span>], <span class="params">at</span> <span class="params">location</span>: <span class="type">CGPoint</span>, <span class="params">in</span> <span class="params">geometry</span>: <span class="type">GeometryProxy</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> sturldata <span class="keyword">in</span> sturldatas &#123;</span><br><span class="line">            <span class="keyword">switch</span> sturldata &#123;</span><br><span class="line">            <span class="keyword">case</span> .url(<span class="keyword">let</span> url):</span><br><span class="line">                document.setBackground(url,undoWith: undoManager)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            <span class="keyword">case</span> .string(<span class="keyword">let</span> emoji):</span><br><span class="line">                document.addEmoji(</span><br><span class="line">                    emoji,</span><br><span class="line">                    at: emojiPosition(at: location, in: geometry),</span><br><span class="line">                    size: paletteEmojiSize <span class="operator">/</span> zoom,</span><br><span class="line">                    undoWith: undoManager</span><br><span class="line">                )</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在画布的工具栏中添加一个 <code>UndoButton</code>，<code>UndoButton</code> 视图详情放置在 <code>Extensions.swift</code> 中：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span>   </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> (spacing:<span class="number">0</span>)&#123;</span><br><span class="line">            documentBody</span><br><span class="line">            <span class="type">PaletteChooser</span>()</span><br><span class="line">                .font(.system(size: paletteEmojiSize))</span><br><span class="line">                .padding(.horizontal)</span><br><span class="line">                .scrollIndicators(.hidden)</span><br><span class="line">        &#125;</span><br><span class="line">        .toolbar &#123;</span><br><span class="line">            <span class="type">UndoButton</span>()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  Extensions.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">UndoButton</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@Environment</span>(\.undoManager) <span class="keyword">var</span> undoManager</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> showUndoMenu <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> undoManager &#123;</span><br><span class="line">            <span class="type">Image</span>(systemName: <span class="string">&quot;arrow.uturn.backward.circle&quot;</span>)</span><br><span class="line">                .foregroundColor(.accentColor)</span><br><span class="line">                .onTapGesture &#123;</span><br><span class="line">                    undoManager.undo()</span><br><span class="line">                &#125;</span><br><span class="line">                .onLongPressGesture(minimumDuration: <span class="number">0.05</span>) &#123;</span><br><span class="line">                    showUndoMenu <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">                .popover(isPresented: <span class="variable">$showUndoMenu</span>) &#123;</span><br><span class="line">                    <span class="type">VStack</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> <span class="operator">!</span>undoManager.canUndo, <span class="operator">!</span>undoManager.canRedo &#123;</span><br><span class="line">                            <span class="type">Text</span>(<span class="string">&quot;Nothing to Undo&quot;</span>)</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            <span class="keyword">if</span> undoManager.canUndo &#123;</span><br><span class="line">                                <span class="type">Button</span>(<span class="string">&quot;Undo &quot;</span> <span class="operator">+</span> undoManager.undoActionName) &#123;</span><br><span class="line">                                    undoManager.undo()</span><br><span class="line">                                    showUndoMenu <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">if</span> undoManager.canRedo &#123;</span><br><span class="line">                                <span class="keyword">if</span> undoManager.canUndo &#123;</span><br><span class="line">                                    <span class="type">Divider</span>()</span><br><span class="line">                                &#125;</span><br><span class="line">                                <span class="type">Button</span>(<span class="string">&quot;Redo &quot;</span> <span class="operator">+</span> undoManager.redoActionName) &#123;</span><br><span class="line">                                    undoManager.redo()</span><br><span class="line">                                    showUndoMenu <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    .padding()</span><br><span class="line">                    .frame(maxWidth: <span class="number">280</span>)</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时还会有两一个问题，即当我们在一个窗口中切换 <code>palette</code> 时，另一个窗口文档也会被切换。这是因为，在我们的应用程序中，<code>PaletteStore</code> 是全局变量，因此当一个窗口的 <code>cursorIndex</code> 发生变换时，所有窗口的 <code>cursorIndex</code> 都会变。为了不影响全局，我们将 <code>PaletteStore</code> 从 <code>EmojiArtApp</code> 移至 <code>EmojiArtDocumentView</code>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@Environment</span>(\.undoManager) <span class="keyword">var</span> undoManager</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> (spacing:<span class="number">0</span>)&#123;</span><br><span class="line">        	<span class="operator">...</span></span><br><span class="line">        &#125;</span><br><span class="line">        .environmentObject(paletteStore)</span><br><span class="line">        .toolbar &#123;</span><br><span class="line">            <span class="type">UndoButton</span>()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-6-添加-Notification-通知"><a href="#6-6-添加-Notification-通知" class="headerlink" title="6.6 添加 Notification 通知"></a>6.6 添加 <code>Notification</code> 通知</h3><p>此时有一个问题，即在一个窗口删除一个 <code>palette</code> 不会立即作用到另一个窗口上，只有当另一个窗口再次切换 <code>palette</code> 时，才会在 <code>UserDefault</code> 中重新查找 <code>PaletteStore</code>，进而删除。</p>
+<p>这就需要添加 <code>Notification</code> 来解决。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteStore.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaletteStore</span>: <span class="title class_ inherited__">ObservableObject</span>,<span class="title class_ inherited__">Identifiable</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="keyword">init</span>(<span class="params">named</span> <span class="params">name</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name <span class="operator">=</span> name</span><br><span class="line">        <span class="keyword">if</span> palettes.isEmpty &#123;</span><br><span class="line">            palettes <span class="operator">=</span> <span class="type">Palette</span>.builtins</span><br><span class="line">            <span class="keyword">if</span> palettes.isEmpty &#123;</span><br><span class="line">                palettes <span class="operator">=</span> [<span class="type">Palette</span>(name: <span class="string">&quot;Warning&quot;</span>, emojis: <span class="string">&quot;⚠️&quot;</span>)]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">NotificationCenter</span>.default.addObserver(</span><br><span class="line">            forName: <span class="type">UserDefaults</span>.didChangeNotification,</span><br><span class="line">            object: <span class="literal">nil</span>,</span><br><span class="line">            queue: .main) &#123; [<span class="keyword">self</span>] notification <span class="keyword">in</span></span><br><span class="line">                objectWillChange.send()</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当这个 <code>PaletteStore</code> 不存在，或者窗口关闭时，我们不再查看文档时，我们不想看到 <code>UserDefaults</code> 发生改变。</p>
+<p>我们使用 <code>deinit</code> 来实现。</p>
+<blockquote>
+<p><strong>deinit</strong>：当你离开堆时会被调用。</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  PaletteStore.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaletteStore</span>: <span class="title class_ inherited__">ObservableObject</span>,<span class="title class_ inherited__">Identifiable</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="keyword">init</span>(<span class="params">named</span> <span class="params">name</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.name <span class="operator">=</span> name</span><br><span class="line">        <span class="keyword">if</span> palettes.isEmpty &#123;</span><br><span class="line">            palettes <span class="operator">=</span> <span class="type">Palette</span>.builtins</span><br><span class="line">            <span class="keyword">if</span> palettes.isEmpty &#123;</span><br><span class="line">                palettes <span class="operator">=</span> [<span class="type">Palette</span>(name: <span class="string">&quot;Warning&quot;</span>, emojis: <span class="string">&quot;⚠️&quot;</span>)]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        observer <span class="operator">=</span> <span class="type">NotificationCenter</span>.default.addObserver(</span><br><span class="line">            forName: <span class="type">UserDefaults</span>.didChangeNotification,</span><br><span class="line">            object: <span class="literal">nil</span>,</span><br><span class="line">            <span class="comment">// weak self means don&#x27;t keep this thing in the heap. And if no one else is interested in it, then just set this self to be nil.</span></span><br><span class="line">            queue: .main) &#123; [<span class="keyword">weak</span> <span class="keyword">self</span>] notification <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">self</span><span class="operator">?</span>.objectWillChange.send()</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> observer: <span class="type">NSObjectProtocol</span>?</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">deinit</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> observer &#123;</span><br><span class="line">            <span class="type">NotificationCenter</span>.default.removeObserver(observer)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Serein 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Serein 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/02/14/Stanford-cs193p-14%EF%BD%9CMultithreading-Error-Handling/" rel="prev" title="Stanford-cs193p-14｜Multithreading-Error-Handling">
+      <i class="fa fa-chevron-left"></i> Stanford-cs193p-14｜Multithreading-Error-Handling
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-App-%E6%9E%B6%E6%9E%84%E4%B8%8E%E6%A0%B8%E5%BF%83%E5%8D%8F%E8%AE%AE"><span class="nav-text">1. App 架构与核心协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-App-%E5%8D%8F%E8%AE%AE-App-Protocol"><span class="nav-text">1.1 App 协议 (App Protocol)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Scene-%E5%8D%8F%E8%AE%AE-Scene-Protocol"><span class="nav-text">1.2 Scene 协议 (Scene Protocol)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%96%87%E6%A1%A3%E6%9E%B6%E6%9E%84-Document-Architecture"><span class="nav-text">2. 文档架构 (Document Architecture)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-DocumentGroup-%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6"><span class="nav-text">2.1 DocumentGroup 的核心机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%96%87%E6%A1%A3%E5%8D%8F%E8%AE%AE-FileDocument-vs-ReferenceFileDocument"><span class="nav-text">2.2 文档协议 (FileDocument vs ReferenceFileDocument)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%BB%9F%E4%B8%80%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B%E6%A0%87%E8%AF%86-UTType"><span class="nav-text">3. 统一文件类型标识 (UTType)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%AE%9A%E4%B9%89%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="nav-text">3.1 定义自定义文件类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%BB%A3%E7%A0%81%E4%B8%AD%E5%A3%B0%E6%98%8E%E6%94%AF%E6%8C%81%E7%9A%84-UTTypes"><span class="nav-text">3.2 代码中声明支持的 UTTypes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%92%A4%E9%94%80%E6%9C%BA%E5%88%B6-Undo"><span class="nav-text">4. 撤销机制 (Undo)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E9%9B%86%E6%88%90-UndoManager"><span class="nav-text">4.1 集成 UndoManager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%AE%9E%E7%8E%B0%E6%92%A4%E9%94%80%E6%93%8D%E4%BD%9C"><span class="nav-text">4.2 实现撤销操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E9%80%9A%E7%9F%A5%E7%B3%BB%E7%BB%9F-Notifications"><span class="nav-text">5. 通知系统 (Notifications)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E7%9B%91%E5%90%AC%E7%B3%BB%E7%BB%9F%E9%80%9A%E7%9F%A5"><span class="nav-text">5.1 监听系统通知</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E5%8F%91%E5%B8%83%E8%87%AA%E5%AE%9A%E4%B9%89%E9%80%9A%E7%9F%A5"><span class="nav-text">5.2 发布自定义通知</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Demo"><span class="nav-text">6. Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E6%B7%BB%E5%8A%A0%E5%BA%94%E7%94%A8%E5%9B%BE%E6%A0%87"><span class="nav-text">6.1 添加应用图标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-ScaledMetric%E8%AE%BE%E7%BD%AE%E5%AD%97%E4%BD%93%E5%A4%A7%E5%B0%8F%E6%A0%B9%E6%8D%AE%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE%E7%BC%A9%E6%94%BE"><span class="nav-text">6.2 @ScaledMetric设置字体大小根据系统设置缩放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%88%9B%E5%BB%BA-Emojiart-%E7%B1%BB%E5%9E%8B"><span class="nav-text">6.3 创建 Emojiart 类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-DocumentGroup-%E5%AE%9E%E7%8E%B0%E6%8B%A5%E6%9C%89%E5%A4%9A%E4%B8%AA%E6%96%87%E6%A1%A3"><span class="nav-text">6.4 DocumentGroup 实现拥有多个文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E5%AE%9E%E7%8E%B0-Undo"><span class="nav-text">6.5 实现 Undo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-6-%E6%B7%BB%E5%8A%A0-Notification-%E9%80%9A%E7%9F%A5"><span class="nav-text">6.6 添加 Notification 通知</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Serein"
+      src="/uploads/avatar.JPEG">
+  <p class="site-author-name" itemprop="name">Serein</p>
+  <div class="site-description" itemprop="description">Crazy learning, crazy sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Aricyq0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Aricyq0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ari.cyq@gmail.com" title="E-Mail → mailto:ari.cyq@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Serein</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">196k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:58</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

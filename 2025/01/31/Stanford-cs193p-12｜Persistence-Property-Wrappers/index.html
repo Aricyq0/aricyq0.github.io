@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aricyq0.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文是斯坦福大学 cs193p 公开课程第 12 集的相关笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stanford-cs193p-12｜Persistence-Property-Wrappers">
+<meta property="og:url" content="https://aricyq0.github.io/2025/01/31/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/index.html">
+<meta property="og:site_name" content="Serein">
+<meta property="og:description" content="本文是斯坦福大学 cs193p 公开课程第 12 集的相关笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aricyq0.github.io/2025/01/31/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers.png">
+<meta property="article:published_time" content="2025-01-31T08:20:17.000Z">
+<meta property="article:modified_time" content="2025-02-19T08:22:33.871Z">
+<meta property="article:author" content="Serein">
+<meta property="article:tag" content="cs193p">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aricyq0.github.io/2025/01/31/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers.png">
+
+<link rel="canonical" href="https://aricyq0.github.io/2025/01/31/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Stanford-cs193p-12｜Persistence-Property-Wrappers | Serein</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Serein</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/aricyq0" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aricyq0.github.io/2025/01/31/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.JPEG">
+      <meta itemprop="name" content="Serein">
+      <meta itemprop="description" content="Crazy learning, crazy sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Serein">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Stanford-cs193p-12｜Persistence-Property-Wrappers
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-01-31 16:20:17" itemprop="dateCreated datePublished" datetime="2025-01-31T16:20:17+08:00">2025-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-02-19 16:22:33" itemprop="dateModified" datetime="2025-02-19T16:22:33+08:00">2025-02-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文是斯坦福大学 cs193p 公开课程第 12 集的相关笔记。</p>
+<span id="more"></span>
+
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p>The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.).</p>
+</blockquote>
+<p>cs193p 课程网址: [<a target="_blank" rel="noopener" href="https://cs193p.sites.stanford.edu/2023]">https://cs193p.sites.stanford.edu/2023]</a></p>
+<hr>
+<h3 id="0-课程预览"><a href="#0-课程预览" class="headerlink" title="0 课程预览"></a>0 课程预览</h3><h4 id="0-1-数据持久化"><a href="#0-1-数据持久化" class="headerlink" title="0.1 数据持久化"></a>0.1 数据持久化</h4><ul>
+<li><strong>存储跨应用启动的持久化数据（第一部分）</strong></li>
+<li><strong>文件管理（FileManager）&#x2F; URL &#x2F; Data</strong> —— 访问 Unix 文件系统</li>
+<li><strong>JSON 编码&#x2F;解码（Codable）</strong></li>
+<li><strong>UserDefaults</strong> —— 轻量级数据存储</li>
+</ul>
+<h4 id="0-2-EmojiArt-应用"><a href="#0-2-EmojiArt-应用" class="headerlink" title="0.2 EmojiArt 应用"></a>0.2 EmojiArt 应用</h4><ul>
+<li><strong>将 EmojiArt 文档保存到文件系统</strong></li>
+<li><strong>尝试可能抛出错误的操作</strong></li>
+<li><strong>使用 UserDefaults 让调色板（Palettes）保持持久化</strong></li>
+</ul>
+<h3 id="1-数据持久化方式"><a href="#1-数据持久化方式" class="headerlink" title="1. 数据持久化方式"></a>1. 数据持久化方式</h3><p>在 iOS 中，有多种方法可以让数据持久化：</p>
+<ol>
+<li><strong>文件系统</strong>（FileManager、URL、Data）</li>
+<li><strong>SQL 数据库</strong>（Core Data 提供面向对象访问，或直接 SQL 调用）</li>
+<li><strong>iCloud</strong>（可与文件系统和数据库协同工作）</li>
+<li><strong>CloudKit</strong>（基于云端的数据库）</li>
+<li><strong>第三方存储方案</strong></li>
+<li><strong>UserDefaults</strong>（仅适用于轻量级数据，如用户偏好设置）</li>
+</ol>
+<h3 id="2-文件系统"><a href="#2-文件系统" class="headerlink" title="2. 文件系统"></a>2. 文件系统</h3><p>在 iOS 中，应用程序访问文件系统的方式类似于 Unix 文件系统：</p>
+<ul>
+<li>以 <code>/</code> 作为根目录</li>
+<li>受 Unix 文件保护机制限制，应用无法访问所有文件</li>
+<li><strong>“沙盒”机制</strong> 限制应用只能访问自己的专属目录</li>
+</ul>
+<h4 id="2-1-为何使用沙盒？"><a href="#2-1-为何使用沙盒？" class="headerlink" title="2.1 为何使用沙盒？"></a>2.1 为何使用沙盒？</h4><ul>
+<li><strong>安全性</strong> —— 其他应用无法篡改你的数据</li>
+<li><strong>隐私保护</strong> —— 其他应用无法查看你的数据</li>
+<li><strong>自动清理</strong> —— 当应用被删除时，所有相关数据也会被清除</li>
+<li><strong>备份管理</strong> —— 部分沙盒数据可随设备备份</li>
+</ul>
+<h4 id="2-2-沙盒目录结构"><a href="#2-2-沙盒目录结构" class="headerlink" title="2.2 沙盒目录结构"></a>2.2 沙盒目录结构</h4><ul>
+<li><strong>应用目录</strong> —— 包含可执行文件、资源文件（如 .jpg），<strong>不可写入</strong></li>
+<li><strong>Documents 目录</strong> —— <strong>持久存储</strong>，可被用户访问</li>
+<li><strong>Application Support 目录</strong> —— <strong>持久存储</strong>，但不可直接访问</li>
+<li><strong>Caches 目录</strong> —— 用于存放<strong>临时文件</strong>（不会被备份）</li>
+<li>其他目录可参考官方文档</li>
+</ul>
+<h3 id="3-URL-处理"><a href="#3-URL-处理" class="headerlink" title="3. URL 处理"></a>3. URL 处理</h3><p>iOS 文件系统依赖 URL 进行路径管理：</p>
+<h4 id="3-1-构建路径"><a href="#3-1-构建路径" class="headerlink" title="3.1 构建路径"></a>3.1 构建路径</h4><p>生成一个指向应用程序 Documents 目录下名为 <code>filename.doc</code> 文件的完整路径，并将其存储在常量 path 中</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> path <span class="operator">=</span> <span class="type">URL</span>.documentsDirectory.appendingPathComponent(<span class="string">&quot;filename.doc&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-URL-相关方法"><a href="#3-2-URL-相关方法" class="headerlink" title="3.2 URL 相关方法"></a>3.2 URL 相关方法</h4><ul>
+<li><code>appendingPathComponent(String) -&gt; URL</code></li>
+<li><code>appendingPathExtension(String) -&gt; URL</code>（如 “jpg”）</li>
+</ul>
+<h4 id="3-3-获取-URL-资源信息"><a href="#3-3-获取-URL-资源信息" class="headerlink" title="3.3 获取 URL 资源信息"></a>3.3 获取 URL 资源信息</h4><ul>
+<li><code>isFileURL</code>：检查是否为文件 URL</li>
+<li><code>resourceValues(for: [URLResourceKey])</code>：获取资源信息，如 <code>.creationDateKey</code>、<code>.fileSizeKey</code> 等</li>
+</ul>
+<hr>
+<h3 id="4-文件管理（FileManager）"><a href="#4-文件管理（FileManager）" class="headerlink" title="4. 文件管理（FileManager）"></a>4. 文件管理（FileManager）</h3><p>FileManager 提供了多种实用的文件操作：</p>
+<ul>
+<li><strong>检测文件是否存在</strong>：<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fileExists(atPath: <span class="type">String</span>) -&gt; <span class="type">Bool</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>创建&#x2F;遍历目录</strong></li>
+<li><strong>移动、复制、删除文件</strong></li>
+<li><strong>线程安全（单线程实例化）</strong></li>
+<li><strong>支持委托回调机制</strong></li>
+</ul>
+<p>更多功能请查阅官方文档。</p>
+<hr>
+<h3 id="5-数据归档（Codable）"><a href="#5-数据归档（Codable）" class="headerlink" title="5. 数据归档（Codable）"></a>5. 数据归档（Codable）</h3><h4 id="5-1-Codable-机制"><a href="#5-1-Codable-机制" class="headerlink" title="5.1 Codable 机制"></a>5.1 Codable 机制</h4><ul>
+<li><strong>将对象的所有变量封装成可持久化的数据格式（如 JSON）</strong></li>
+<li><strong>使结构体（struct）持久化存储</strong></li>
+<li><strong>必须符合 Codable 协议</strong></li>
+</ul>
+<h4 id="5-2-自动符合-Codable"><a href="#5-2-自动符合-Codable" class="headerlink" title="5.2 自动符合 Codable"></a>5.2 自动符合 Codable</h4><ul>
+<li><strong>如果结构体仅包含基本类型</strong>（如 <code>String</code>, <code>Int</code>, <code>Bool</code> 等），Swift 会自动实现 <code>Codable</code></li>
+<li><strong>枚举类型（enum）</strong> 也可以符合 Codable，但仅限于 Codable 关联数据</li>
+</ul>
+<h4 id="5-3-手动实现-Codable"><a href="#5-3-手动实现-Codable" class="headerlink" title="5.3 手动实现 Codable"></a>5.3 手动实现 Codable</h4><p>如果结构体包含非 Codable 类型，或是类（class），需要手动实现 Codable。</p>
+<hr>
+<h3 id="6-数据编码与解码"><a href="#6-数据编码与解码" class="headerlink" title="6. 数据编码与解码"></a>6. 数据编码与解码</h3><h4 id="6-1-编码"><a href="#6-1-编码" class="headerlink" title="6.1 编码"></a>6.1 编码</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> object: <span class="type">MyType</span> <span class="operator">=</span> <span class="operator">...</span></span><br><span class="line"><span class="keyword">let</span> jsonData: <span class="type">Data</span> <span class="operator">=</span> <span class="keyword">try</span> <span class="type">JSONEncoder</span>().encode(object)</span><br></pre></td></tr></table></figure>
+
+<p>JSON 数据可以转换为 <code>String</code>：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> jsonString <span class="operator">=</span> <span class="type">String</span>(data: jsonData, encoding: .utf8)</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-2-存储-JSON-数据"><a href="#6-2-存储-JSON-数据" class="headerlink" title="6.2 存储 JSON 数据"></a>6.2 存储 JSON 数据</h4><p>将 <code>jsonData</code> 写入到指定的 url（文件路径）。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> jsonData.write(to: url) <span class="comment">// 需要处理错误</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-3-解码"><a href="#6-3-解码" class="headerlink" title="6.3 解码"></a>6.3 解码</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> myObject: <span class="type">MyType</span> <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">JSONDecoder</span>().decode(<span class="type">MyType</span>.<span class="keyword">self</span>, from: jsonData) &#123;</span><br><span class="line">    <span class="comment">// 使用解码后的对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="7-UserDefaults"><a href="#7-UserDefaults" class="headerlink" title="7. UserDefaults"></a>7. UserDefaults</h3><h4 id="7-1-存储数据"><a href="#7-1-存储数据" class="headerlink" title="7.1 存储数据"></a>7.1 存储数据</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> defaults <span class="operator">=</span> <span class="type">UserDefaults</span>.standard</span><br><span class="line">defaults.set(object, forKey: <span class="string">&quot;SomeKey&quot;</span>) <span class="comment">// object 必须是 Property List 类型</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>支持的 Property List 类型</strong>：</p>
+<ul>
+<li><code>String</code></li>
+<li><code>Int</code></li>
+<li><code>Double</code></li>
+<li><code>Array</code></li>
+<li><code>Dictionary&lt;String, Property List&gt;</code></li>
+<li><code>Data</code>（可以存储 JSON 编码后的 Codable 对象）</li>
+</ul>
+<h4 id="7-2-读取数据"><a href="#7-2-读取数据" class="headerlink" title="7.2 读取数据"></a>7.2 读取数据</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> i: <span class="type">Int</span>? <span class="operator">=</span> defaults.integer(forKey: <span class="string">&quot;MyInteger&quot;</span>)</span><br><span class="line"><span class="keyword">let</span> b: <span class="type">Data</span>? <span class="operator">=</span> defaults.data(forKey: <span class="string">&quot;MyData&quot;</span>)</span><br><span class="line"><span class="keyword">let</span> u: <span class="type">URL</span>? <span class="operator">=</span> defaults.url(forKey: <span class="string">&quot;MyURL&quot;</span>)</span><br><span class="line"><span class="keyword">let</span> strings: [<span class="type">String</span>]<span class="operator">?</span> <span class="operator">=</span> defaults.stringArray(forKey: <span class="string">&quot;MyStrings&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>对于数组和字典，可能需要 <code>as</code> 进行类型转换。</p>
+<h3 id="8-错误处理（Error-Handling）"><a href="#8-错误处理（Error-Handling）" class="headerlink" title="8. 错误处理（Error Handling）"></a>8. 错误处理（Error Handling）</h3><p><strong>某些函数可能会抛出错误</strong>，必须使用 <code>try</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> write(to: url)</span><br></pre></td></tr></table></figure>
+
+<p>错误处理方式有两种，分别为不处理错误和处理错误。</p>
+<h4 id="8-1-不处理错误"><a href="#8-1-不处理错误" class="headerlink" title="8.1 不处理错误"></a>8.1 不处理错误</h4><ul>
+<li>**<code>try?</code>**：忽略错误，返回 <code>nil</code><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> imageData <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">Data</span>(contentsOf: url) <span class="comment">// 失败时返回 nil</span></span><br></pre></td></tr></table></figure></li>
+<li>**<code>try!</code>**：如果出错，应用直接崩溃<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try!</span> data.write(to: url)</span><br></pre></td></tr></table></figure></li>
+<li>**<code>try</code> 结合 <code>throws</code>**：如果在 <code>throws</code> 标记的函数中调用 <code>try</code>，错误会继续向上抛出<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">foo</span>() <span class="keyword">throws</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> somethingThatThrows()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="8-2-处理错误"><a href="#8-2-处理错误" class="headerlink" title="8.2 处理错误"></a>8.2 处理错误</h4><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> functionThatThrows()</span><br><span class="line">&#125; <span class="keyword">catch</span> <span class="keyword">let</span> error &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;捕获的错误: <span class="subst">\(error.localizedDescription)</span>&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>catch</code> 语句可以省略 <code>let error</code>，默认捕获错误</li>
+<li><strong>支持多个 <code>catch</code> 语句</strong> 以匹配不同类型的错误</li>
+</ul>
+<hr>
+<h3 id="9-示例：EmojiArt-应用"><a href="#9-示例：EmojiArt-应用" class="headerlink" title="9. 示例：EmojiArt 应用"></a>9. 示例：EmojiArt 应用</h3><h4 id="9-1-EmojiArt-画布保存"><a href="#9-1-EmojiArt-画布保存" class="headerlink" title="9.1 EmojiArt 画布保存"></a>9.1 EmojiArt 画布保存</h4><p>解决 bug：异步图片未正常拖入时需报错</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocumentView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArtDocumentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="meta">@ViewBuilder</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">documentContents</span>(<span class="params">in</span> <span class="params">geometry</span>: <span class="type">GeometryProxy</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AsyncImage</span>(url: document.background) &#123; phase <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> image <span class="operator">=</span> phase.image &#123;</span><br><span class="line">                image</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">let</span> url <span class="operator">=</span> document.background &#123;</span><br><span class="line">                <span class="keyword">if</span> phase.error <span class="operator">!=</span> <span class="literal">nil</span> &#123;</span><br><span class="line">                    <span class="type">Text</span>(<span class="string">&quot;<span class="subst">\(url)</span>&quot;</span>)</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="type">ProgressView</span>()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .position(<span class="type">Emoji</span>.<span class="type">Position</span>.zero.in(geometry))</span><br><span class="line">        <span class="type">ForEach</span>(document.emojis) &#123; emoji <span class="keyword">in</span></span><br><span class="line">            <span class="type">Text</span>(emoji.string)</span><br><span class="line">                .font(emoji.font)</span><br><span class="line">                .position(emoji.position.in(geometry))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，我们在每次编辑后再次打开都需要从空白开始重新编辑，因此我们要为 <code>EmojiArtDocument</code> 添加自动保存功能。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Emoji</span> <span class="operator">=</span> <span class="type">EmojiArt</span>.<span class="type">Emoji</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Published</span> <span class="keyword">private</span> <span class="keyword">var</span> emojiArt <span class="operator">=</span> <span class="type">EmojiArt</span>() &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            autosave()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> autosaveURL: <span class="type">URL</span> <span class="operator">=</span> <span class="type">URL</span>.documentsDirectory.appendingPathComponent(<span class="string">&quot;Autosaved.emojiart&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">autosave</span>() &#123;</span><br><span class="line">        save(to: autosaveURL)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;autosaved to <span class="subst">\(autosaveURL)</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">save</span>(<span class="params">to</span> <span class="params">url</span>: <span class="type">URL</span>) &#123;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> data <span class="operator">=</span> <span class="keyword">try</span> emojiArt.json()</span><br><span class="line">            <span class="keyword">try</span> data.write(to: url)</span><br><span class="line">        &#125; <span class="keyword">catch</span> <span class="keyword">let</span> error &#123;</span><br><span class="line">            <span class="comment">//error is the error throw</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;EmojiArtDocument: error while saving <span class="subst">\(error.localizedDescription)</span>&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArt.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArt</span>: <span class="title class_ inherited__">Codable</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> background: <span class="type">URL</span>?</span><br><span class="line">    <span class="keyword">private(set)</span> <span class="keyword">var</span> emojis <span class="operator">=</span> [<span class="type">Emoji</span>]()</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> uniqueEmojiId <span class="operator">=</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将自身转为 Json</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">json</span>() <span class="keyword">throws</span> -&gt; <span class="type">Data</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> encoded <span class="operator">=</span>  <span class="keyword">try</span> <span class="type">JSONEncoder</span>().encode(<span class="keyword">self</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;EmojiArt = <span class="subst">\(String(data: encoded,encoding:.utf8) <span class="operator">??</span> <span class="string">&quot;nil&quot;</span>)</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> encoded</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">addEmoji</span>(<span class="keyword">_</span> <span class="params">emoji</span>: <span class="type">String</span>, <span class="params">at</span> <span class="params">position</span>: <span class="type">Emoji</span>.<span class="type">Position</span>, <span class="params">size</span>: <span class="type">Int</span>) &#123;</span><br><span class="line">        uniqueEmojiId <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">        emojis.append(<span class="type">Emoji</span>(</span><br><span class="line">            string: emoji,</span><br><span class="line">            position: position,</span><br><span class="line">            size: size,</span><br><span class="line">            id: uniqueEmojiId</span><br><span class="line">        ))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Emoji</span> : <span class="title class_ inherited__">Identifiable</span>, <span class="title class_ inherited__">Codable</span>&#123;</span><br><span class="line">        <span class="keyword">let</span> string: <span class="type">String</span></span><br><span class="line">        <span class="keyword">var</span> position: <span class="type">Position</span></span><br><span class="line">        <span class="keyword">var</span> size: <span class="type">Int</span></span><br><span class="line">        <span class="comment">// 每次添加表情符号时，都会使id+1</span></span><br><span class="line">        <span class="keyword">var</span> id: <span class="type">Int</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">struct</span> <span class="title class_">Position</span>: <span class="title class_ inherited__">Codable</span> &#123;</span><br><span class="line">            <span class="keyword">var</span> x: <span class="type">Int</span></span><br><span class="line">            <span class="keyword">var</span> y: <span class="type">Int</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">static</span> <span class="keyword">let</span> zero <span class="operator">=</span> <span class="keyword">Self</span>(x: <span class="number">0</span>, y: <span class="number">0</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这时我们再重新启动 app，仍然会保留之前的编辑。</p>
+<p>EmojiArt 转为 json 的打印信息包含背景图片的 url 以及 icon 的信息、id 和位置：</p>
+<p><img src="/2025/01/31/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers/Stanford-cs193p-12%EF%BD%9CPersistence-Property-Wrappers.png" alt="Stanford-cs193p-12｜Persistence-Property-Wrappers"><br>同样，我们可以通过 json 格式存储的信息来初始化 EmojiArt。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArt.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiArt</span>: <span class="title class_ inherited__">Codable</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用于从 JSON 数据创建一个具体的 EmojiArt 对象</span></span><br><span class="line">    <span class="keyword">init</span>(<span class="params">json</span>:<span class="type">Data</span>) <span class="keyword">throws</span> &#123;</span><br><span class="line">        <span class="keyword">self</span> <span class="operator">=</span> <span class="keyword">try</span> <span class="type">JSONDecoder</span>().decode(<span class="type">EmojiArt</span>.<span class="keyword">self</span>, from: json)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 提供一种简单的方式来创建一个空的或默认配置的对象</span></span><br><span class="line">    <span class="keyword">init</span>() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiArtDocument.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EmojiArtDocument</span>: <span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> data <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">Data</span>(contentsOf: autosaveURL),</span><br><span class="line">           <span class="keyword">let</span> autosavedEmojiArt <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">EmojiArt</span>(json: data) &#123;</span><br><span class="line">            emojiArt <span class="operator">=</span> autosavedEmojiArt</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>尽管能保存对画布的编辑，但当我们对 palette 编辑后，重新打开时上次的编辑未能保存。接下来，我们还需使用 UserDefaults 来保存对 <code>palette</code> 的编辑。</p>
+<h4 id="9-2-Palette-保存"><a href="#9-2-Palette-保存" class="headerlink" title="9.2 Palette 保存"></a>9.2 Palette 保存</h4><h5 id="9-2-1-UserDefaults"><a href="#9-2-1-UserDefaults" class="headerlink" title="9.2.1 UserDefaults"></a>9.2.1 UserDefaults</h5><p>我们将 palettes 修改为一个计算属性</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//paletteStore.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaletteStore</span>:<span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="meta">@Published</span> <span class="keyword">var</span> palettes: [<span class="type">Palette</span>] &#123;</span><br><span class="line">		<span class="keyword">get</span> &#123;</span><br><span class="line">			<span class="type">UserDefaults</span>.standard.palettes(forKey: name)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">set</span> &#123;</span><br><span class="line">			<span class="type">UserDefaults</span>.standard.set(newValue, forKey: name)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时会报错，<code>Property wrapper cannot be applied to a computed property</code>，即属性包装起不能用于计算属性，但我们需要对 palette 使用 <code>@Published</code>，否则我们的视图将不会更新。</p>
+<p>为了理解这一点，我们需要先理解属性包装器 <code>@Published</code> 的工作原理：当你拥有一个实现 ObservableObject 协议的类，那么你就会得到一个免费的变量 <code>objectWillChange</code>，这个变量就是我们用来告诉视图某些变量将会变化，将会触发 UI 更新，这就是 <code>@Published</code> 做的工作。</p>
+<p>如果这里不能使用 <code>@Published</code>，我们可以直接使用 <code>objectWillChange</code> 来给视图发送变化通。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//paletteStore.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaletteStore</span>:<span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> palettes: [<span class="type">Palette</span>] &#123;</span><br><span class="line">		<span class="keyword">get</span> &#123;</span><br><span class="line">			<span class="type">UserDefaults</span>.standard.palettes(forKey: name)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">set</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> <span class="operator">!</span>newValue.isEmpty &#123;</span><br><span class="line">				<span class="type">UserDefaults</span>.standard.set(newValue, forKey: name)</span><br><span class="line">				objectWillChange.send()</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> objectWillChange: <span class="type">ObservableObjectPublisher</span></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时仍然有报错 <code>Value of type &#39;UserDefaults&#39; has no member &#39;palettes&#39;</code>，我们通过添加 entension 来解决</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//paletteStore.swift</span></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">UserDefaults</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">palettes</span>(<span class="params">forKey</span> <span class="params">key</span>: <span class="type">String</span>) -&gt; [<span class="type">Palette</span>] &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">set</span>(<span class="keyword">_</span> <span class="params">palettes</span>: [<span class="type">Palette</span>], <span class="params">forKey</span> <span class="params">key</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> data <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">JSONEncoder</span>().encode(palettes)</span><br><span class="line">        <span class="keyword">set</span>(data, forKey: key)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时会报错 <code>Class &#39;JSONEncoder&#39; requires that &#39;Palette&#39; conform to &#39;Encodable&#39;</code>，我们需要使 <code>Palette</code> 符合 <code>Codable</code> 协议，但当我们为 Palette 添加 <code>Codable</code> 协议后，会弹出一个警告 <code>Immutable property will not be decoded because it is declared with an initial value which cannot be overwritten</code>，即不可变属性 ID 不会被解码，因为它声明了一个无法覆盖的初始值。</p>
+<p>我们不能使用 <code>let</code> 来定义一个可能会被改变的变量，因此我们修改为 <code>var id</code></p>
+<p>另外，还有一个错误，我们将 builtins 设置为 <code>static let</code>，也就是说 <code>Palette.builtins</code> 只创建一次，<code>UUID</code> 在程序启动时就固定了，任何 <code>PaletteStore</code> 访问 <code>Palette.builtins</code> 都回得到相同 <code>UUID</code> 的 Palette，导致唯一性问题。即，如果我们设置了两个具有不同名称的 PaletteStore，它们都指向同一个 <code>builtins</code>。因此，我们将 <code>static let</code> 修改为 <code>static var builtins:[Palette]&#123;[...]&#125;</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Palette.swift</span></span><br><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Palette</span>: <span class="title class_ inherited__">Identifiable</span>,<span class="title class_ inherited__">Codable</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> emojis: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> id <span class="operator">=</span> <span class="type">UUID</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> builtins: [<span class="type">Palette</span>] &#123; [</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Vehicles&quot;</span>, emojis: <span class="string">&quot;🚙🚗🚘🚕🚖🏎🚚🛻🚛🚐🚓🚔🚑🚒🚀✈️🛫🛬🛩🚁🛸🚲🏍🛶⛵️🚤🛥🛳⛴🚢🚂🚝🚅🚆🚊🚉🚇🛺🚜&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Sports&quot;</span>, emojis: <span class="string">&quot;🏈⚾️🏀⚽️🎾🏐🥏🏓⛳️🥅🥌🏂⛷🎳&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Music&quot;</span>, emojis: <span class="string">&quot;🎼🎤🎹🪘🥁🎺🪗🪕🎻&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Animals&quot;</span>, emojis: <span class="string">&quot;🐥🐣🐂🐄🐎🐖🐏🐑🦙🐐🐓🐁🐀🐒🦆🦅🦉🦇🐢🐍🦎🦖🦕🐅🐆🦓🦍🦧🦣🐘🦛🦏🐪🐫🦒🦘🦬🐃🦙🐐🦌🐕🐩🦮🐈🦤🦢🦩🕊🦝🦨🦡🦫🦦🦥🐿🦔&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Animal Faces&quot;</span>, emojis: <span class="string">&quot;🐵🙈🙊🙉🐶🐱🐭🐹🐰🦊🐻🐼🐻‍❄️🐨🐯🦁🐮🐷🐸🐲&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Flora&quot;</span>, emojis: <span class="string">&quot;🌲🌴🌿☘️🍀🍁🍄🌾💐🌷🌹🥀🌺🌸🌼🌻&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Weather&quot;</span>, emojis: <span class="string">&quot;☀️🌤⛅️🌥☁️🌦🌧⛈🌩🌨❄️💨☔️💧💦🌊☂️🌫🌪&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;COVID&quot;</span>, emojis: <span class="string">&quot;💉🦠😷🤧🤒&quot;</span>),</span><br><span class="line">        <span class="type">Palette</span>(name: <span class="string">&quot;Faces&quot;</span>, emojis: <span class="string">&quot;😀😃😄😁😆😅😂🤣🥲☺️😊😇🙂🙃😉😌😍🥰😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🥸🤩🥳😏😞😔😟😕🙁☹️😣😖😫😩🥺😢😭😤😠😡🤯😳🥶😥😓🤗🤔🤭🤫🤥😬🙄😯😧🥱😴🤮😷🤧🤒🤠&quot;</span>)</span><br><span class="line">    ] &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>PaletteStore.swift</code> 中添加的 UserDefaults 扩展如下；此外，还需要在 <code>PaletteStore</code> 初始化时告知仅当调色盘为空时，才会使用 <code>builtins</code>，否则将会使用 <code>UserDefaults</code> 中保存的 <code>palettes</code>。为了代码的可读性，我们希望使用 <code>userDefaultsKey</code> 而不是 <code>main</code> 来定义 <code>palettes</code> 的默认键名。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//paletteStore.swift</span></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">UserDefaults</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">palettes</span>(<span class="params">forKey</span> <span class="params">key</span>: <span class="type">String</span>) -&gt; [<span class="type">Palette</span>] &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> jsonData <span class="operator">=</span> data(forKey: key),</span><br><span class="line">           <span class="keyword">let</span> decodedPalettes <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">JSONDecoder</span>().decode([<span class="type">Palette</span>].<span class="keyword">self</span>, from: jsonData) &#123;</span><br><span class="line">            <span class="keyword">return</span> decodedPalettes</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">set</span>(<span class="keyword">_</span> <span class="params">palettes</span>: [<span class="type">Palette</span>], <span class="params">forKey</span> <span class="params">key</span>: <span class="type">String</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> data <span class="operator">=</span> <span class="keyword">try?</span> <span class="type">JSONEncoder</span>().encode(palettes)</span><br><span class="line">        <span class="keyword">set</span>(data, forKey: key)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PaletteStore</span>:<span class="title class_ inherited__">ObservableObject</span> &#123;</span><br><span class="line">	<span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">var</span> userDefaultsKey:<span class="type">String</span> &#123; <span class="string">&quot;PaletteStore:&quot;</span> <span class="operator">+</span> name&#125;</span><br><span class="line"></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">init</span>(<span class="params">named</span> <span class="params">name</span>: <span class="type">String</span>) &#123;</span><br><span class="line">		<span class="keyword">self</span>.name <span class="operator">=</span> name</span><br><span class="line">		<span class="keyword">if</span> palettes.isEmpty &#123;</span><br><span class="line">			palettes <span class="operator">=</span> <span class="type">Palette</span>.builtins</span><br><span class="line">			<span class="keyword">if</span> palettes.isEmpty &#123;</span><br><span class="line">				palettes <span class="operator">=</span> [<span class="type">Palette</span>(name: <span class="string">&quot;Warning&quot;</span>, emojis: <span class="string">&quot;⚠️&quot;</span>)]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="10-Property-Wrappers"><a href="#10-Property-Wrappers" class="headerlink" title="10. Property Wrappers"></a>10. Property Wrappers</h3><h4 id="10-1-属性包装器的基本概念"><a href="#10-1-属性包装器的基本概念" class="headerlink" title="10.1 属性包装器的基本概念"></a>10.1 属性包装器的基本概念</h4><ul>
+<li>@Something 关键字：所有以 <code>@</code> 开头的修饰符（如 <code>@State</code>、<code>@Published</code> 等）都是属性包装器（Property Wrappers）。</li>
+<li>属性包装器本质：<ul>
+<li>其实是一个结构体（struct），用于封装对变量的某种通用行为。</li>
+<li>其作用是提供语法糖（syntactic sugar），使属性的管理更加简洁。</li>
+</ul>
+</li>
+<li>常见用途示例：<ul>
+<li><code>@State</code>：让变量存储在堆（heap）中，并在变化时触发视图（View）更新。</li>
+<li><code>@Published</code>：使变量的更改可被监听（发布-订阅模式）。</li>
+<li><code>@ObservedObject</code>：当 <code>@Published</code> 变量发生变化时，自动触发视图重绘。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="10-2-属性包装器的语法糖"><a href="#10-2-属性包装器的语法糖" class="headerlink" title="10.2 属性包装器的语法糖"></a>10.2 属性包装器的语法糖</h4><ul>
+<li><p>示例：<code>@Published</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Published</span> <span class="keyword">var</span> emojiArt: <span class="type">EmojiArt</span> <span class="operator">=</span> <span class="type">EmojiArt</span>()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Swift 实际上等价于：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Published</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> wrappedValue: <span class="type">EmojiArt</span></span><br><span class="line">    <span class="keyword">var</span> projectedValue: <span class="type">Publisher</span>&lt;<span class="type">EmojiArt</span>, <span class="type">Never</span>&gt;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> _emojiArt: <span class="type">Published</span> <span class="operator">=</span> <span class="type">Published</span>(wrappedValue: <span class="type">EmojiArt</span>())</span><br><span class="line"><span class="keyword">var</span> emojiArt: <span class="type">EmojiArt</span> &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123; _emojiArt.wrappedValue &#125;</span><br><span class="line">    <span class="keyword">set</span> &#123; _emojiArt.wrappedValue <span class="operator">=</span> newValue &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>额外变量（projectedValue）：</p>
+<ul>
+<li>可以通过 <code>$变量名</code> 访问，例如 <code>$emojiArt</code>。</li>
+<li><code>@Published</code> 的 <code>$</code> 变量类型是 <code>Publisher&lt;EmojiArt, Never&gt;</code>，可用于监听变量变化。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="10-3-其他常见属性包装器"><a href="#10-3-其他常见属性包装器" class="headerlink" title="10.3 其他常见属性包装器"></a>10.3 其他常见属性包装器</h4><h5 id="10-3-1-State"><a href="#10-3-1-State" class="headerlink" title="10.3.1 @State"></a>10.3.1 <code>@State</code></h5><ul>
+<li>用途：<ul>
+<li>存储变量在堆（heap）中，而不是栈（stack）。</li>
+<li>变量变化时自动触发视图无效化（View Invalidations），从而更新 UI。</li>
+</ul>
+</li>
+<li>包装值（wrappedValue）：<ul>
+<li>任何数据类型都可以使用 <code>@State</code> 进行存储。</li>
+</ul>
+</li>
+<li>投影值（projectedValue，$变量名）：<ul>
+<li>生成 <code>Binding</code>（绑定），允许子视图访问和修改变量。</li>
+</ul>
+</li>
+<li>注意：<ul>
+<li>在 <code>init()</code> 中初始化 <code>@State</code> 变量时需要手动赋值：<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> foo: <span class="type">Int</span></span><br><span class="line"><span class="keyword">init</span>() &#123;</span><br><span class="line">    _foo <span class="operator">=</span> .<span class="keyword">init</span>(initialValue: <span class="number">5</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h5 id="10-3-2-StateObject-和-ObservedObject"><a href="#10-3-2-StateObject-和-ObservedObject" class="headerlink" title="10.3.2 @StateObject 和 @ObservedObject"></a>10.3.2 <code>@StateObject</code> 和 <code>@ObservedObject</code></h5><ul>
+<li>用途：<ul>
+<li>适用于遵循 <code>ObservableObject</code> 协议的对象（ViewModel）。</li>
+<li>当 <code>wrappedValue</code> 发生变化时，自动调用 <code>objectWillChange.send()</code> 触发视图更新。</li>
+</ul>
+</li>
+<li>区别：<ul>
+<li><code>@StateObject</code>：<ul>
+<li>用于创建和管理 <code>ObservableObject</code> 的生命周期。</li>
+<li>适用于视图首次创建时实例化 ViewModel。</li>
+</ul>
+</li>
+<li><code>@ObservedObject</code>：<ul>
+<li>适用于传递已有的 <code>ObservableObject</code> 实例。</li>
+<li>由外部组件负责管理对象生命周期。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="10-3-3-Binding"><a href="#10-3-3-Binding" class="headerlink" title="10.3.3 @Binding"></a>10.3.3 <code>@Binding</code></h5><ul>
+<li><p>用途：</p>
+<ul>
+<li>绑定到其他地方的值，而不是自己管理的值。</li>
+<li>当绑定的值变化时，触发视图无效化（更新 UI）。</li>
+</ul>
+</li>
+<li><p>包装值（wrappedValue）：</p>
+<ul>
+<li>一个被绑定的变量，不能直接存储值。</li>
+</ul>
+</li>
+<li><p>投影值（projectedValue，$变量名）：</p>
+<ul>
+<li><code>Binding</code> 本身，允许传递给子视图。</li>
+</ul>
+</li>
+<li><p>典型使用场景：</p>
+<ul>
+<li><p>例如 <code>TextField</code> 需要双向绑定到 <code>@State</code> 变量：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MyView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> myString <span class="operator">=</span> <span class="string">&quot;Hello&quot;</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">OtherView</span>(sharedText: <span class="variable">$myString</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">OtherView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@Binding</span> <span class="keyword">var</span> sharedText: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">TextField</span>(<span class="string">&quot;Shared:&quot;</span>, text: <span class="variable">$sharedText</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这样 <code>OtherView</code> 的 <code>sharedText</code> 变化时，<code>MyView</code> 的 <code>myString</code> 也会自动更新。</p>
+</li>
+</ul>
+</li>
+<li><p>绑定常量值：</p>
+<ul>
+<li>可以绑定到一个常量，例如：<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OtherView</span>(sharedText: .constant(<span class="string">&quot;Howdy&quot;</span>))</span><br></pre></td></tr></table></figure></li>
+<li>在 <code>OtherView</code> 内，<code>sharedText</code> 始终是 <code>&quot;Howdy&quot;</code>，不会变化，从而保证该视图的内容不受外部变量影响。</li>
+</ul>
+</li>
+</ul>
+<h5 id="10-3-4-EnvironmentObject"><a href="#10-3-4-EnvironmentObject" class="headerlink" title="10.3.4 @EnvironmentObject"></a>10.3.4 <code>@EnvironmentObject</code></h5><ul>
+<li>用途：<ul>
+<li>通过 <code>.environmentObject()</code> 在视图层级传递 <code>ObservableObject</code>，这样在多个视图中都可以访问和使用同一个数据对象。</li>
+<li>当 <code>objectWillChange.send()</code> 被触发时，所有依赖这个对象的视图会自动更新。</li>
+</ul>
+</li>
+<li>包装值（wrappedValue）：<ul>
+<li>绑定的 <code>ObservableObject</code> 实例。</li>
+</ul>
+</li>
+<li>投影值（projectedValue，$变量名）：<ul>
+<li>允许在视图中使用该对象的 <code>Binding</code>，方便数据的双向绑定。</li>
+</ul>
+</li>
+</ul>
+<h5 id="10-3-5-Environment"><a href="#10-3-5-Environment" class="headerlink" title="10.3.5 @Environment"></a>10.3.5 <code>@Environment</code></h5><ul>
+<li>用途：<ul>
+<li>访问 SwiftUI 提供的环境变量，例如 <code>colorScheme</code>、<code>locale</code> 等系统级别的设置。</li>
+<li>用法示例：<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Environment</span>(\.colorScheme) <span class="keyword">var</span> colorScheme</span><br></pre></td></tr></table></figure></li>
+<li><code>colorScheme</code> 是一个枚举（enum）：<ul>
+<li><code>.dark</code>：深色模式</li>
+<li><code>.light</code>：浅色模式</li>
+</ul>
+</li>
+<li>区别：<ul>
+<li><code>@EnvironmentObject</code> 需要在视图层次结构中传递 <code>ObservableObject</code>。</li>
+<li><code>@Environment</code> 仅用于获取系统或环境参数，不需要在视图之间传递。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="10-4-Binding-使用场景"><a href="#10-4-Binding-使用场景" class="headerlink" title="10.4 @Binding 使用场景"></a>10.4 <code>@Binding</code> 使用场景</h4><ul>
+<li><p>用于共享 <code>@State</code> 或 <code>@ObservedObject</code> 的变量：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MyView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> myString <span class="operator">=</span> <span class="string">&quot;Hello&quot;</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">OtherView</span>(sharedText: <span class="variable">$myString</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">OtherView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@Binding</span> <span class="keyword">var</span> sharedText: <span class="type">String</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">TextField</span>(<span class="string">&quot;Shared:&quot;</span>, text: <span class="variable">$sharedText</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>绑定到常量值：</p>
+<ul>
+<li><code>Binding.constant(value)</code> 用法示例：<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OtherView</span>(sharedText: .constant(<span class="string">&quot;Howdy&quot;</span>))</span><br></pre></td></tr></table></figure></li>
+<li>此时，<code>OtherView</code> 无法修改 <code>sharedText</code>，始终显示 <code>&quot;Howdy&quot;</code>。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="课堂预告"><a href="#课堂预告" class="headerlink" title="课堂预告"></a>课堂预告</h3><ul>
+<li>涉及的概念包括：<ul>
+<li><code>sheet</code>：模态视图。</li>
+<li><code>popover</code>：弹出视图。</li>
+<li><code>@Binding</code>：双向绑定。</li>
+<li><code>TextField</code>：文本输入框。</li>
+<li><code>Form</code>：表单视图。</li>
+<li><code>List</code>：列表视图。</li>
+<li><code>Section</code>：分组视图。</li>
+<li><code>.toolbar</code>：工具栏。</li>
+<li><code>@FocusState</code>：用于管理焦点状态。</li>
+<li><code>NavigationStack / SplitView</code>：导航视图的管理。</li>
+<li><code>NavigationLink</code>：导航链接。</li>
+<li><code>.navigationDestination(for:)</code>：导航目的地的方法。</li>
+<li>在 <code>ForEach</code> 中处理元素的删除与移动（<code>.onDelete / .onMove</code>）。</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Serein 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Serein 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/01/25/Stanford-cs193p-11%EF%BD%9CGestures-and-2nd-MVVM/" rel="prev" title="Stanford-cs193p-11｜Gestures-and-2nd-MVVM">
+      <i class="fa fa-chevron-left"></i> Stanford-cs193p-11｜Gestures-and-2nd-MVVM
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/02/13/Stanford-cs193p-13%EF%BD%9CPresenting-Views-Navigation/" rel="next" title="Stanford-cs193p-13｜Presenting-Views-Navigation">
+      Stanford-cs193p-13｜Presenting-Views-Navigation <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-%E8%AF%BE%E7%A8%8B%E9%A2%84%E8%A7%88"><span class="nav-text">0 课程预览</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0-1-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-text">0.1 数据持久化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0-2-EmojiArt-%E5%BA%94%E7%94%A8"><span class="nav-text">0.2 EmojiArt 应用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="nav-text">1. 数据持久化方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-text">2. 文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E4%B8%BA%E4%BD%95%E4%BD%BF%E7%94%A8%E6%B2%99%E7%9B%92%EF%BC%9F"><span class="nav-text">2.1 为何使用沙盒？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E6%B2%99%E7%9B%92%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-text">2.2 沙盒目录结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-URL-%E5%A4%84%E7%90%86"><span class="nav-text">3. URL 处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E6%9E%84%E5%BB%BA%E8%B7%AF%E5%BE%84"><span class="nav-text">3.1 构建路径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-URL-%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="nav-text">3.2 URL 相关方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-%E8%8E%B7%E5%8F%96-URL-%E8%B5%84%E6%BA%90%E4%BF%A1%E6%81%AF"><span class="nav-text">3.3 获取 URL 资源信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%EF%BC%88FileManager%EF%BC%89"><span class="nav-text">4. 文件管理（FileManager）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%95%B0%E6%8D%AE%E5%BD%92%E6%A1%A3%EF%BC%88Codable%EF%BC%89"><span class="nav-text">5. 数据归档（Codable）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-Codable-%E6%9C%BA%E5%88%B6"><span class="nav-text">5.1 Codable 机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-%E8%87%AA%E5%8A%A8%E7%AC%A6%E5%90%88-Codable"><span class="nav-text">5.2 自动符合 Codable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-Codable"><span class="nav-text">5.3 手动实现 Codable</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%95%B0%E6%8D%AE%E7%BC%96%E7%A0%81%E4%B8%8E%E8%A7%A3%E7%A0%81"><span class="nav-text">6. 数据编码与解码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-%E7%BC%96%E7%A0%81"><span class="nav-text">6.1 编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-%E5%AD%98%E5%82%A8-JSON-%E6%95%B0%E6%8D%AE"><span class="nav-text">6.2 存储 JSON 数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-%E8%A7%A3%E7%A0%81"><span class="nav-text">6.3 解码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-UserDefaults"><span class="nav-text">7. UserDefaults</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#7-1-%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE"><span class="nav-text">7.1 存储数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-2-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-text">7.2 读取数据</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%EF%BC%88Error-Handling%EF%BC%89"><span class="nav-text">8. 错误处理（Error Handling）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#8-1-%E4%B8%8D%E5%A4%84%E7%90%86%E9%94%99%E8%AF%AF"><span class="nav-text">8.1 不处理错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-2-%E5%A4%84%E7%90%86%E9%94%99%E8%AF%AF"><span class="nav-text">8.2 处理错误</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E7%A4%BA%E4%BE%8B%EF%BC%9AEmojiArt-%E5%BA%94%E7%94%A8"><span class="nav-text">9. 示例：EmojiArt 应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#9-1-EmojiArt-%E7%94%BB%E5%B8%83%E4%BF%9D%E5%AD%98"><span class="nav-text">9.1 EmojiArt 画布保存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#9-2-Palette-%E4%BF%9D%E5%AD%98"><span class="nav-text">9.2 Palette 保存</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#9-2-1-UserDefaults"><span class="nav-text">9.2.1 UserDefaults</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-Property-Wrappers"><span class="nav-text">10. Property Wrappers</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#10-1-%E5%B1%9E%E6%80%A7%E5%8C%85%E8%A3%85%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">10.1 属性包装器的基本概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#10-2-%E5%B1%9E%E6%80%A7%E5%8C%85%E8%A3%85%E5%99%A8%E7%9A%84%E8%AF%AD%E6%B3%95%E7%B3%96"><span class="nav-text">10.2 属性包装器的语法糖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#10-3-%E5%85%B6%E4%BB%96%E5%B8%B8%E8%A7%81%E5%B1%9E%E6%80%A7%E5%8C%85%E8%A3%85%E5%99%A8"><span class="nav-text">10.3 其他常见属性包装器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#10-3-1-State"><span class="nav-text">10.3.1 @State</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-3-2-StateObject-%E5%92%8C-ObservedObject"><span class="nav-text">10.3.2 @StateObject 和 @ObservedObject</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-3-3-Binding"><span class="nav-text">10.3.3 @Binding</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-3-4-EnvironmentObject"><span class="nav-text">10.3.4 @EnvironmentObject</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-3-5-Environment"><span class="nav-text">10.3.5 @Environment</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#10-4-Binding-%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">10.4 @Binding 使用场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BE%E5%A0%82%E9%A2%84%E5%91%8A"><span class="nav-text">课堂预告</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Serein"
+      src="/uploads/avatar.JPEG">
+  <p class="site-author-name" itemprop="name">Serein</p>
+  <div class="site-description" itemprop="description">Crazy learning, crazy sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Aricyq0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Aricyq0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ari.cyq@gmail.com" title="E-Mail → mailto:ari.cyq@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Serein</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">196k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:58</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
