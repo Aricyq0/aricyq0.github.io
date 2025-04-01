@@ -1024,6 +1024,217 @@
       </tags>
   </entry>
   <entry>
+    <title>Stanford cs193p 06 | Layout @ViewBuilder</title>
+    <url>/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/</url>
+    <content><![CDATA[<p>本文是斯坦福大学 cs193p 公开课程第 06 集的相关笔记。</p>
+<span id="more"></span>
+
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p>The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.).</p>
+</blockquote>
+<p>cs193p 课程网址: <a href="https://cs193p.sites.stanford.edu/2023">https://cs193p.sites.stanford.edu/2023</a></p>
+<h2 id="0-本节概要"><a href="#0-本节概要" class="headerlink" title="0 本节概要"></a>0 本节概要</h2><ul>
+<li><p><strong>布局</strong><br>Swift 如何将空间分配给其视图？<br>演示：根据提供的空间为我们的卡片选择适当的大小。</p>
+</li>
+<li><p><strong>@ViewBuilder</strong><br>关于它如何工作的更多信息。<br>演示：创建我们自己的“组合视图” (AspectVGrid)。</p>
+</li>
+</ul>
+<h2 id="1-布局"><a href="#1-布局" class="headerlink" title="1. 布局"></a>1. 布局</h2><p><strong>视图是如何分配屏幕上的空间的？</strong></p>
+<ol>
+<li>容器视图为内部视图提供部分或者全部的容器视图空间。</li>
+<li>内部视图接着选择它们想要的大小（只有它们可以这样做）。</li>
+<li>然后容器视图对内部视图进行位置排列。</li>
+</ol>
+<h3 id="1-1-堆叠视图-HStack、VStack"><a href="#1-1-堆叠视图-HStack、VStack" class="headerlink" title="1.1 堆叠视图 HStack、VStack"></a>1.1 堆叠视图 <code>HStack</code>、<code>VStack</code></h3><p>堆叠视图划分空间的步骤如下：</p>
+<ul>
+<li><p><strong>堆叠视图</strong> 将它们获得的空间划分，然后将空间提供给内部视图。它首先将空间提供给其“最不灵活”（即尺寸方面） 的子视图。</p>
+<ul>
+<li><strong>“不灵活”视图的示例</strong>：图像（它希望有一个固定的大小）。</li>
+<li><strong>另一个示例（稍微灵活一些）</strong>：文本（总是希望根据其文本精准调整大小）。</li>
+<li><strong>非常灵活视图示例</strong>：圆角矩形（总是会使用所提供的任何空间）。</li>
+</ul>
+</li>
+<li><p>在一个视图选择它想要的大小后，其大小将从可用空间中移除。然后堆叠视图将继续处理下一个“最不灵活”的视图。</p>
+</li>
+<li><p><strong>非常灵活的视图</strong>（即那些将占用所有提供空间的视图）会大致均匀分配空间。</p>
+</li>
+<li><p>重复上述过程。</p>
+</li>
+</ul>
+<p>需要注意的是：</p>
+<ul>
+<li>在堆叠视图内部，视图选择自己的大小后，堆叠视图会调整其大小以适应它们。</li>
+<li>如果堆叠中的任何视图是“非常灵活的”，那么堆叠视图也将是“非常灵活的”。</li>
+</ul>
+<h4 id="1-1-1-布局工具"><a href="#1-1-1-布局工具" class="headerlink" title="1.1.1 布局工具"></a>1.1.1 布局工具</h4><p>有几个非常有价值的布局视图，通常被放置在堆栈中：</p>
+<ul>
+<li><p><strong>Spacer (minLength: CGFloat)</strong><br>总是占用其所分配的所有空间。<br>不绘制任何内容。<br><code>minLength</code> 默认设置为在特定平台上你可能希望的最小间距。</p>
+</li>
+<li><p><strong>Divider()</strong><br>在堆叠视图的布局方向上绘制分割线。<br>例如，在 <code>HStack</code> 中，Divider 会绘制一条垂直线。<br>在堆叠的方向上，它只占用绘制该线所需的最小空间。<br>在横向（交叉）方向上，它会占用所有提供给它的空间。</p>
+</li>
+</ul>
+<h4 id="1-1-2-布局优先级"><a href="#1-1-2-布局优先级" class="headerlink" title="1.1.2 布局优先级"></a>1.1.2 布局优先级</h4><p>堆叠视图选择接下来要提供空间的视图，可以通过 <code>.layoutPriority(Double)</code>被覆盖。换句话说，布局优先级可以优先于“最不灵活”的视图。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">HStack</span> &#123;</span><br><span class="line">	<span class="type">Text</span>(<span class="string">&quot;Important&quot;</span>).layoutPriority(<span class="number">100</span>) <span class="comment">// 任何浮点数都可以</span></span><br><span class="line">	<span class="type">Image</span>(systemName: <span class="string">&quot;arrow.up&quot;</span>) <span class="comment">// 默认布局优先级为 0</span></span><br><span class="line">	<span class="type">Text</span>(<span class="string">&quot;Unimportant&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>上面的 <code>Text(&quot;important&quot;)</code> 文本将首先获得所需空间。</li>
+<li>然后 <code>Image</code> 会获得它的空间（因为它比 <code>Text(&quot;Unimportant&quot;)</code> 更不灵活）。</li>
+<li>最后， <code>Text(&quot;Unimportant&quot;)</code> 将必须尝试适应剩余空间。如果文本获得的空间不足，它将省略显示（例如，“Swift is…”而不是“Swift is great！”）。</li>
+</ul>
+<h4 id="1-1-3-视图对齐"><a href="#1-1-3-视图对齐" class="headerlink" title="1.1.3 视图对齐"></a>1.1.3 视图对齐</h4><p>堆叠视图布局内部视图的另一个重要方面是对齐方式。</p>
+<p>当 <code>VStack</code> 将视图按列布局时，如果视图的宽度不相同，会如何处理？它是“左对齐”它们，还是将它们居中，或者以其他方式排列？这可以通过传递给堆叠视图的参数来指定：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">VStack</span>(alignment: .leading) &#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>为什么使用 <code>.leading</code> 而不是 <code>.left</code>？<br>因为堆叠视图会自动适应文本从右向左的环境（例如阿拉伯语或希伯来语）。<code>leading</code> 对齐方式会将 <code>VStack</code> 中的内容排列到文本开始的边缘。</p>
+</li>
+<li><p>文本基线也可以用于对齐（例如 <code>HStack(alignment: .firstTextBaseline) &#123; ... &#125;</code>）。</p>
+</li>
+<li><p>您甚至可以定义自己的“对齐指南”，来指定自定义的对齐方式。目前只使用内置的对齐方式（<code>.textBaselines</code>、<code>.center </code>、<code>.top </code>、<code>.trailing</code> 等）。</p>
+</li>
+</ul>
+<h3 id="1-2-LazyVStack、LazyHStack、LazyVGrid、LazyHGrid-和-Grid"><a href="#1-2-LazyVStack、LazyHStack、LazyVGrid、LazyHGrid-和-Grid" class="headerlink" title="1.2 LazyVStack、LazyHStack、LazyVGrid、LazyHGrid 和 Grid"></a>1.2 <code>LazyVStack</code>、<code>LazyHStack</code>、<code>LazyVGrid</code>、<code>LazyHGrid</code> 和 <code>Grid</code></h3><h4 id="1-2-1-LazyVStack-和-LazyHStack"><a href="#1-2-1-LazyVStack-和-LazyHStack" class="headerlink" title="1.2.1 LazyVStack 和 LazyHStack"></a>1.2.1 <code>LazyVStack</code> 和 <code>LazyHStack</code></h4><ul>
+<li>这些“lazy”的堆叠版本不会创建任何不可见的视图。</li>
+<li>即使内部有灵活视图，它们也不会占用所有提供给它们的空间。</li>
+<li>在 <code>ScrollView</code> 中时，也可以使用这些堆叠视图。</li>
+</ul>
+<h4 id="1-2-2-LazyVGrid-和-LazyHGrid"><a href="#1-2-2-LazyVGrid-和-LazyHGrid" class="headerlink" title="1.2.2 LazyVGrid 和 LazyHGrid"></a>1.2.2 <code>LazyVGrid</code> 和 <code>LazyHGrid</code></h4><ul>
+<li>我们看到它们是如何布局其视图的。</li>
+<li>视图的大小基于提供给 <code>LazyVGrid</code> 或 <code>LazyHGrid</code> 的参数信息（例如，<code>columns</code>）。</li>
+<li>另一个方向可以随着更多视图的添加而增长或缩小。</li>
+<li>如果不需要，<strong>仍不会占用所有提供给它的空间</strong>。</li>
+</ul>
+<h4 id="1-2-3-Grid"><a href="#1-2-3-Grid" class="headerlink" title="1.2.3 Grid"></a>1.2.3 <code>Grid</code></h4><ul>
+<li>在水平和垂直方向上为它的视图分配空间（注意它的名称中没有<code>H</code>或<code>V</code>）。</li>
+<li>在列和行之间有许多对齐选项（例如，使用 <code>grid*()</code> 修饰符）。</li>
+<li>通常用作“电子表格视图”或“数据表格视图”。</li>
+</ul>
+<h3 id="1-3-ScrollView、ViewThatFits、Form-、-List、Custom-Layout"><a href="#1-3-ScrollView、ViewThatFits、Form-、-List、Custom-Layout" class="headerlink" title="1.3 ScrollView、ViewThatFits、Form 、 List、Custom Layout"></a>1.3 <code>ScrollView</code>、<code>ViewThatFits</code>、<code>Form</code> 、 <code>List</code>、<code>Custom Layout</code></h3><h4 id="1-3-1-ScrollView"><a href="#1-3-1-ScrollView" class="headerlink" title="1.3.1 ScrollView"></a>1.3.1 <code>ScrollView</code></h4><ul>
+<li><code>ScrollView</code> 占用所有提供给它的空间。</li>
+<li>其中的视图会自动调整以适应您正在滚动的方向。</li>
+</ul>
+<h4 id="1-3-2-ViewThatFits"><a href="#1-3-2-ViewThatFits" class="headerlink" title="1.3.2 ViewThatFits"></a>1.3.2 <code>ViewThatFits</code></h4><ul>
+<li>接受一组容器视图（例如 <code>HStack</code> 和 <code>VStack</code>），并选择一个适合的视图。</li>
+<li>当为横屏与竖屏布局时，这非常有用。或者当使用动态类型字号布局时（较大的字体可能无法在横向上适应）。</li>
+</ul>
+<h4 id="1-3-3-Form、List、OutlineGroup-和-DisclosureGroup"><a href="#1-3-3-Form、List、OutlineGroup-和-DisclosureGroup" class="headerlink" title="1.3.3 Form、List、OutlineGroup 和 DisclosureGroup"></a>1.3.3 <code>Form</code>、<code>List</code>、<code>OutlineGroup</code> 和 <code>DisclosureGroup</code></h4><ul>
+<li>这些类似于“非常智能的 <code>VStack</code>”（具备滚动、选择、层级等功能）。</li>
+<li>将在后面的课程中讨论它们。</li>
+</ul>
+<h4 id="1-3-4-自定义布局协议实现"><a href="#1-3-4-自定义布局协议实现" class="headerlink" title="1.3.4 自定义布局协议实现"></a>1.3.4 自定义布局协议实现</h4><ul>
+<li>您可以自定义一个“提供空间、让视图选择其大小，然后对其进行排列”的过程。</li>
+<li>实现一个实现 <code>Layout</code> 协议的视图（<code>sizeThatFits</code>、<code>placeSubviews</code>）。</li>
+</ul>
+<h3 id="1-4-ZStack"><a href="#1-4-ZStack" class="headerlink" title="1.4 ZStack"></a>1.4 <code>ZStack</code></h3><h4 id="1-4-1-ZStack"><a href="#1-4-1-ZStack" class="headerlink" title="1.4.1 ZStack"></a>1.4.1 <code>ZStack</code></h4><ul>
+<li><code>ZStack</code> 自适应调整以适应其子视图。</li>
+<li>如果其中任何一个子视图是完全灵活的，则 <code>ZStack</code> 也会是灵活的。</li>
+</ul>
+<h4 id="1-4-2-background-修饰符"><a href="#1-4-2-background-修饰符" class="headerlink" title="1.4.2 .background 修饰符"></a>1.4.2 <code>.background</code> 修饰符</h4><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">Text</span>(<span class="string">&quot;hello&quot;</span>).background(<span class="type">Rectangle</span>().foregroundColor(.red))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这类似于将 <code>Text</code> 和 <code>Rectangle</code> 的 <code>ZStack</code> 叠加（<code>Text</code> 在前）。</li>
+<li>然而，这与使用 <code>ZStack</code> 叠加它们之间存在很大不同。</li>
+<li>在这种情况下，生成的视图会根据 <code>Text</code> 的大小来调整（<code>Rectangle</code> 不参与）。</li>
+<li>换句话说，<code>Text</code> 完全决定了这个“两个迷你 <code>ZStack</code>”的布局。</li>
+</ul>
+<h4 id="1-4-3-overlay-修饰符"><a href="#1-4-3-overlay-修饰符" class="headerlink" title="1.4.3 .overlay 修饰符"></a>1.4.3 <code>.overlay</code> 修饰符</h4><p>与 <code>.background</code> 相同的布局规则，但叠加方向相反。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">Circle</span>().overlay(<span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>), alignment: .center)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这将根据 <code>Circle</code> 的大小调整（即它将是完全灵活的）。</li>
+<li><code>Text</code> 将被叠加在 <code>Circle</code> 上（在 <code>Circle</code> 的指定对齐方式内）。</li>
+</ul>
+<h3 id="1-5-修饰符"><a href="#1-5-修饰符" class="headerlink" title="1.5 修饰符"></a>1.5 修饰符</h3><h4 id="1-5-1-padding"><a href="#1-5-1-padding" class="headerlink" title="1.5.1 .padding"></a>1.5.1 <code>.padding</code></h4><p>请记住，视图修饰符函数（如 <code>.padding</code>）本身返回一个视图。概念上，这个视图 <code>包裹</code> 着它所修饰的视图。</p>
+<p>其中许多仅将提供给它们的大小传递下去（如 <code>.font</code> 或 <code>.foregroundColor</code>）。</p>
+<p>但也可能有修饰符参与布局过程。例如，<code>.padding(10)</code> 返回的视图会提供一个与它所修改的视图大小相同，但每一侧减少 10 个点的空间。返回的视图 <code>.padding(10)</code> 的尺寸将比它所修饰的视图选择的尺寸大 10 个点。</p>
+<h4 id="1-5-2-aspectRatio"><a href="#1-5-2-aspectRatio" class="headerlink" title="1.5.2 .aspectRatio"></a>1.5.2 <code>.aspectRatio</code></h4><p>另一个例子是我们已经使用过的修饰符：<code>.aspectRatio</code>。</p>
+<p>通过 <code>.aspectRatio</code> 修饰符返回的视图会根据其比例选择适合的大小。它可以选择较小的尺寸（<code>.fit</code>），以适应给定的空间，或选择较大的尺寸（<code>.fill</code>），以尽可能使用所有可用空间（甚至超过提供的空间），同时遵循比例。（视图可以选择一个大于其所提供空间的大小！）</p>
+<p><code>.aspectRatio</code> 会将选择的空间传递给其修饰的视图，作为其“容器”。</p>
+<h3 id="1-6-GeometryReader-动态布局"><a href="#1-6-GeometryReader-动态布局" class="headerlink" title="1.6 GeometryReader 动态布局"></a>1.6 <code>GeometryReader</code> 动态布局</h3><p>大多数视图会自动调整大小，以充分利用所提供的空间。例如，各种形状（如圆角矩形）通常会自我调整以适应容器。而自定义视图，如 CardView，也应该根据提供的空间进行适应，以保持美观性。比如，可以调整卡片内文本的字体大小，使其表情符号能填满空间。</p>
+<p>然而，当视图需要根据提供的空间进行动态调整时，例如在选择卡片大小以适配 LazyVGrid 使其不需要滚动时，就需要用到一个名为 GeometryReader 的容器视图来获取所提供的空间大小，从而进行动态的布局调整。</p>
+<p>您可以用这个 <code>GeometryReader</code> 视图包裹通常出现在您的视图主体中的内容：</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span> <span class="comment">// 使用尾随闭包语法</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>geometry</code> 参数是一个 <code>GeometryProxy</code> 对象。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">GeometryProxy</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> size: <span class="type">CGSize</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">frame</span>(<span class="params">in</span> <span class="params">coordinateSpace</span>: <span class="type">CoordinateSpace</span>) -&gt; <span class="type">CGRect</span></span><br><span class="line">    <span class="keyword">var</span> safeAreaInsets: <span class="type">EdgeInsets</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>size</code> 变量是我们的容器提供给我们的“空间大小”。</li>
+<li>现在我们可以选择一个适合这个大小空间的卡片尺寸。</li>
+<li><code>GeometryReader</code> 本身（它只是一个视图）始终接受所有提供给它的空间。</li>
+</ul>
+<h3 id="1-7-safeArea"><a href="#1-7-safeArea" class="headerlink" title="1.7 safeArea"></a>1.7 <code>safeArea</code></h3><p>通常，当视图被提供空间时，这个空间并不包括“安全区域”。最明显的安全区域出现在 iPhone X 及其后续型号的刘海部分，这个区域通常用于保护前置摄像头、传感器和扬声器等组件。因此，应用视图时，内容一般不应该绘制在这些安全区域内。</p>
+<p>不过，开发者也可以选择忽略这一限制，在指定的边缘内进行绘制。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">ZStack</span> &#123; <span class="operator">...</span> &#125;.edgesIgnoringSafeArea([.top]) <span class="comment">// 在顶部边缘的“安全区域”中绘制</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-Demo：布局"><a href="#2-Demo：布局" class="headerlink" title="2. Demo：布局"></a>2. Demo：布局</h2><h3 id="2-1-LazyVGrid、GridItem"><a href="#2-1-LazyVGrid、GridItem" class="headerlink" title="2.1 LazyVGrid、GridItem"></a>2.1 <code>LazyVGrid</code>、<code>GridItem</code></h3><p>这里使用 <code>GridItem()</code> 来设置 <code>Grid</code> 布局中的每一列，<code>[GridItem()]</code> 显示为一列，<code>[GridItem(),GridItem()]</code> 则显示为两列</p>
+<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder.png"></p>
+<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder-1.png"></p>
+<p>其中，<code>GridItem.size</code> 为枚举类型，有 <code>adaptive</code>、<code>fixed</code> 和 <code>flexible</code> 三种 case。</p>
+<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder-5.png"></p>
+<p>我们用 <code>adaptive</code> 来自适应调整 GridItem，当调整为合适的宽度时，可以在屏幕中全部呈现，不需要 scrollView。</p>
+<p>但将 <code>scrollView</code> 去除后，这个 <code>Vstack</code> 无法容纳所有的 card，将底部的 <code>shuffle</code> 从容器中推了出来。</p>
+<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder-6.png"></p>
+<p>那如何调整 <code>GridItem</code> 的大小，让 <code>LazyVGrid</code> 占据所有空间?</p>
+<h3 id="2-2-GeometryReader"><a href="#2-2-GeometryReader" class="headerlink" title="2.2 GeometryReader"></a>2.2 <code>GeometryReader</code></h3><p>可以使用 <code>GeometryReader</code> 来动态调整 <code>GridItem</code> 的大小。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	        <span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">	        <span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">	        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">	            <span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: viewModel.cards.count, size: geometry.size, atAspectRatio: <span class="number">2</span><span class="operator">/</span><span class="number">3</span>)</span><br><span class="line">	            <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">	                <span class="type">ForEach</span>(viewModel.cards) &#123; card <span class="keyword">in</span></span><br><span class="line">	                    <span class="type">CardView</span>(card: card)</span><br><span class="line">	                        .aspectRatio(<span class="number">2</span><span class="operator">/</span><span class="number">3</span>, contentMode: .fit)</span><br><span class="line">	                        .padding(<span class="number">8</span>)</span><br><span class="line">	                        .onTapGesture &#123;</span><br><span class="line">	                            viewModel.choose(card)</span><br><span class="line">	                        &#125;</span><br><span class="line">	                &#125;</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	        .foregroundColor(.orange)</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">func</span> <span class="title function_">gridItemWidthThatFits</span> (</span><br><span class="line">	        <span class="params">count</span>:<span class="type">Int</span>,</span><br><span class="line">	        <span class="params">size</span>:<span class="type">CGSize</span>,</span><br><span class="line">	        <span class="params">atAspectRatio</span> <span class="params">aspectRatio</span>:<span class="type">CGFloat</span></span><br><span class="line">	    ) -&gt; <span class="type">CGFloat</span> &#123;</span><br><span class="line">	        <span class="keyword">var</span> columnCount <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">	        <span class="keyword">repeat</span> &#123;</span><br><span class="line">	            <span class="keyword">let</span> width <span class="operator">=</span> size.width <span class="operator">/</span> columnCount</span><br><span class="line">	            <span class="keyword">let</span> height <span class="operator">=</span> width <span class="operator">/</span> aspectRatio</span><br><span class="line"></span><br><span class="line">	            <span class="keyword">let</span> rowCount <span class="operator">=</span> (count <span class="operator">/</span> columnCount).rounded(.up)</span><br><span class="line">	            <span class="keyword">if</span> rowCount <span class="operator">*</span> height <span class="operator">&lt;</span> size.height &#123;</span><br><span class="line">	                <span class="keyword">return</span> (size.width <span class="operator">/</span> columnCount).rounded(.down)</span><br><span class="line">	            &#125;</span><br><span class="line">	            columnCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">	        &#125; <span class="keyword">while</span> columnCount <span class="operator">&lt;</span> count</span><br><span class="line">	        <span class="keyword">return</span> <span class="built_in">min</span>(size.width <span class="operator">/</span> count, size.height <span class="operator">*</span> aspectRatio).rounded(.down)</span><br><span class="line">	    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述在 <code>gridItemWidthThat</code> 中会报错，因为返回类型为 <code>CGFloat</code>, <code>columnCount</code> 和 <code>count</code> 都为 <code>Int</code> 类型，无法进行运算，需要做类型转化。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">func</span> <span class="title function_">gridItemWidthThatFits</span> (</span><br><span class="line">	           <span class="params">count</span>:<span class="type">Int</span>,</span><br><span class="line">	           <span class="params">size</span>:<span class="type">CGSize</span>,</span><br><span class="line">	           <span class="params">atAspectRatio</span> <span class="params">aspectRatio</span>:<span class="type">CGFloat</span></span><br><span class="line">	       ) -&gt; <span class="type">CGFloat</span> &#123;</span><br><span class="line">	           <span class="keyword">let</span> count <span class="operator">=</span> <span class="type">CGFloat</span>(count)</span><br><span class="line">	           <span class="keyword">var</span> columnCount <span class="operator">=</span> <span class="number">1.0</span></span><br><span class="line">	           <span class="operator">...</span></span><br><span class="line">	       &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时视图会随着卡片对数的变化而变化，且始终保持在 Vstack 容器内。</p>
+<h3 id="2-3-ViewBuilder"><a href="#2-3-ViewBuilder" class="headerlink" title="2.3 ViewBuilder"></a>2.3 <code>ViewBuilder</code></h3><p>我们将 aspectRatio 提取为变量，替换相应代码。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	 <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	    <span class="keyword">let</span> aspectRatio : <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">2</span><span class="operator">/</span><span class="number">3</span></span><br><span class="line">		<span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">		<span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">		<span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">			<span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: viewModel.cards.count, size: geometry.size, atAspectRatio: aspectRatio)</span><br><span class="line">			<span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="type">ForEach</span>(viewModel.cards) &#123; card <span class="keyword">in</span></span><br><span class="line">					<span class="type">CardView</span>(card: card)</span><br><span class="line">						.aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">						.padding(<span class="number">8</span>)</span><br><span class="line">						.onTapGesture &#123;</span><br><span class="line">							viewModel.choose(card)</span><br><span class="line">						&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码会报错 <code>Function declares an opaque return type, but has no return statements in its body from which to infer an underlying type</code> ，因为需要返回一个 View。可以在 <code>GeometryReader</code> 前加上 <code>return</code> 或者使用 <code>@ViewBuilder</code> 都可以处理该问题。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="meta">@ViewBuilder</span></span><br><span class="line">	 <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	    <span class="keyword">let</span> aspectRatio : <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">2</span><span class="operator">/</span><span class="number">3</span></span><br><span class="line">		<span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">		<span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">		<span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">			<span class="operator">...</span></span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，这里可以将 <code>aspectRatio</code> 提取出来作为私有变量是一种更简洁易读的办法。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">let</span> aspectRatio : <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">2</span><span class="operator">/</span><span class="number">3</span></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">		<span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">		<span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">			<span class="operator">...</span></span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>我们会将所有变量设为 <code>private</code> 的，除非它需要共享，或者是协议本身有定义的例如 <code>body</code>。</p>
+</blockquote>
+<h2 id="3-ViewBuilder"><a href="#3-ViewBuilder" class="headerlink" title="3. @ViewBuilder"></a>3. <code>@ViewBuilder</code></h2><p>基于 Swift 中的一种机制，增强了变量的功能，使其具备特殊的作用。这个机制为视图列表提供了更便捷的语法支持，开发者可以将其应用于任何返回符合 View 协议的函数。</p>
+<p>当使用这个机制时，函数仍然返回符合 View 的内容，但它会将这些内容视作一个视图列表，然后将它们合并成一个视图。</p>
+<p>合并后的视图可以是多个视图组成的 TupleView，也可以是包含条件判断的 <code>_ConditionalContent</code> 视图，甚至在列表为空的情况下会变成 EmptyView，虽然这可能看起来有些奇怪，但这是被允许的。此外，这些组合可以是更复杂的，例如在条件内部再嵌套条件等。</p>
+<p>需要注意的是，某些功能（比如 <code>_ConditionalContent</code>）目前尚未完全公开为 API。然而，对我们来说，我们并不关心合并后生成的具体视图，只要它始终返回某种视图就可以了。</p>
+<p>任何函数或只读计算属性都可以标记为 <code>@ViewBuilder</code>。一旦标记，该函数或属性的内容将被解释为视图列表。例如，如果我们想将用于构建卡片前面部分的视图提取出来</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">front</span>(<span class="params">of</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	<span class="keyword">let</span> shape <span class="operator">=</span> <span class="type">RoundedRectangle</span> (cornerRadius: <span class="number">20</span>)</span><br><span class="line">	shape.fill(.white)</span><br><span class="line">	shape.stroke()</span><br><span class="line">	<span class="type">Text</span> (card.content)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码并不是一个合法的函数语法，而仅仅是一个视图列表。我们不能像这样列出视图 Views。</p>
+<p>但是如果我们把 <code>@ViewBuilder</code> 放在前面是可以的。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ViewBuilder</span></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">front</span>(<span class="params">of</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	<span class="keyword">let</span> shape <span class="operator">=</span> <span class="type">RoundedRectangle</span> (cornerRadius: <span class="number">20</span>)</span><br><span class="line">	shape.fill(.white)</span><br><span class="line">	shape.stroke()</span><br><span class="line">	<span class="type">Text</span> (card.content)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以合法地使用简单的 if-else 语句来控制列表中包含哪些视图。（不过，这只是我们卡片的前面部分，所以不需要使用任何条件判断。）</p>
+<p>上述代码将返回一个 <code>TupleView&lt;RoundedRectangle, RoundedRectangle, Text&gt;</code>。</p>
+<p>你还可以使用 <code>@ViewBuilder</code> 来标记函数或初始化方法的参数。该参数的类型必须是“返回 View 的函数”。例如，<code>ZStack</code>、<code>HStack</code>、<code>VStack</code>、<code>ForEach</code>、<code>LazyGrid</code> 等都采用这种方式（它们的 <code>content:</code> 参数）。我们将在后面的演示中展示这一点。</p>
+<p>需要注意的是， <code>@ViewBuilder</code> 的内容只是一个视图列表，并不是任意代码。可以使用 if-else（或 switch、if let）语句来选择要包含在列表中的视图。你也可以使用局部的 let 语句。其他类型的代码是不允许的（至少在本次讲座时是这样的）。</p>
+<h2 id="4-Demo：创建“合并视图”"><a href="#4-Demo：创建“合并视图”" class="headerlink" title="4. Demo：创建“合并视图”"></a>4. Demo：创建“合并视图”</h2><p>为了更好地理解像 HStack 或 LazyVGrid 这样的组件如何接收参数，接下来将通过创建一个“合并视图” <code>AspectVGrid</code> 来实现这一点。它类似于 LazyVGrid，但不同的是会根据提供给它的空间调整其内容视图的大小。</p>
+<p>首先创建一个新的 SwiftUI 文档，并命名为 <code>AspectVGrid.swift</code>。</p>
+<p>我们将 <code>EmojiMemoryGameView</code> 中的 <code>GeometryReader </code> 和 <code>gridItemWidthThatFits</code> 移至 <code>AspectVGrid.swift</code>, 将 viewModel.cards 修改为 <code>[Item]</code> 类型变量，其中 <code>Item</code> 为 <code>generic type </code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span>&#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="type">AspectVGrid</span>(viewModel.cards,aspectRatio:aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">			<span class="type">CardView</span>(card: card)</span><br><span class="line">				.aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">				.padding(<span class="number">8</span>)</span><br><span class="line">				.onTapGesture &#123;</span><br><span class="line">					viewModel.choose(card)</span><br><span class="line">				&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//AspectVGrid.swift</span></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">AspectVGrid</span>&lt;<span class="type">Item</span>:<span class="type">Identifiable</span>&gt;:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> items:[<span class="type">Item</span>]</span><br><span class="line">    <span class="keyword">var</span> aspectRatio:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body:<span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: items.count, size: geometry.size, atAspectRatio: aspectRatio)</span><br><span class="line">            <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="type">ForEach</span>(items) &#123;item <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">gridItemWidthThatFits</span> (</span><br><span class="line">        <span class="params">count</span>:<span class="type">Int</span>,</span><br><span class="line">        <span class="params">size</span>:<span class="type">CGSize</span>,</span><br><span class="line">        <span class="params">atAspectRatio</span> <span class="params">aspectRatio</span>:<span class="type">CGFloat</span></span><br><span class="line">    ) -&gt; <span class="type">CGFloat</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> count <span class="operator">=</span> <span class="type">CGFloat</span>(count)</span><br><span class="line">        <span class="keyword">var</span> columnCount <span class="operator">=</span> <span class="number">1.0</span></span><br><span class="line">        <span class="keyword">repeat</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> width <span class="operator">=</span> size.width <span class="operator">/</span> columnCount</span><br><span class="line">            <span class="keyword">let</span> height <span class="operator">=</span> width <span class="operator">/</span> aspectRatio</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> rowCount <span class="operator">=</span> (count <span class="operator">/</span> columnCount).rounded(.up)</span><br><span class="line">            <span class="keyword">if</span> rowCount <span class="operator">*</span> height <span class="operator">&lt;</span> size.height &#123;</span><br><span class="line">                <span class="keyword">return</span> (size.width <span class="operator">/</span> columnCount).rounded(.down)</span><br><span class="line">            &#125;</span><br><span class="line">            columnCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">while</span> columnCount <span class="operator">&lt;</span> count</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">min</span>(size.width <span class="operator">/</span> count, size.height <span class="operator">*</span> aspectRatio).rounded(.down)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上述代码会报错：<code>Failed to produce diagnostic for expression; please submit a bug report</code>。这表面 <code>view Builder</code> 存在问题。因为此处的 <code>aspectRatio</code> 没有定义。而 <code>ForEach</code> 要求 <code>Item</code> 为 <code>Identifiable</code>。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//AspectVGrid.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">AspectVGrid</span>&lt;<span class="type">Item</span>:<span class="type">Identifiable</span>&gt;: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> items:[<span class="type">Item</span>]</span><br><span class="line">    <span class="keyword">var</span> aspectRatio:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"> 	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时再回到 <code>EmojiMemoryGameView.swift</code>，我们需要将 <code>&#123;card in ...&#125;</code> 这个尾随闭包传递给 <code>AspectVGrid</code>，在 <code>AspectVGrid</code> 中定义一个返回值为符合 View 协议的视图的函数类型参数 <code>content</code>，在 <code>ForEach</code> 中补充相应 View。</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//AspectVGrid.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">AspectVGrid</span>&lt;<span class="type">Item</span>:<span class="type">Identifiable</span>, <span class="type">ItemView</span>:<span class="type">View</span>&gt;: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> items:[<span class="type">Item</span>]</span><br><span class="line">    <span class="keyword">var</span> aspectRatio:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">var</span> content:(<span class="type">View</span>) -&gt; (<span class="type">ItemView</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> body:<span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">	            <span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: items.count, size: geometry.size, atAspectRatio: aspectRatio)</span><br><span class="line">	            <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">	                <span class="type">ForEach</span>(items) &#123;item <span class="keyword">in</span></span><br><span class="line">	                	content(item)</span><br><span class="line">	                		.aspectRatio(aspectRatio, contentMode:.fit)</span><br><span class="line">	                &#125;</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span>&#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="type">AspectVGrid</span>(items: viewModel.cards,aspectRatio:aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">			<span class="type">CardView</span>(card: card)</span><br><span class="line">				.aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">				.padding(<span class="number">8</span>)</span><br><span class="line">				.onTapGesture &#123;</span><br><span class="line">					viewModel.choose(card)</span><br><span class="line">				&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>code</category>
+        <category>swift</category>
+      </categories>
+      <tags>
+        <tag>cs193p</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Stanford cs193p 07｜Shape ViewModifier Constants</title>
     <url>/2025/01/05/Stanford-cs193p-07%EF%BD%9CShape-ViewModifier-Constants/</url>
     <content><![CDATA[<p>本文是斯坦福大学 cs193p 公开课程第 07 集的相关笔记。</p>
@@ -1606,293 +1817,6 @@
       </tags>
   </entry>
   <entry>
-    <title>个人前端学习路径分享｜附项目及常用工具</title>
-    <url>/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<p>本文为个人前端学习路径分享，主要分享前端学习路线，前端三件套，前端项目推荐，前端框架，前端相关工具，其他常用工具资源等。</p>
-<span id="more"></span>
-
-<ul>
-<li><p><strong>了解学习路线（10 分钟）</strong></p>
-<blockquote>
-<p>快速了解前端和全栈的技术栈和学习路线（非常重要）。</p>
-</blockquote>
-<ul>
-<li><p>**前端学习路线 (油管，约 9 分钟)**：<a href="https://www.youtube.com/watch?v=Tef1e9FiSR0">The Complete Frontend Developer Roadmap 2024</a></p>
-</li>
-<li><p><strong>全栈学习路线（油管，15 分钟）</strong>：<a href="https://www.youtube.com/watch?v=GxmfcnU3feo">The Complete Web Development Roadmap 2024</a></p>
-</li>
-<li><p><strong>前端三件套（2-3 个月）</strong></p>
-<ul>
-<li><p><strong>HTML+CSS（1 个月）</strong>：<a href="https://www.bilibili.com/video/BV14J4114768/?spm_id_from=333.337.search-card.all.click&vd_source=9a40fb262d68cbd3e674569c050a1028">黑马 pink 零基础 h5+css3+移动端视频教程｜ B 站 pink</a></p>
-<blockquote>
-<p>pink 老师的课程分节都很细很短（1-10 分钟&#x2F;节），课程分节很细，一小节的时长很短（大部分 5 -15 分钟），可以根据每天的时间调整观看的数量，建议每天都要看，不论看多少。（每天定一小节的任务，能减小学习的阻力，通常会是超额完成）</p>
-</blockquote>
-</li>
-<li><p><strong>JavaScript（1 个月）</strong></p>
-<blockquote>
-<p>看完第一个，第二个从第 191 集开始看，后续如果遇到不明白的，再往前跳到对应节点看即可。如果由于科学上网问题，第一个无法观看，建议从第二个第 1 集开始看。</p>
-</blockquote>
-<ul>
-<li><strong>JS 基础（一周）</strong>：<a href="https://www.youtube.com/watch?v=PkZNo7MFNFg&t=44s">JavaScript Beginer ｜油管 freeCodeCamp</a></li>
-<li><strong>js web api（一个月）</strong>：<a href="https://www.bilibili.com/video/BV1Sy4y1C7ha?spm_id_from=333.788.videopod.episodes&vd_source=9a40fb262d68cbd3e674569c050a1028&p=191">JavaScript 前端课程-dom-bom-js-es6 新语法｜ B 站 pink 老师</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>练习项目推荐</strong>：</p>
-<blockquote>
-<p>建议在学完 web api 后可以合适的项目做，边做边学 React 或者 Vue，React 或 Vue 学得差不多了，同样在这找项目做。</p>
-</blockquote>
-<ul>
-<li>这个就够用了： <a href="https://github.com/florinpop17/app-ideas">florinpop17 ｜ app-ideas ｜ github</a>。有分别对应初学者、中级、高级三个阶段的项目和参考源码。</li>
-<li>补充项目：<a href="https://github.com/KelvinQiu802/project-ideas?tab=readme-ov-file">kelvinQiu802 ｜项目构想｜ github</a></li>
-</ul>
-</li>
-<li><p><strong>前端框架</strong>：</p>
-<blockquote>
-<p>React 的视频教程较少，建议直接看官方文档，非常简洁易懂，小白推荐。</p>
-</blockquote>
-<ul>
-<li><strong>React</strong>：<a href="https://react.docschina.org/learn">React 中文官网</a></li>
-</ul>
-</li>
-<li><p><strong>前端相关工具或资源</strong></p>
-<ul>
-<li>资源集锦：<a href="https://docschina.org/">印记中文</a>。收集了编译构建（webpack、babel 等）、前端框架（React、Vue、Angular）、前端组件库（AntDesign、MaterialUI、）及可视化图表组件库等大量前端开发学习地址。</li>
-<li>UI 组件源码：<a href="https://uiverse.io/">uiverse</a>，<a href="https://codepen.io/trending">codePen</a></li>
-<li>css 背景渐变：<a href="https://webgradients.com/">css ｜ webgradients</a></li>
-<li>css 动画：<a href="https://animista.net/">animista</a></li>
-</ul>
-</li>
-<li><p><strong>其他常用工具资源</strong></p>
-<ul>
-<li>计算机自学指南：<a href="https://csdiy.wiki/">cs 自学指南</a>。⭐⭐⭐⭐⭐，超级宝藏的博客，包含了：必学工具（科学上网，git，vim，docker…）、数学基础，编程基础（python、c、java、）、数据结构，人工智能，深度学习等大量优秀的 cs 国内外课程收集及经验分享。</li>
-<li>网页转 markdown 浏览器插件：<strong>obsidian webcliper</strong>。⭐⭐⭐⭐⭐，网页转存 markdown 自动保存在 obsidian 仓库文件夹，可修改并导出为 pdf 格式，相比直接导出图片 pdf 更方便美观。效果如下（从左至右为网站、markdown、pdf）。<br><img src="/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7-1.png" alt="个人前端学习路径分享｜附项目及常用工具-1"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>code</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Stanford cs193p 06 | Layout @ViewBuilder</title>
-    <url>/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/</url>
-    <content><![CDATA[<p>本文是斯坦福大学 cs193p 公开课程第 06 集的相关笔记。</p>
-<span id="more"></span>
-
-<p>cs193p 课程介绍:</p>
-<blockquote>
-<p>The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.).</p>
-</blockquote>
-<p>cs193p 课程网址: <a href="https://cs193p.sites.stanford.edu/2023">https://cs193p.sites.stanford.edu/2023</a></p>
-<h2 id="0-本节概要"><a href="#0-本节概要" class="headerlink" title="0 本节概要"></a>0 本节概要</h2><ul>
-<li><p><strong>布局</strong><br>Swift 如何将空间分配给其视图？<br>演示：根据提供的空间为我们的卡片选择适当的大小。</p>
-</li>
-<li><p><strong>@ViewBuilder</strong><br>关于它如何工作的更多信息。<br>演示：创建我们自己的“组合视图” (AspectVGrid)。</p>
-</li>
-</ul>
-<h2 id="1-布局"><a href="#1-布局" class="headerlink" title="1. 布局"></a>1. 布局</h2><p><strong>视图是如何分配屏幕上的空间的？</strong></p>
-<ol>
-<li>容器视图为内部视图提供部分或者全部的容器视图空间。</li>
-<li>内部视图接着选择它们想要的大小（只有它们可以这样做）。</li>
-<li>然后容器视图对内部视图进行位置排列。</li>
-</ol>
-<h3 id="1-1-堆叠视图-HStack、VStack"><a href="#1-1-堆叠视图-HStack、VStack" class="headerlink" title="1.1 堆叠视图 HStack、VStack"></a>1.1 堆叠视图 <code>HStack</code>、<code>VStack</code></h3><p>堆叠视图划分空间的步骤如下：</p>
-<ul>
-<li><p><strong>堆叠视图</strong> 将它们获得的空间划分，然后将空间提供给内部视图。它首先将空间提供给其“最不灵活”（即尺寸方面） 的子视图。</p>
-<ul>
-<li><strong>“不灵活”视图的示例</strong>：图像（它希望有一个固定的大小）。</li>
-<li><strong>另一个示例（稍微灵活一些）</strong>：文本（总是希望根据其文本精准调整大小）。</li>
-<li><strong>非常灵活视图示例</strong>：圆角矩形（总是会使用所提供的任何空间）。</li>
-</ul>
-</li>
-<li><p>在一个视图选择它想要的大小后，其大小将从可用空间中移除。然后堆叠视图将继续处理下一个“最不灵活”的视图。</p>
-</li>
-<li><p><strong>非常灵活的视图</strong>（即那些将占用所有提供空间的视图）会大致均匀分配空间。</p>
-</li>
-<li><p>重复上述过程。</p>
-</li>
-</ul>
-<p>需要注意的是：</p>
-<ul>
-<li>在堆叠视图内部，视图选择自己的大小后，堆叠视图会调整其大小以适应它们。</li>
-<li>如果堆叠中的任何视图是“非常灵活的”，那么堆叠视图也将是“非常灵活的”。</li>
-</ul>
-<h4 id="1-1-1-布局工具"><a href="#1-1-1-布局工具" class="headerlink" title="1.1.1 布局工具"></a>1.1.1 布局工具</h4><p>有几个非常有价值的布局视图，通常被放置在堆栈中：</p>
-<ul>
-<li><p><strong>Spacer (minLength: CGFloat)</strong><br>总是占用其所分配的所有空间。<br>不绘制任何内容。<br><code>minLength</code> 默认设置为在特定平台上你可能希望的最小间距。</p>
-</li>
-<li><p><strong>Divider()</strong><br>在堆叠视图的布局方向上绘制分割线。<br>例如，在 <code>HStack</code> 中，Divider 会绘制一条垂直线。<br>在堆叠的方向上，它只占用绘制该线所需的最小空间。<br>在横向（交叉）方向上，它会占用所有提供给它的空间。</p>
-</li>
-</ul>
-<h4 id="1-1-2-布局优先级"><a href="#1-1-2-布局优先级" class="headerlink" title="1.1.2 布局优先级"></a>1.1.2 布局优先级</h4><p>堆叠视图选择接下来要提供空间的视图，可以通过 <code>.layoutPriority(Double)</code>被覆盖。换句话说，布局优先级可以优先于“最不灵活”的视图。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">HStack</span> &#123;</span><br><span class="line">	<span class="type">Text</span>(<span class="string">&quot;Important&quot;</span>).layoutPriority(<span class="number">100</span>) <span class="comment">// 任何浮点数都可以</span></span><br><span class="line">	<span class="type">Image</span>(systemName: <span class="string">&quot;arrow.up&quot;</span>) <span class="comment">// 默认布局优先级为 0</span></span><br><span class="line">	<span class="type">Text</span>(<span class="string">&quot;Unimportant&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>上面的 <code>Text(&quot;important&quot;)</code> 文本将首先获得所需空间。</li>
-<li>然后 <code>Image</code> 会获得它的空间（因为它比 <code>Text(&quot;Unimportant&quot;)</code> 更不灵活）。</li>
-<li>最后， <code>Text(&quot;Unimportant&quot;)</code> 将必须尝试适应剩余空间。如果文本获得的空间不足，它将省略显示（例如，“Swift is…”而不是“Swift is great！”）。</li>
-</ul>
-<h4 id="1-1-3-视图对齐"><a href="#1-1-3-视图对齐" class="headerlink" title="1.1.3 视图对齐"></a>1.1.3 视图对齐</h4><p>堆叠视图布局内部视图的另一个重要方面是对齐方式。</p>
-<p>当 <code>VStack</code> 将视图按列布局时，如果视图的宽度不相同，会如何处理？它是“左对齐”它们，还是将它们居中，或者以其他方式排列？这可以通过传递给堆叠视图的参数来指定：</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">VStack</span>(alignment: .leading) &#123;</span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>为什么使用 <code>.leading</code> 而不是 <code>.left</code>？<br>因为堆叠视图会自动适应文本从右向左的环境（例如阿拉伯语或希伯来语）。<code>leading</code> 对齐方式会将 <code>VStack</code> 中的内容排列到文本开始的边缘。</p>
-</li>
-<li><p>文本基线也可以用于对齐（例如 <code>HStack(alignment: .firstTextBaseline) &#123; ... &#125;</code>）。</p>
-</li>
-<li><p>您甚至可以定义自己的“对齐指南”，来指定自定义的对齐方式。目前只使用内置的对齐方式（<code>.textBaselines</code>、<code>.center </code>、<code>.top </code>、<code>.trailing</code> 等）。</p>
-</li>
-</ul>
-<h3 id="1-2-LazyVStack、LazyHStack、LazyVGrid、LazyHGrid-和-Grid"><a href="#1-2-LazyVStack、LazyHStack、LazyVGrid、LazyHGrid-和-Grid" class="headerlink" title="1.2 LazyVStack、LazyHStack、LazyVGrid、LazyHGrid 和 Grid"></a>1.2 <code>LazyVStack</code>、<code>LazyHStack</code>、<code>LazyVGrid</code>、<code>LazyHGrid</code> 和 <code>Grid</code></h3><h4 id="1-2-1-LazyVStack-和-LazyHStack"><a href="#1-2-1-LazyVStack-和-LazyHStack" class="headerlink" title="1.2.1 LazyVStack 和 LazyHStack"></a>1.2.1 <code>LazyVStack</code> 和 <code>LazyHStack</code></h4><ul>
-<li>这些“lazy”的堆叠版本不会创建任何不可见的视图。</li>
-<li>即使内部有灵活视图，它们也不会占用所有提供给它们的空间。</li>
-<li>在 <code>ScrollView</code> 中时，也可以使用这些堆叠视图。</li>
-</ul>
-<h4 id="1-2-2-LazyVGrid-和-LazyHGrid"><a href="#1-2-2-LazyVGrid-和-LazyHGrid" class="headerlink" title="1.2.2 LazyVGrid 和 LazyHGrid"></a>1.2.2 <code>LazyVGrid</code> 和 <code>LazyHGrid</code></h4><ul>
-<li>我们看到它们是如何布局其视图的。</li>
-<li>视图的大小基于提供给 <code>LazyVGrid</code> 或 <code>LazyHGrid</code> 的参数信息（例如，<code>columns</code>）。</li>
-<li>另一个方向可以随着更多视图的添加而增长或缩小。</li>
-<li>如果不需要，<strong>仍不会占用所有提供给它的空间</strong>。</li>
-</ul>
-<h4 id="1-2-3-Grid"><a href="#1-2-3-Grid" class="headerlink" title="1.2.3 Grid"></a>1.2.3 <code>Grid</code></h4><ul>
-<li>在水平和垂直方向上为它的视图分配空间（注意它的名称中没有<code>H</code>或<code>V</code>）。</li>
-<li>在列和行之间有许多对齐选项（例如，使用 <code>grid*()</code> 修饰符）。</li>
-<li>通常用作“电子表格视图”或“数据表格视图”。</li>
-</ul>
-<h3 id="1-3-ScrollView、ViewThatFits、Form-、-List、Custom-Layout"><a href="#1-3-ScrollView、ViewThatFits、Form-、-List、Custom-Layout" class="headerlink" title="1.3 ScrollView、ViewThatFits、Form 、 List、Custom Layout"></a>1.3 <code>ScrollView</code>、<code>ViewThatFits</code>、<code>Form</code> 、 <code>List</code>、<code>Custom Layout</code></h3><h4 id="1-3-1-ScrollView"><a href="#1-3-1-ScrollView" class="headerlink" title="1.3.1 ScrollView"></a>1.3.1 <code>ScrollView</code></h4><ul>
-<li><code>ScrollView</code> 占用所有提供给它的空间。</li>
-<li>其中的视图会自动调整以适应您正在滚动的方向。</li>
-</ul>
-<h4 id="1-3-2-ViewThatFits"><a href="#1-3-2-ViewThatFits" class="headerlink" title="1.3.2 ViewThatFits"></a>1.3.2 <code>ViewThatFits</code></h4><ul>
-<li>接受一组容器视图（例如 <code>HStack</code> 和 <code>VStack</code>），并选择一个适合的视图。</li>
-<li>当为横屏与竖屏布局时，这非常有用。或者当使用动态类型字号布局时（较大的字体可能无法在横向上适应）。</li>
-</ul>
-<h4 id="1-3-3-Form、List、OutlineGroup-和-DisclosureGroup"><a href="#1-3-3-Form、List、OutlineGroup-和-DisclosureGroup" class="headerlink" title="1.3.3 Form、List、OutlineGroup 和 DisclosureGroup"></a>1.3.3 <code>Form</code>、<code>List</code>、<code>OutlineGroup</code> 和 <code>DisclosureGroup</code></h4><ul>
-<li>这些类似于“非常智能的 <code>VStack</code>”（具备滚动、选择、层级等功能）。</li>
-<li>将在后面的课程中讨论它们。</li>
-</ul>
-<h4 id="1-3-4-自定义布局协议实现"><a href="#1-3-4-自定义布局协议实现" class="headerlink" title="1.3.4 自定义布局协议实现"></a>1.3.4 自定义布局协议实现</h4><ul>
-<li>您可以自定义一个“提供空间、让视图选择其大小，然后对其进行排列”的过程。</li>
-<li>实现一个实现 <code>Layout</code> 协议的视图（<code>sizeThatFits</code>、<code>placeSubviews</code>）。</li>
-</ul>
-<h3 id="1-4-ZStack"><a href="#1-4-ZStack" class="headerlink" title="1.4 ZStack"></a>1.4 <code>ZStack</code></h3><h4 id="1-4-1-ZStack"><a href="#1-4-1-ZStack" class="headerlink" title="1.4.1 ZStack"></a>1.4.1 <code>ZStack</code></h4><ul>
-<li><code>ZStack</code> 自适应调整以适应其子视图。</li>
-<li>如果其中任何一个子视图是完全灵活的，则 <code>ZStack</code> 也会是灵活的。</li>
-</ul>
-<h4 id="1-4-2-background-修饰符"><a href="#1-4-2-background-修饰符" class="headerlink" title="1.4.2 .background 修饰符"></a>1.4.2 <code>.background</code> 修饰符</h4><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">Text</span>(<span class="string">&quot;hello&quot;</span>).background(<span class="type">Rectangle</span>().foregroundColor(.red))</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>这类似于将 <code>Text</code> 和 <code>Rectangle</code> 的 <code>ZStack</code> 叠加（<code>Text</code> 在前）。</li>
-<li>然而，这与使用 <code>ZStack</code> 叠加它们之间存在很大不同。</li>
-<li>在这种情况下，生成的视图会根据 <code>Text</code> 的大小来调整（<code>Rectangle</code> 不参与）。</li>
-<li>换句话说，<code>Text</code> 完全决定了这个“两个迷你 <code>ZStack</code>”的布局。</li>
-</ul>
-<h4 id="1-4-3-overlay-修饰符"><a href="#1-4-3-overlay-修饰符" class="headerlink" title="1.4.3 .overlay 修饰符"></a>1.4.3 <code>.overlay</code> 修饰符</h4><p>与 <code>.background</code> 相同的布局规则，但叠加方向相反。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">Circle</span>().overlay(<span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>), alignment: .center)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>这将根据 <code>Circle</code> 的大小调整（即它将是完全灵活的）。</li>
-<li><code>Text</code> 将被叠加在 <code>Circle</code> 上（在 <code>Circle</code> 的指定对齐方式内）。</li>
-</ul>
-<h3 id="1-5-修饰符"><a href="#1-5-修饰符" class="headerlink" title="1.5 修饰符"></a>1.5 修饰符</h3><h4 id="1-5-1-padding"><a href="#1-5-1-padding" class="headerlink" title="1.5.1 .padding"></a>1.5.1 <code>.padding</code></h4><p>请记住，视图修饰符函数（如 <code>.padding</code>）本身返回一个视图。概念上，这个视图 <code>包裹</code> 着它所修饰的视图。</p>
-<p>其中许多仅将提供给它们的大小传递下去（如 <code>.font</code> 或 <code>.foregroundColor</code>）。</p>
-<p>但也可能有修饰符参与布局过程。例如，<code>.padding(10)</code> 返回的视图会提供一个与它所修改的视图大小相同，但每一侧减少 10 个点的空间。返回的视图 <code>.padding(10)</code> 的尺寸将比它所修饰的视图选择的尺寸大 10 个点。</p>
-<h4 id="1-5-2-aspectRatio"><a href="#1-5-2-aspectRatio" class="headerlink" title="1.5.2 .aspectRatio"></a>1.5.2 <code>.aspectRatio</code></h4><p>另一个例子是我们已经使用过的修饰符：<code>.aspectRatio</code>。</p>
-<p>通过 <code>.aspectRatio</code> 修饰符返回的视图会根据其比例选择适合的大小。它可以选择较小的尺寸（<code>.fit</code>），以适应给定的空间，或选择较大的尺寸（<code>.fill</code>），以尽可能使用所有可用空间（甚至超过提供的空间），同时遵循比例。（视图可以选择一个大于其所提供空间的大小！）</p>
-<p><code>.aspectRatio</code> 会将选择的空间传递给其修饰的视图，作为其“容器”。</p>
-<h3 id="1-6-GeometryReader-动态布局"><a href="#1-6-GeometryReader-动态布局" class="headerlink" title="1.6 GeometryReader 动态布局"></a>1.6 <code>GeometryReader</code> 动态布局</h3><p>大多数视图会自动调整大小，以充分利用所提供的空间。例如，各种形状（如圆角矩形）通常会自我调整以适应容器。而自定义视图，如 CardView，也应该根据提供的空间进行适应，以保持美观性。比如，可以调整卡片内文本的字体大小，使其表情符号能填满空间。</p>
-<p>然而，当视图需要根据提供的空间进行动态调整时，例如在选择卡片大小以适配 LazyVGrid 使其不需要滚动时，就需要用到一个名为 GeometryReader 的容器视图来获取所提供的空间大小，从而进行动态的布局调整。</p>
-<p>您可以用这个 <code>GeometryReader</code> 视图包裹通常出现在您的视图主体中的内容：</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span> <span class="comment">// 使用尾随闭包语法</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>geometry</code> 参数是一个 <code>GeometryProxy</code> 对象。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">GeometryProxy</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> size: <span class="type">CGSize</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">frame</span>(<span class="params">in</span> <span class="params">coordinateSpace</span>: <span class="type">CoordinateSpace</span>) -&gt; <span class="type">CGRect</span></span><br><span class="line">    <span class="keyword">var</span> safeAreaInsets: <span class="type">EdgeInsets</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>size</code> 变量是我们的容器提供给我们的“空间大小”。</li>
-<li>现在我们可以选择一个适合这个大小空间的卡片尺寸。</li>
-<li><code>GeometryReader</code> 本身（它只是一个视图）始终接受所有提供给它的空间。</li>
-</ul>
-<h3 id="1-7-safeArea"><a href="#1-7-safeArea" class="headerlink" title="1.7 safeArea"></a>1.7 <code>safeArea</code></h3><p>通常，当视图被提供空间时，这个空间并不包括“安全区域”。最明显的安全区域出现在 iPhone X 及其后续型号的刘海部分，这个区域通常用于保护前置摄像头、传感器和扬声器等组件。因此，应用视图时，内容一般不应该绘制在这些安全区域内。</p>
-<p>不过，开发者也可以选择忽略这一限制，在指定的边缘内进行绘制。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="type">ZStack</span> &#123; <span class="operator">...</span> &#125;.edgesIgnoringSafeArea([.top]) <span class="comment">// 在顶部边缘的“安全区域”中绘制</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="2-Demo：布局"><a href="#2-Demo：布局" class="headerlink" title="2. Demo：布局"></a>2. Demo：布局</h2><h3 id="2-1-LazyVGrid、GridItem"><a href="#2-1-LazyVGrid、GridItem" class="headerlink" title="2.1 LazyVGrid、GridItem"></a>2.1 <code>LazyVGrid</code>、<code>GridItem</code></h3><p>这里使用 <code>GridItem()</code> 来设置 <code>Grid</code> 布局中的每一列，<code>[GridItem()]</code> 显示为一列，<code>[GridItem(),GridItem()]</code> 则显示为两列</p>
-<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder.png"></p>
-<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder-1.png"></p>
-<p>其中，<code>GridItem.size</code> 为枚举类型，有 <code>adaptive</code>、<code>fixed</code> 和 <code>flexible</code> 三种 case。</p>
-<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder-5.png"></p>
-<p>我们用 <code>adaptive</code> 来自适应调整 GridItem，当调整为合适的宽度时，可以在屏幕中全部呈现，不需要 scrollView。</p>
-<p>但将 <code>scrollView</code> 去除后，这个 <code>Vstack</code> 无法容纳所有的 card，将底部的 <code>shuffle</code> 从容器中推了出来。</p>
-<p><img src="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/cs193p%EF%BD%9C06%EF%BD%9CViewBuilder-6.png"></p>
-<p>那如何调整 <code>GridItem</code> 的大小，让 <code>LazyVGrid</code> 占据所有空间?</p>
-<h3 id="2-2-GeometryReader"><a href="#2-2-GeometryReader" class="headerlink" title="2.2 GeometryReader"></a>2.2 <code>GeometryReader</code></h3><p>可以使用 <code>GeometryReader</code> 来动态调整 <code>GridItem</code> 的大小。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	        <span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">	        <span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">	        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">	            <span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: viewModel.cards.count, size: geometry.size, atAspectRatio: <span class="number">2</span><span class="operator">/</span><span class="number">3</span>)</span><br><span class="line">	            <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">	                <span class="type">ForEach</span>(viewModel.cards) &#123; card <span class="keyword">in</span></span><br><span class="line">	                    <span class="type">CardView</span>(card: card)</span><br><span class="line">	                        .aspectRatio(<span class="number">2</span><span class="operator">/</span><span class="number">3</span>, contentMode: .fit)</span><br><span class="line">	                        .padding(<span class="number">8</span>)</span><br><span class="line">	                        .onTapGesture &#123;</span><br><span class="line">	                            viewModel.choose(card)</span><br><span class="line">	                        &#125;</span><br><span class="line">	                &#125;</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	        .foregroundColor(.orange)</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">func</span> <span class="title function_">gridItemWidthThatFits</span> (</span><br><span class="line">	        <span class="params">count</span>:<span class="type">Int</span>,</span><br><span class="line">	        <span class="params">size</span>:<span class="type">CGSize</span>,</span><br><span class="line">	        <span class="params">atAspectRatio</span> <span class="params">aspectRatio</span>:<span class="type">CGFloat</span></span><br><span class="line">	    ) -&gt; <span class="type">CGFloat</span> &#123;</span><br><span class="line">	        <span class="keyword">var</span> columnCount <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">	        <span class="keyword">repeat</span> &#123;</span><br><span class="line">	            <span class="keyword">let</span> width <span class="operator">=</span> size.width <span class="operator">/</span> columnCount</span><br><span class="line">	            <span class="keyword">let</span> height <span class="operator">=</span> width <span class="operator">/</span> aspectRatio</span><br><span class="line"></span><br><span class="line">	            <span class="keyword">let</span> rowCount <span class="operator">=</span> (count <span class="operator">/</span> columnCount).rounded(.up)</span><br><span class="line">	            <span class="keyword">if</span> rowCount <span class="operator">*</span> height <span class="operator">&lt;</span> size.height &#123;</span><br><span class="line">	                <span class="keyword">return</span> (size.width <span class="operator">/</span> columnCount).rounded(.down)</span><br><span class="line">	            &#125;</span><br><span class="line">	            columnCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">	        &#125; <span class="keyword">while</span> columnCount <span class="operator">&lt;</span> count</span><br><span class="line">	        <span class="keyword">return</span> <span class="built_in">min</span>(size.width <span class="operator">/</span> count, size.height <span class="operator">*</span> aspectRatio).rounded(.down)</span><br><span class="line">	    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述在 <code>gridItemWidthThat</code> 中会报错，因为返回类型为 <code>CGFloat</code>, <code>columnCount</code> 和 <code>count</code> 都为 <code>Int</code> 类型，无法进行运算，需要做类型转化。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">func</span> <span class="title function_">gridItemWidthThatFits</span> (</span><br><span class="line">	           <span class="params">count</span>:<span class="type">Int</span>,</span><br><span class="line">	           <span class="params">size</span>:<span class="type">CGSize</span>,</span><br><span class="line">	           <span class="params">atAspectRatio</span> <span class="params">aspectRatio</span>:<span class="type">CGFloat</span></span><br><span class="line">	       ) -&gt; <span class="type">CGFloat</span> &#123;</span><br><span class="line">	           <span class="keyword">let</span> count <span class="operator">=</span> <span class="type">CGFloat</span>(count)</span><br><span class="line">	           <span class="keyword">var</span> columnCount <span class="operator">=</span> <span class="number">1.0</span></span><br><span class="line">	           <span class="operator">...</span></span><br><span class="line">	       &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时视图会随着卡片对数的变化而变化，且始终保持在 Vstack 容器内。</p>
-<h3 id="2-3-ViewBuilder"><a href="#2-3-ViewBuilder" class="headerlink" title="2.3 ViewBuilder"></a>2.3 <code>ViewBuilder</code></h3><p>我们将 aspectRatio 提取为变量，替换相应代码。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	 <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	    <span class="keyword">let</span> aspectRatio : <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">2</span><span class="operator">/</span><span class="number">3</span></span><br><span class="line">		<span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">		<span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">		<span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">			<span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: viewModel.cards.count, size: geometry.size, atAspectRatio: aspectRatio)</span><br><span class="line">			<span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="type">ForEach</span>(viewModel.cards) &#123; card <span class="keyword">in</span></span><br><span class="line">					<span class="type">CardView</span>(card: card)</span><br><span class="line">						.aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">						.padding(<span class="number">8</span>)</span><br><span class="line">						.onTapGesture &#123;</span><br><span class="line">							viewModel.choose(card)</span><br><span class="line">						&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述代码会报错 <code>Function declares an opaque return type, but has no return statements in its body from which to infer an underlying type</code> ，因为需要返回一个 View。可以在 <code>GeometryReader</code> 前加上 <code>return</code> 或者使用 <code>@ViewBuilder</code> 都可以处理该问题。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="meta">@ViewBuilder</span></span><br><span class="line">	 <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	    <span class="keyword">let</span> aspectRatio : <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">2</span><span class="operator">/</span><span class="number">3</span></span><br><span class="line">		<span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">		<span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">		<span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">			<span class="operator">...</span></span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是，这里可以将 <code>aspectRatio</code> 提取出来作为私有变量是一种更简洁易读的办法。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">let</span> aspectRatio : <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">2</span><span class="operator">/</span><span class="number">3</span></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="comment">// creates a vertically scrollable collection of views</span></span><br><span class="line">		<span class="comment">// lazy implies that the views are only created when SwiftUI needs to display them</span></span><br><span class="line">		<span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">			<span class="operator">...</span></span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>我们会将所有变量设为 <code>private</code> 的，除非它需要共享，或者是协议本身有定义的例如 <code>body</code>。</p>
-</blockquote>
-<h2 id="3-ViewBuilder"><a href="#3-ViewBuilder" class="headerlink" title="3. @ViewBuilder"></a>3. <code>@ViewBuilder</code></h2><p>基于 Swift 中的一种机制，增强了变量的功能，使其具备特殊的作用。这个机制为视图列表提供了更便捷的语法支持，开发者可以将其应用于任何返回符合 View 协议的函数。</p>
-<p>当使用这个机制时，函数仍然返回符合 View 的内容，但它会将这些内容视作一个视图列表，然后将它们合并成一个视图。</p>
-<p>合并后的视图可以是多个视图组成的 TupleView，也可以是包含条件判断的 <code>_ConditionalContent</code> 视图，甚至在列表为空的情况下会变成 EmptyView，虽然这可能看起来有些奇怪，但这是被允许的。此外，这些组合可以是更复杂的，例如在条件内部再嵌套条件等。</p>
-<p>需要注意的是，某些功能（比如 <code>_ConditionalContent</code>）目前尚未完全公开为 API。然而，对我们来说，我们并不关心合并后生成的具体视图，只要它始终返回某种视图就可以了。</p>
-<p>任何函数或只读计算属性都可以标记为 <code>@ViewBuilder</code>。一旦标记，该函数或属性的内容将被解释为视图列表。例如，如果我们想将用于构建卡片前面部分的视图提取出来</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">front</span>(<span class="params">of</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	<span class="keyword">let</span> shape <span class="operator">=</span> <span class="type">RoundedRectangle</span> (cornerRadius: <span class="number">20</span>)</span><br><span class="line">	shape.fill(.white)</span><br><span class="line">	shape.stroke()</span><br><span class="line">	<span class="type">Text</span> (card.content)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码并不是一个合法的函数语法，而仅仅是一个视图列表。我们不能像这样列出视图 Views。</p>
-<p>但是如果我们把 <code>@ViewBuilder</code> 放在前面是可以的。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ViewBuilder</span></span><br><span class="line"><span class="keyword">func</span> <span class="title function_">front</span>(<span class="params">of</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	<span class="keyword">let</span> shape <span class="operator">=</span> <span class="type">RoundedRectangle</span> (cornerRadius: <span class="number">20</span>)</span><br><span class="line">	shape.fill(.white)</span><br><span class="line">	shape.stroke()</span><br><span class="line">	<span class="type">Text</span> (card.content)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>你可以合法地使用简单的 if-else 语句来控制列表中包含哪些视图。（不过，这只是我们卡片的前面部分，所以不需要使用任何条件判断。）</p>
-<p>上述代码将返回一个 <code>TupleView&lt;RoundedRectangle, RoundedRectangle, Text&gt;</code>。</p>
-<p>你还可以使用 <code>@ViewBuilder</code> 来标记函数或初始化方法的参数。该参数的类型必须是“返回 View 的函数”。例如，<code>ZStack</code>、<code>HStack</code>、<code>VStack</code>、<code>ForEach</code>、<code>LazyGrid</code> 等都采用这种方式（它们的 <code>content:</code> 参数）。我们将在后面的演示中展示这一点。</p>
-<p>需要注意的是， <code>@ViewBuilder</code> 的内容只是一个视图列表，并不是任意代码。可以使用 if-else（或 switch、if let）语句来选择要包含在列表中的视图。你也可以使用局部的 let 语句。其他类型的代码是不允许的（至少在本次讲座时是这样的）。</p>
-<h2 id="4-Demo：创建“合并视图”"><a href="#4-Demo：创建“合并视图”" class="headerlink" title="4. Demo：创建“合并视图”"></a>4. Demo：创建“合并视图”</h2><p>为了更好地理解像 HStack 或 LazyVGrid 这样的组件如何接收参数，接下来将通过创建一个“合并视图” <code>AspectVGrid</code> 来实现这一点。它类似于 LazyVGrid，但不同的是会根据提供给它的空间调整其内容视图的大小。</p>
-<p>首先创建一个新的 SwiftUI 文档，并命名为 <code>AspectVGrid.swift</code>。</p>
-<p>我们将 <code>EmojiMemoryGameView</code> 中的 <code>GeometryReader </code> 和 <code>gridItemWidthThatFits</code> 移至 <code>AspectVGrid.swift</code>, 将 viewModel.cards 修改为 <code>[Item]</code> 类型变量，其中 <code>Item</code> 为 <code>generic type </code>。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span>&#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="type">AspectVGrid</span>(viewModel.cards,aspectRatio:aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">			<span class="type">CardView</span>(card: card)</span><br><span class="line">				.aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">				.padding(<span class="number">8</span>)</span><br><span class="line">				.onTapGesture &#123;</span><br><span class="line">					viewModel.choose(card)</span><br><span class="line">				&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//AspectVGrid.swift</span></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">AspectVGrid</span>&lt;<span class="type">Item</span>:<span class="type">Identifiable</span>&gt;:<span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> items:[<span class="type">Item</span>]</span><br><span class="line">    <span class="keyword">var</span> aspectRatio:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body:<span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: items.count, size: geometry.size, atAspectRatio: aspectRatio)</span><br><span class="line">            <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="type">ForEach</span>(items) &#123;item <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">gridItemWidthThatFits</span> (</span><br><span class="line">        <span class="params">count</span>:<span class="type">Int</span>,</span><br><span class="line">        <span class="params">size</span>:<span class="type">CGSize</span>,</span><br><span class="line">        <span class="params">atAspectRatio</span> <span class="params">aspectRatio</span>:<span class="type">CGFloat</span></span><br><span class="line">    ) -&gt; <span class="type">CGFloat</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> count <span class="operator">=</span> <span class="type">CGFloat</span>(count)</span><br><span class="line">        <span class="keyword">var</span> columnCount <span class="operator">=</span> <span class="number">1.0</span></span><br><span class="line">        <span class="keyword">repeat</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> width <span class="operator">=</span> size.width <span class="operator">/</span> columnCount</span><br><span class="line">            <span class="keyword">let</span> height <span class="operator">=</span> width <span class="operator">/</span> aspectRatio</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> rowCount <span class="operator">=</span> (count <span class="operator">/</span> columnCount).rounded(.up)</span><br><span class="line">            <span class="keyword">if</span> rowCount <span class="operator">*</span> height <span class="operator">&lt;</span> size.height &#123;</span><br><span class="line">                <span class="keyword">return</span> (size.width <span class="operator">/</span> columnCount).rounded(.down)</span><br><span class="line">            &#125;</span><br><span class="line">            columnCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">while</span> columnCount <span class="operator">&lt;</span> count</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">min</span>(size.width <span class="operator">/</span> count, size.height <span class="operator">*</span> aspectRatio).rounded(.down)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>上述代码会报错：<code>Failed to produce diagnostic for expression; please submit a bug report</code>。这表面 <code>view Builder</code> 存在问题。因为此处的 <code>aspectRatio</code> 没有定义。而 <code>ForEach</code> 要求 <code>Item</code> 为 <code>Identifiable</code>。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//AspectVGrid.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">AspectVGrid</span>&lt;<span class="type">Item</span>:<span class="type">Identifiable</span>&gt;: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> items:[<span class="type">Item</span>]</span><br><span class="line">    <span class="keyword">var</span> aspectRatio:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line"> 	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时再回到 <code>EmojiMemoryGameView.swift</code>，我们需要将 <code>&#123;card in ...&#125;</code> 这个尾随闭包传递给 <code>AspectVGrid</code>，在 <code>AspectVGrid</code> 中定义一个返回值为符合 View 协议的视图的函数类型参数 <code>content</code>，在 <code>ForEach</code> 中补充相应 View。</p>
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//AspectVGrid.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">AspectVGrid</span>&lt;<span class="type">Item</span>:<span class="type">Identifiable</span>, <span class="type">ItemView</span>:<span class="type">View</span>&gt;: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> items:[<span class="type">Item</span>]</span><br><span class="line">    <span class="keyword">var</span> aspectRatio:<span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">var</span> content:(<span class="type">View</span>) -&gt; (<span class="type">ItemView</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> body:<span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	        <span class="type">GeometryReader</span> &#123; geometry <span class="keyword">in</span></span><br><span class="line">	            <span class="keyword">let</span> gridItemSize <span class="operator">=</span> gridItemWidthThatFits(count: items.count, size: geometry.size, atAspectRatio: aspectRatio)</span><br><span class="line">	            <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: gridItemSize),spacing: <span class="number">0</span>)],spacing: <span class="number">0</span>) &#123;</span><br><span class="line">	                <span class="type">ForEach</span>(items) &#123;item <span class="keyword">in</span></span><br><span class="line">	                	content(item)</span><br><span class="line">	                		.aspectRatio(aspectRatio, contentMode:.fit)</span><br><span class="line">	                &#125;</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="comment">//EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>:<span class="title class_ inherited__">View</span>&#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">		<span class="type">AspectVGrid</span>(items: viewModel.cards,aspectRatio:aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">			<span class="type">CardView</span>(card: card)</span><br><span class="line">				.aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">				.padding(<span class="number">8</span>)</span><br><span class="line">				.onTapGesture &#123;</span><br><span class="line">					viewModel.choose(card)</span><br><span class="line">				&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		.foregroundColor(.orange)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>code</category>
-        <category>swift</category>
-      </categories>
-      <tags>
-        <tag>cs193p</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Stanford-cs193p-10｜EmojiArt</title>
     <url>/2025/01/24/Stanford-cs193p-10%EF%BD%9CEmojiArt/</url>
     <content><![CDATA[<p>本文是斯坦福大学 cs193p 公开课程第 10 集的相关笔记。</p>
@@ -1973,6 +1897,82 @@
       </categories>
       <tags>
         <tag>cs193p</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>个人前端学习路径分享｜附项目及常用工具</title>
+    <url>/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<p>本文为个人前端学习路径分享，主要分享前端学习路线，前端三件套，前端项目推荐，前端框架，前端相关工具，其他常用工具资源等。</p>
+<span id="more"></span>
+
+<ul>
+<li><p><strong>了解学习路线（10 分钟）</strong></p>
+<blockquote>
+<p>快速了解前端和全栈的技术栈和学习路线（非常重要）。</p>
+</blockquote>
+<ul>
+<li><p>**前端学习路线 (油管，约 9 分钟)**：<a href="https://www.youtube.com/watch?v=Tef1e9FiSR0">The Complete Frontend Developer Roadmap 2024</a></p>
+</li>
+<li><p><strong>全栈学习路线（油管，15 分钟）</strong>：<a href="https://www.youtube.com/watch?v=GxmfcnU3feo">The Complete Web Development Roadmap 2024</a></p>
+</li>
+<li><p><strong>前端三件套（2-3 个月）</strong></p>
+<ul>
+<li><p><strong>HTML+CSS（1 个月）</strong>：<a href="https://www.bilibili.com/video/BV14J4114768/?spm_id_from=333.337.search-card.all.click&vd_source=9a40fb262d68cbd3e674569c050a1028">黑马 pink 零基础 h5+css3+移动端视频教程｜ B 站 pink</a></p>
+<blockquote>
+<p>pink 老师的课程分节都很细很短（1-10 分钟&#x2F;节），课程分节很细，一小节的时长很短（大部分 5 -15 分钟），可以根据每天的时间调整观看的数量，建议每天都要看，不论看多少。（每天定一小节的任务，能减小学习的阻力，通常会是超额完成）</p>
+</blockquote>
+</li>
+<li><p><strong>JavaScript（1 个月）</strong></p>
+<blockquote>
+<p>看完第一个，第二个从第 191 集开始看，后续如果遇到不明白的，再往前跳到对应节点看即可。如果由于科学上网问题，第一个无法观看，建议从第二个第 1 集开始看。</p>
+</blockquote>
+<ul>
+<li><strong>JS 基础（一周）</strong>：<a href="https://www.youtube.com/watch?v=PkZNo7MFNFg&t=44s">JavaScript Beginer ｜油管 freeCodeCamp</a></li>
+<li><strong>js web api（一个月）</strong>：<a href="https://www.bilibili.com/video/BV1Sy4y1C7ha?spm_id_from=333.788.videopod.episodes&vd_source=9a40fb262d68cbd3e674569c050a1028&p=191">JavaScript 前端课程-dom-bom-js-es6 新语法｜ B 站 pink 老师</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>练习项目推荐</strong>：</p>
+<blockquote>
+<p>建议在学完 web api 后可以合适的项目做，边做边学 React 或者 Vue，React 或 Vue 学得差不多了，同样在这找项目做。</p>
+</blockquote>
+<ul>
+<li>这个就够用了： <a href="https://github.com/florinpop17/app-ideas">florinpop17 ｜ app-ideas ｜ github</a>。有分别对应初学者、中级、高级三个阶段的项目和参考源码。</li>
+<li>补充项目：<a href="https://github.com/KelvinQiu802/project-ideas?tab=readme-ov-file">kelvinQiu802 ｜项目构想｜ github</a></li>
+</ul>
+</li>
+<li><p><strong>前端框架</strong>：</p>
+<blockquote>
+<p>React 的视频教程较少，建议直接看官方文档，非常简洁易懂，小白推荐。</p>
+</blockquote>
+<ul>
+<li><strong>React</strong>：<a href="https://react.docschina.org/learn">React 中文官网</a></li>
+</ul>
+</li>
+<li><p><strong>前端相关工具或资源</strong></p>
+<ul>
+<li>资源集锦：<a href="https://docschina.org/">印记中文</a>。收集了编译构建（webpack、babel 等）、前端框架（React、Vue、Angular）、前端组件库（AntDesign、MaterialUI、）及可视化图表组件库等大量前端开发学习地址。</li>
+<li>UI 组件源码：<a href="https://uiverse.io/">uiverse</a>，<a href="https://codepen.io/trending">codePen</a></li>
+<li>css 背景渐变：<a href="https://webgradients.com/">css ｜ webgradients</a></li>
+<li>css 动画：<a href="https://animista.net/">animista</a></li>
+</ul>
+</li>
+<li><p><strong>其他常用工具资源</strong></p>
+<ul>
+<li>计算机自学指南：<a href="https://csdiy.wiki/">cs 自学指南</a>。⭐⭐⭐⭐⭐，超级宝藏的博客，包含了：必学工具（科学上网，git，vim，docker…）、数学基础，编程基础（python、c、java、）、数据结构，人工智能，深度学习等大量优秀的 cs 国内外课程收集及经验分享。</li>
+<li>网页转 markdown 浏览器插件：<strong>obsidian webcliper</strong>。⭐⭐⭐⭐⭐，网页转存 markdown 自动保存在 obsidian 仓库文件夹，可修改并导出为 pdf 格式，相比直接导出图片 pdf 更方便美观。效果如下（从左至右为网站、markdown、pdf）。<br><img src="/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7-1.png" alt="个人前端学习路径分享｜附项目及常用工具-1"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>code</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
       </tags>
   </entry>
 </search>
