@@ -482,7 +482,7 @@
     
     
         <div class="reward-container">
-  <div></div>
+  <div>欣赏此文？求鼓励，求支持！</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
     打赏
   </button>
@@ -503,6 +503,43 @@
 
 
       <footer class="post-footer">
+      <div>
+     
+       
+<div class="my_post_copyright">
+  <div style="text-align:center;color: #ccc;font-size:14px;">------ 版权声明 ------</div>
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <p><span>原始链接:</span><a href="/2025/01/20/Stanford-cs193p-08%EF%BD%9CAnimation/" title="Stanford-cs193p-08｜Animation">https://aricyq0.github.io/2025/01/20/Stanford-cs193p-08｜Animation/</a>
+    <button class="copy-button" style="cursor: pointer; margin-left: 6px; border: none; background: none;" title="点击复制文章链接">
+      <i class="fa fa-clipboard" aria-label="复制"></i>
+    </button>
+    <span class="copy-success" style="margin-left: 5px; display: none; color: #999; font-size: 14px;">复制成功</span>
+  </p>
+  <p><span style="margin-right: 4px;">版权申明:</span>本博客所有文章除特别声明外，均采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International">CC BY-NC-SA 4.0</a>许可协议。转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+  document.addEventListener('DOMContentLoaded', function() {
+    var clipboard = new ClipboardJS('.copy-button', {
+      text: function() {
+        return window.location.origin + '/2025/01/20/Stanford-cs193p-08%EF%BD%9CAnimation/';
+      }
+    });
+    
+    clipboard.on('success', function(e) {
+      var successTip = document.querySelector('.copy-success');
+      successTip.style.display = 'inline';
+      setTimeout(function() {
+        successTip.style.display = 'none';
+      }, 1000);
+    });
+  });
+</script>
+
+     
+</div>
           
           <div class="post-tags">
               <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
@@ -647,7 +684,7 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Serein</span>
+  <span class="author" itemprop="copyrightHolder">[object Object]</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>

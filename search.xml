@@ -1817,6 +1817,82 @@
       </tags>
   </entry>
   <entry>
+    <title>个人前端学习路径分享｜附项目及常用工具</title>
+    <url>/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<p>本文为个人前端学习路径分享，主要分享前端学习路线，前端三件套，前端项目推荐，前端框架，前端相关工具，其他常用工具资源等。</p>
+<span id="more"></span>
+
+<ul>
+<li><p><strong>了解学习路线（10 分钟）</strong></p>
+<blockquote>
+<p>快速了解前端和全栈的技术栈和学习路线（非常重要）。</p>
+</blockquote>
+<ul>
+<li><p>**前端学习路线 (油管，约 9 分钟)**：<a href="https://www.youtube.com/watch?v=Tef1e9FiSR0">The Complete Frontend Developer Roadmap 2024</a></p>
+</li>
+<li><p><strong>全栈学习路线（油管，15 分钟）</strong>：<a href="https://www.youtube.com/watch?v=GxmfcnU3feo">The Complete Web Development Roadmap 2024</a></p>
+</li>
+<li><p><strong>前端三件套（2-3 个月）</strong></p>
+<ul>
+<li><p><strong>HTML+CSS（1 个月）</strong>：<a href="https://www.bilibili.com/video/BV14J4114768/?spm_id_from=333.337.search-card.all.click&vd_source=9a40fb262d68cbd3e674569c050a1028">黑马 pink 零基础 h5+css3+移动端视频教程｜ B 站 pink</a></p>
+<blockquote>
+<p>pink 老师的课程分节都很细很短（1-10 分钟&#x2F;节），课程分节很细，一小节的时长很短（大部分 5 -15 分钟），可以根据每天的时间调整观看的数量，建议每天都要看，不论看多少。（每天定一小节的任务，能减小学习的阻力，通常会是超额完成）</p>
+</blockquote>
+</li>
+<li><p><strong>JavaScript（1 个月）</strong></p>
+<blockquote>
+<p>看完第一个，第二个从第 191 集开始看，后续如果遇到不明白的，再往前跳到对应节点看即可。如果由于科学上网问题，第一个无法观看，建议从第二个第 1 集开始看。</p>
+</blockquote>
+<ul>
+<li><strong>JS 基础（一周）</strong>：<a href="https://www.youtube.com/watch?v=PkZNo7MFNFg&t=44s">JavaScript Beginer ｜油管 freeCodeCamp</a></li>
+<li><strong>js web api（一个月）</strong>：<a href="https://www.bilibili.com/video/BV1Sy4y1C7ha?spm_id_from=333.788.videopod.episodes&vd_source=9a40fb262d68cbd3e674569c050a1028&p=191">JavaScript 前端课程-dom-bom-js-es6 新语法｜ B 站 pink 老师</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>练习项目推荐</strong>：</p>
+<blockquote>
+<p>建议在学完 web api 后可以合适的项目做，边做边学 React 或者 Vue，React 或 Vue 学得差不多了，同样在这找项目做。</p>
+</blockquote>
+<ul>
+<li>这个就够用了： <a href="https://github.com/florinpop17/app-ideas">florinpop17 ｜ app-ideas ｜ github</a>。有分别对应初学者、中级、高级三个阶段的项目和参考源码。</li>
+<li>补充项目：<a href="https://github.com/KelvinQiu802/project-ideas?tab=readme-ov-file">kelvinQiu802 ｜项目构想｜ github</a></li>
+</ul>
+</li>
+<li><p><strong>前端框架</strong>：</p>
+<blockquote>
+<p>React 的视频教程较少，建议直接看官方文档，非常简洁易懂，小白推荐。</p>
+</blockquote>
+<ul>
+<li><strong>React</strong>：<a href="https://react.docschina.org/learn">React 中文官网</a></li>
+</ul>
+</li>
+<li><p><strong>前端相关工具或资源</strong></p>
+<ul>
+<li>资源集锦：<a href="https://docschina.org/">印记中文</a>。收集了编译构建（webpack、babel 等）、前端框架（React、Vue、Angular）、前端组件库（AntDesign、MaterialUI、）及可视化图表组件库等大量前端开发学习地址。</li>
+<li>UI 组件源码：<a href="https://uiverse.io/">uiverse</a>，<a href="https://codepen.io/trending">codePen</a></li>
+<li>css 背景渐变：<a href="https://webgradients.com/">css ｜ webgradients</a></li>
+<li>css 动画：<a href="https://animista.net/">animista</a></li>
+</ul>
+</li>
+<li><p><strong>其他常用工具资源</strong></p>
+<ul>
+<li>计算机自学指南：<a href="https://csdiy.wiki/">cs 自学指南</a>。⭐⭐⭐⭐⭐，超级宝藏的博客，包含了：必学工具（科学上网，git，vim，docker…）、数学基础，编程基础（python、c、java、）、数据结构，人工智能，深度学习等大量优秀的 cs 国内外课程收集及经验分享。</li>
+<li>网页转 markdown 浏览器插件：<strong>obsidian webcliper</strong>。⭐⭐⭐⭐⭐，网页转存 markdown 自动保存在 obsidian 仓库文件夹，可修改并导出为 pdf 格式，相比直接导出图片 pdf 更方便美观。效果如下（从左至右为网站、markdown、pdf）。<br><img src="/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7-1.png" alt="个人前端学习路径分享｜附项目及常用工具-1"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>code</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Stanford-cs193p-10｜EmojiArt</title>
     <url>/2025/01/24/Stanford-cs193p-10%EF%BD%9CEmojiArt/</url>
     <content><![CDATA[<p>本文是斯坦福大学 cs193p 公开课程第 10 集的相关笔记。</p>
@@ -1897,82 +1973,6 @@
       </categories>
       <tags>
         <tag>cs193p</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>个人前端学习路径分享｜附项目及常用工具</title>
-    <url>/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/</url>
-    <content><![CDATA[<p>本文为个人前端学习路径分享，主要分享前端学习路线，前端三件套，前端项目推荐，前端框架，前端相关工具，其他常用工具资源等。</p>
-<span id="more"></span>
-
-<ul>
-<li><p><strong>了解学习路线（10 分钟）</strong></p>
-<blockquote>
-<p>快速了解前端和全栈的技术栈和学习路线（非常重要）。</p>
-</blockquote>
-<ul>
-<li><p>**前端学习路线 (油管，约 9 分钟)**：<a href="https://www.youtube.com/watch?v=Tef1e9FiSR0">The Complete Frontend Developer Roadmap 2024</a></p>
-</li>
-<li><p><strong>全栈学习路线（油管，15 分钟）</strong>：<a href="https://www.youtube.com/watch?v=GxmfcnU3feo">The Complete Web Development Roadmap 2024</a></p>
-</li>
-<li><p><strong>前端三件套（2-3 个月）</strong></p>
-<ul>
-<li><p><strong>HTML+CSS（1 个月）</strong>：<a href="https://www.bilibili.com/video/BV14J4114768/?spm_id_from=333.337.search-card.all.click&vd_source=9a40fb262d68cbd3e674569c050a1028">黑马 pink 零基础 h5+css3+移动端视频教程｜ B 站 pink</a></p>
-<blockquote>
-<p>pink 老师的课程分节都很细很短（1-10 分钟&#x2F;节），课程分节很细，一小节的时长很短（大部分 5 -15 分钟），可以根据每天的时间调整观看的数量，建议每天都要看，不论看多少。（每天定一小节的任务，能减小学习的阻力，通常会是超额完成）</p>
-</blockquote>
-</li>
-<li><p><strong>JavaScript（1 个月）</strong></p>
-<blockquote>
-<p>看完第一个，第二个从第 191 集开始看，后续如果遇到不明白的，再往前跳到对应节点看即可。如果由于科学上网问题，第一个无法观看，建议从第二个第 1 集开始看。</p>
-</blockquote>
-<ul>
-<li><strong>JS 基础（一周）</strong>：<a href="https://www.youtube.com/watch?v=PkZNo7MFNFg&t=44s">JavaScript Beginer ｜油管 freeCodeCamp</a></li>
-<li><strong>js web api（一个月）</strong>：<a href="https://www.bilibili.com/video/BV1Sy4y1C7ha?spm_id_from=333.788.videopod.episodes&vd_source=9a40fb262d68cbd3e674569c050a1028&p=191">JavaScript 前端课程-dom-bom-js-es6 新语法｜ B 站 pink 老师</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><strong>练习项目推荐</strong>：</p>
-<blockquote>
-<p>建议在学完 web api 后可以合适的项目做，边做边学 React 或者 Vue，React 或 Vue 学得差不多了，同样在这找项目做。</p>
-</blockquote>
-<ul>
-<li>这个就够用了： <a href="https://github.com/florinpop17/app-ideas">florinpop17 ｜ app-ideas ｜ github</a>。有分别对应初学者、中级、高级三个阶段的项目和参考源码。</li>
-<li>补充项目：<a href="https://github.com/KelvinQiu802/project-ideas?tab=readme-ov-file">kelvinQiu802 ｜项目构想｜ github</a></li>
-</ul>
-</li>
-<li><p><strong>前端框架</strong>：</p>
-<blockquote>
-<p>React 的视频教程较少，建议直接看官方文档，非常简洁易懂，小白推荐。</p>
-</blockquote>
-<ul>
-<li><strong>React</strong>：<a href="https://react.docschina.org/learn">React 中文官网</a></li>
-</ul>
-</li>
-<li><p><strong>前端相关工具或资源</strong></p>
-<ul>
-<li>资源集锦：<a href="https://docschina.org/">印记中文</a>。收集了编译构建（webpack、babel 等）、前端框架（React、Vue、Angular）、前端组件库（AntDesign、MaterialUI、）及可视化图表组件库等大量前端开发学习地址。</li>
-<li>UI 组件源码：<a href="https://uiverse.io/">uiverse</a>，<a href="https://codepen.io/trending">codePen</a></li>
-<li>css 背景渐变：<a href="https://webgradients.com/">css ｜ webgradients</a></li>
-<li>css 动画：<a href="https://animista.net/">animista</a></li>
-</ul>
-</li>
-<li><p><strong>其他常用工具资源</strong></p>
-<ul>
-<li>计算机自学指南：<a href="https://csdiy.wiki/">cs 自学指南</a>。⭐⭐⭐⭐⭐，超级宝藏的博客，包含了：必学工具（科学上网，git，vim，docker…）、数学基础，编程基础（python、c、java、）、数据结构，人工智能，深度学习等大量优秀的 cs 国内外课程收集及经验分享。</li>
-<li>网页转 markdown 浏览器插件：<strong>obsidian webcliper</strong>。⭐⭐⭐⭐⭐，网页转存 markdown 自动保存在 obsidian 仓库文件夹，可修改并导出为 pdf 格式，相比直接导出图片 pdf 更方便美观。效果如下（从左至右为网站、markdown、pdf）。<br><img src="/2025/02/19/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7/%E4%B8%AA%E4%BA%BA%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E5%88%86%E4%BA%AB%EF%BD%9C%E9%99%84%E9%A1%B9%E7%9B%AE%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7-1.png" alt="个人前端学习路径分享｜附项目及常用工具-1"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>code</category>
-      </categories>
-      <tags>
-        <tag>前端</tag>
       </tags>
   </entry>
 </search>
