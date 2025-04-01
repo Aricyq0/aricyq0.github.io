@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aricyq0.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文是斯坦福大学 cs193p 公开课程第 02 集的相关笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stanford cs193p 02 | More SwiftUI">
+<meta property="og:url" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/index.html">
+<meta property="og:site_name" content="Serein">
+<meta property="og:description" content="本文是斯坦福大学 cs193p 公开课程第 02 集的相关笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_option.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_textButton.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_iconButton.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_view.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_function.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_lazyVGrid.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_opacity.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_aspectRatio.png">
+<meta property="article:published_time" content="2024-11-21T08:26:47.000Z">
+<meta property="article:modified_time" content="2025-04-01T04:04:14.917Z">
+<meta property="article:author" content="Serein">
+<meta property="article:tag" content="cs193p">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_option.png">
+
+<link rel="canonical" href="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Stanford cs193p 02 | More SwiftUI | Serein</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Serein</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/aricyq0" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aricyq0.github.io/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.JPEG">
+      <meta itemprop="name" content="Serein">
+      <meta itemprop="description" content="Crazy learning, crazy sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Serein">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Stanford cs193p 02 | More SwiftUI
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-11-21 16:26:47" itemprop="dateCreated datePublished" datetime="2024-11-21T16:26:47+08:00">2024-11-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-01 12:04:14" itemprop="dateModified" datetime="2025-04-01T12:04:14+08:00">2025-04-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文是斯坦福大学 cs193p 公开课程第 02 集的相关笔记。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>本文主要内容转载于：<a target="_blank" rel="noopener" href="https://nwdan.com/my-learning/stanford-cs193p-2.html">闻者通达的个人博客</a></p>
+</blockquote>
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p>The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.).</p>
+</blockquote>
+<p>cs193p 课程网址: <a target="_blank" rel="noopener" href="https://cs193p.sites.stanford.edu/2023">https://cs193p.sites.stanford.edu/2023</a></p>
+<p>继续上一节记忆卡片的游戏制作，笔记按照课程项目制作步骤进行整理，在每个步骤依次对涉及的语法糖进行说明。建议在看第二节视频前预览一遍，了解教程框架，便于针对性的学习。</p>
+<p>该笔记基于 <a target="_blank" rel="noopener" href="https://nwdan.com/my-learning/stanford-cs193p-2.html">https://nwdan.com/my-learning/stanford-cs193p-2.html</a> 做了适当修改，添加了对于项目制作流程梳理，并在 <code>some View</code>、<code>@State</code>、<code>LazyVGrid</code> 等小节增加了部分说明。（ps：笔记非原创，原博主的笔记非常简洁清晰，推荐阅读。）</p>
+<h2 id="1-创建一个-CardView-struct"><a href="#1-创建一个-CardView-struct" class="headerlink" title="1. 创建一个 CardView struct"></a>1. 创建一个 CardView struct</h2><h3 id="1-1-some-View"><a href="#1-1-some-View" class="headerlink" title="1.1 some View"></a>1.1 some View</h3><p>请看一段演示代码，如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段演示代码同样可以这样写：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="type">Text</span> &#123;</span><br><span class="line">        <span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是如果我们放一些返回值不为 <code>Text</code> 的结构，编译器会报错 (Cannot convert return expression of type <code>&#39;VStack&lt;TupleView&lt;(Text, Text, Text)&gt;&gt;&#39;</code> to return type <code>&#39;Text&#39;</code>)：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="type">Text</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">            <span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样，如果我们放入多个 <code>Text</code> 的结构，编译器仍然会报错：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> body: <span class="type">Text</span> &#123;</span><br><span class="line">		<span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">		<span class="type">Text</span>(<span class="string">&quot;Hello&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>some View</code> 可以让编译器自动识别不同的返回类型。</p>
+<h3 id="1-2-尾随闭包-Trailing-closure-syntax"><a href="#1-2-尾随闭包-Trailing-closure-syntax" class="headerlink" title="1.2 尾随闭包 (Trailing closure syntax)"></a>1.2 尾随闭包 (Trailing closure syntax)</h3><p>我们如果仔细看看 <code>VStack</code>, 我们传入了一个名为<code>content</code>的参数。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> isFaceUp: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span>(alignment: .top, content: &#123;</span><br><span class="line">            <span class="comment">// ZStack Code</span></span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果一个函数的最后一个参数本身是一个函数，此时我们可以使用尾随闭包：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> isFaceUp: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span>(alignment: .top) &#123;</span><br><span class="line">            <span class="comment">// ZStack Code</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-RoundedRectangle"><a href="#1-3-RoundedRectangle" class="headerlink" title="1.3 RoundedRectangle"></a>1.3 RoundedRectangle</h3><p>当我们使用 RoundedRectangle 时，如果我们不指定具体的修改器，Swift 会默认填充。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>)</span><br><span class="line"><span class="comment">// These two codes are identical in terms of functionality.</span></span><br><span class="line"><span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>).fill()</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-局部变量-Local-Variable"><a href="#1-4-局部变量-Local-Variable" class="headerlink" title="1.4 局部变量 (Local Variable)"></a>1.4 局部变量 (Local Variable)</h3><p>我们可以创建一个局部变量:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> isFaceUp: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> isFaceUp &#123;</span><br><span class="line">                <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>).fill(.white)</span><br><span class="line">                <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>).strokeBorder(lineWidth: <span class="number">2</span>)</span><br><span class="line">                <span class="type">Text</span>(<span class="string">&quot;👻&quot;</span>).font(.largeTitle)</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>).fill()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建了一个局部变量名为 <code>base</code>：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> isFaceUp: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> base: <span class="type">RoundedRectangle</span> <span class="operator">=</span> <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>)</span><br><span class="line">            <span class="keyword">if</span> isFaceUp &#123;</span><br><span class="line">                base.fill(.white)</span><br><span class="line">                base.strokeBorder(lineWidth: <span class="number">2</span>)</span><br><span class="line">                <span class="type">Text</span>(<span class="string">&quot;👻&quot;</span>).font(.largeTitle)</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                base.fill()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>IMPORTANT:</strong> 我们使用了关键字 <code>let</code> 而不是 <code>var</code>，因为这个变量一旦创建就不再能被改变。(<code>let</code> 通常用来创建常量)</p>
+<h3 id="1-5-类型推断-Type-Inference"><a href="#1-5-类型推断-Type-Inference" class="headerlink" title="1.5 类型推断 (Type Inference)"></a>1.5 类型推断 (Type Inference)</h3><p>我们可以省略变量类型让 Swift 自动判定。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Without omit the type</span></span><br><span class="line"><span class="keyword">let</span> base: <span class="type">RoundedRectangle</span> <span class="operator">=</span> <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>)</span><br><span class="line"><span class="comment">// Omited the type (using type inference)</span></span><br><span class="line"><span class="keyword">let</span> base <span class="operator">=</span> <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以按住 <code>option</code> 键然后点击 <code>base</code> 变量，Swift 会显示自动判定的变量类型。</p>
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_option.png"></p>
+<blockquote>
+<p>Note: 我们在生产环境几乎都使用类型推断，不手动指定变量类型。如果需要对返回的类型进行检查，则可指定变量类型。</p>
+</blockquote>
+<h3 id="1-6-onTapGesture"><a href="#1-6-onTapGesture" class="headerlink" title="1.6 .onTapGesture"></a>1.6 <code>.onTapGesture</code></h3><p>单击:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="comment">// ZStack Code</span></span><br><span class="line">        &#125;</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">            isFaceUp.toggle()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>尾随闭包</strong>：单击的方法为 <code>.onTapGesture(perform:&#123;&#125;)</code> ，此处由于最后一个参数本身是一个函数，所以使用尾随闭包 <code>.onTapGesture &#123; isFaceUp.toggle() &#125;</code></li>
+</ul>
+<p>双击:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="comment">// ZStack Code</span></span><br><span class="line">        &#125;</span><br><span class="line">        .onTapGesture(count: <span class="number">2</span>) &#123;</span><br><span class="line">            isFaceUp.toggle()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-7-State"><a href="#1-7-State" class="headerlink" title="1.7 @State"></a>1.7 <code>@State</code></h3><p>这一段代码会报错 <code>Error: Cannot assign to property: &#39;self&#39; is immutable</code>。因为结构体的属性默认是不可变的。也就是说，在结构体的实例方法或闭包中不能直接修改它的属性，除非明确标记为 <code>mutating</code>。因此，当你在 struct 中使用一个属性（比如 isFaceUp），它默认是不可变的，在 .onTapGesture 中试图修改 isFaceUp 则会导致这个错误。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="comment">// ZStack Code</span></span><br><span class="line">        &#125;</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">        	isFaceUp <span class="operator">=</span> <span class="operator">!</span>isFaceUp</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通常来说，一个变量在函数被调用后就不可改变。<code>@State</code> 关键字允许变量有临时的状态，因为 <code>@State</code> 会创建一个指针指向堆 (Heap) 中。因此，指针本身没有被改变，改变的是堆里存的数据。</p>
+<p>在 <code>SwiftUI</code> 中， <code>@State</code> 属性包装器用来管理视图中的可变状态的，将 <code>isFaceUp</code> 声明为 <code>@State</code>，SwiftUI 会知道这个属性的变化会导致视图重新渲染。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="comment">// ZStack Code</span></span><br><span class="line">        &#125;</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">            isFaceUp.toggle()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，<code>isFaceUp</code> 可以在视图中动态可变，且不会触发不可变性错误。</p>
+<h2 id="2-生成一组-Card"><a href="#2-生成一组-Card" class="headerlink" title="2. 生成一组 Card"></a>2. 生成一组 Card</h2><h3 id="2-1-数组-Array"><a href="#2-1-数组-Array" class="headerlink" title="2.1 数组(Array)"></a>2.1 数组(Array)</h3><p>Swift 接受以下两种方式新建数组，</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A valid array notation</span></span><br><span class="line"><span class="keyword">let</span> emojis: <span class="type">Array</span>&lt;<span class="type">String</span>&gt; <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>]</span><br><span class="line"><span class="comment">// Alternate array notation</span></span><br><span class="line"><span class="keyword">let</span> emojis: [<span class="type">String</span>] <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>我们也可以使用类型推论省略类型：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> emojis <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-ForEach-循环"><a href="#2-2-ForEach-循环" class="headerlink" title="2.2 ForEach 循环"></a>2.2 ForEach 循环</h3><p><strong>ForEach 不包含最后一个数字</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// iterate from 0 to 3 (NOT including 4)</span></span><br><span class="line"><span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span><span class="number">4</span>, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">    <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Note：<code>id:\.self</code> 会在 cs193p 后续课程中讲解</p>
+</blockquote>
+<p><strong>ForEach 包含最后一个数字</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// iterate from 0 to 4 (including 4)</span></span><br><span class="line"><span class="type">ForEach</span>(<span class="number">0</span><span class="operator">...</span><span class="number">4</span>, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">    <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>ForEach （基于数组的长度）循环整个数组</strong></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> emojis <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>]</span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            <span class="type">ForEach</span>(emojis.indices, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .foregroundColor(.orange)</span><br><span class="line">        .padding()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通常在数组长度未知时使用该 <code>.indices</code> 方法。</p>
+<h2 id="3-控制-Card-个数"><a href="#3-控制-Card-个数" class="headerlink" title="3. 控制 Card 个数"></a>3. 控制 Card 个数</h2><h3 id="3-1-按钮"><a href="#3-1-按钮" class="headerlink" title="3.1 按钮"></a>3.1 按钮</h3><h4 id="3-1-1-文本按钮"><a href="#3-1-1-文本按钮" class="headerlink" title="3.1.1 文本按钮"></a>3.1.1 文本按钮</h4><p>语法结构：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(<span class="string">&quot;Remove card&quot;</span>) &#123;</span><br><span class="line">    <span class="comment">// action</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> emojis <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>, <span class="string">&quot;💩&quot;</span>, <span class="string">&quot;🎉&quot;</span>, <span class="string">&quot;😎&quot;</span>]</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> cardCount <span class="operator">=</span> <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">                    <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            .foregroundColor(.orange)</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">Button</span>(<span class="string">&quot;Remove card&quot;</span>) &#123;</span><br><span class="line">                    cardCount <span class="operator">-=</span> <span class="number">1</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">Spacer</span>()</span><br><span class="line">                <span class="type">Button</span>(<span class="string">&quot;Add card&quot;</span>) &#123;</span><br><span class="line">                    cardCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .padding()</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_textButton.png"></p>
+<h4 id="3-1-2-图标按钮"><a href="#3-1-2-图标按钮" class="headerlink" title="3.1.2 图标按钮"></a>3.1.2 图标按钮</h4><p>语法结构：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: &#123;</span><br><span class="line">    <span class="comment">// action</span></span><br><span class="line">&#125;, label: &#123;</span><br><span class="line">    <span class="comment">// button icon, images, etc...</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> emojis <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>, <span class="string">&quot;💩&quot;</span>, <span class="string">&quot;🎉&quot;</span>, <span class="string">&quot;😎&quot;</span>]</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> cardCount <span class="operator">=</span> <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">                    <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            .foregroundColor(.orange)</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">Button</span>(action: &#123;</span><br><span class="line">                    cardCount <span class="operator">-=</span> <span class="number">1</span></span><br><span class="line">                &#125;, label: &#123;</span><br><span class="line">                    <span class="type">Image</span>(systemName: <span class="string">&quot;rectangle.stack.badge.minus.fill&quot;</span>)</span><br><span class="line">                &#125;)</span><br><span class="line">                <span class="type">Spacer</span>()</span><br><span class="line">                <span class="type">Button</span>(action: &#123;</span><br><span class="line">                    cardCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">                &#125;, label: &#123;</span><br><span class="line">                    <span class="type">Image</span>(systemName: <span class="string">&quot;rectangle.stack.badge.plus.fill&quot;</span>)</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;</span><br><span class="line">            .imageScale(.large)</span><br><span class="line">        &#125;</span><br><span class="line">        .padding()</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_iconButton.png"></p>
+<h3 id="3-2-超出索引的问题"><a href="#3-2-超出索引的问题" class="headerlink" title="3.2 超出索引的问题"></a>3.2 超出索引的问题</h3><p>如果我们添加了太多的卡片，由于索引超出范围会导致程序崩溃。其中一种避免程序的方法是添加一个 <code>if</code> 逻辑。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Button</span>(action: &#123;</span><br><span class="line">    <span class="keyword">if</span> cardCount <span class="operator">&lt;</span> emojis.count &#123;</span><br><span class="line">        cardCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;, label: &#123;</span><br><span class="line">    <span class="type">Image</span>(systemName: <span class="string">&quot;rectangle.stack.badge.plus.fill&quot;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>另一种方法是使用 <code>.disabled</code> 视图修改器</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">cardCountAdjuster</span>(<span class="params">by</span> <span class="params">offset</span>: <span class="type">Int</span>, <span class="params">symbol</span>: <span class="type">String</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">Button</span>(action: &#123;</span><br><span class="line">        cardCount <span class="operator">+=</span> offset</span><br><span class="line">    &#125;, label: &#123;</span><br><span class="line">        <span class="type">Image</span>(systemName: symbol)</span><br><span class="line">    &#125;)</span><br><span class="line">    .disabled(cardCount <span class="operator">+</span> offset <span class="operator">&lt;</span> <span class="number">1</span> <span class="operator">||</span> cardCount <span class="operator">+</span> offset <span class="operator">&gt;</span> emojis.count)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Note: 这节课的后半部分讲解了 Swift 中的函数。</p>
+</blockquote>
+<h2 id="4-整理代码"><a href="#4-整理代码" class="headerlink" title="4. 整理代码"></a>4. 整理代码</h2><h3 id="4-1-优化代码可读性"><a href="#4-1-优化代码可读性" class="headerlink" title="4.1 优化代码可读性"></a>4.1 优化代码可读性</h3><p>我们先看看 <code>body</code> 中包含的代码，</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> emojis <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>, <span class="string">&quot;💩&quot;</span>, <span class="string">&quot;🎉&quot;</span>, <span class="string">&quot;😎&quot;</span>]</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> cardCount <span class="operator">=</span> <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">                    <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            .foregroundColor(.orange)</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                <span class="type">Button</span>(action: &#123;</span><br><span class="line">                    <span class="keyword">if</span> cardCount <span class="operator">&gt;</span> <span class="number">1</span> &#123;</span><br><span class="line">                        cardCount <span class="operator">-=</span> <span class="number">1</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;, label: &#123;</span><br><span class="line">                    <span class="type">Image</span>(systemName: <span class="string">&quot;rectangle.stack.badge.minus.fill&quot;</span>)</span><br><span class="line">                &#125;)</span><br><span class="line">                <span class="type">Spacer</span>()</span><br><span class="line">                <span class="type">Button</span>(action: &#123;</span><br><span class="line">                    <span class="keyword">if</span> cardCount <span class="operator">&lt;</span> emojis.count &#123;</span><br><span class="line">                        cardCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;, label: &#123;</span><br><span class="line">                    <span class="type">Image</span>(systemName: <span class="string">&quot;rectangle.stack.badge.plus.fill&quot;</span>)</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;</span><br><span class="line">            .imageScale(.large)</span><br><span class="line">        &#125;</span><br><span class="line">        .padding()</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在看起来十分不整洁。我们可以创建其它视图提高代码的可读性。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">ContentView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> emojis <span class="operator">=</span> [<span class="string">&quot;👻&quot;</span>, <span class="string">&quot;🎃&quot;</span>, <span class="string">&quot;🕷️&quot;</span>, <span class="string">&quot;😈&quot;</span>, <span class="string">&quot;💩&quot;</span>, <span class="string">&quot;🎉&quot;</span>, <span class="string">&quot;😎&quot;</span>]</span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> cardCount <span class="operator">=</span> <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            cards</span><br><span class="line">            cardCountAdjusters</span><br><span class="line">        &#125;</span><br><span class="line">        .padding()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .foregroundColor(.orange)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> cardCountAdjusters: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">HStack</span> &#123;</span><br><span class="line">            cardRemover</span><br><span class="line">            <span class="type">Spacer</span>()</span><br><span class="line">            cardAdder</span><br><span class="line">        &#125;</span><br><span class="line">        .imageScale(.large)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> cardRemover: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Button</span>(action: &#123;</span><br><span class="line">            <span class="keyword">if</span> cardCount <span class="operator">&gt;</span> <span class="number">1</span> &#123;</span><br><span class="line">                cardCount <span class="operator">-=</span> <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, label: &#123;</span><br><span class="line">            <span class="type">Image</span>(systemName: <span class="string">&quot;rectangle.stack.badge.minus.fill&quot;</span>)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> cardAdder: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">Button</span>(action: &#123;</span><br><span class="line">            <span class="keyword">if</span> cardCount <span class="operator">&lt;</span> emojis.count &#123;</span><br><span class="line">                cardCount <span class="operator">+=</span> <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, label: &#123;</span><br><span class="line">            <span class="type">Image</span>(systemName: <span class="string">&quot;rectangle.stack.badge.plus.fill&quot;</span>)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在整理后，我们 <code>body</code> 中的代码现在看起来非常容易理解。</p>
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_view.png"></p>
+<h3 id="4-2-隐式返回值-Implicit-return"><a href="#4-2-隐式返回值-Implicit-return" class="headerlink" title="4.2 隐式返回值 (Implicit return)"></a>4.2 隐式返回值 (Implicit return)</h3><p>如果一个函数只有 1 行代码，我们就可以使用隐式返回。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">HStack</span> &#123;</span><br><span class="line">        <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">            <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    .foregroundColor(.orange)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然我们也可以使用 <code>return</code> 关键字显式返回。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">HStack</span> &#123;</span><br><span class="line">        <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">            <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    .foregroundColor(.orange)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-函数-Function"><a href="#4-3-函数-Function" class="headerlink" title="4.3 函数 (Function)"></a>4.3 函数 (Function)</h3><p>语法结构：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">&lt;</span>function name<span class="operator">&gt;</span>(<span class="operator">&lt;</span>para name<span class="operator">&gt;</span>: <span class="operator">&lt;</span>data type<span class="operator">&gt;</span>) -&gt; <span class="operator">&lt;</span><span class="keyword">return</span> type<span class="operator">&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// function code</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">cardCountAdjuster</span>(<span class="params">by</span> <span class="params">offset</span>: <span class="type">Int</span>, <span class="params">symbol</span>: <span class="type">String</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">Button</span>(action: &#123;</span><br><span class="line">        cardCount <span class="operator">+=</span> offset</span><br><span class="line">    &#125;, label: &#123;</span><br><span class="line">        <span class="type">Image</span>(systemName: symbol)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>IMPORTANT:</strong> <code>by offset: Int</code> 我们有时候会使用 2 个标签代表一个参数，第一个参数 <code>by</code> 在调用函数时使用，而第二个标签在函数内使用。第一个标签被称为 external parameter name，第二个标签被称为 internal parameter name。</p>
+<p>现在我们的代码看起来更漂亮了,</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> <span class="title function_">cardCountAdjuster</span>(<span class="params">by</span> <span class="params">offset</span>: <span class="type">Int</span>, <span class="params">symbol</span>: <span class="type">String</span>) -&gt; <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">Button</span>(action: &#123;</span><br><span class="line">        cardCount <span class="operator">+=</span> offset</span><br><span class="line">    &#125;, label: &#123;</span><br><span class="line">        <span class="type">Image</span>(systemName: symbol)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> cardRemover: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> cardCountAdjuster(by: <span class="operator">-</span><span class="number">1</span>, symbol: <span class="string">&quot;rectangle.stack.badge.minus.fill&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> cardAdder: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> cardCountAdjuster(by: <span class="number">1</span>, symbol: <span class="string">&quot;rectangle.stack.badge.plus.fill&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Note: 由于我们删除了 <code>if</code> 逻辑，我们程序可能由于数组超出索引范围而崩溃。但是我们在超出索引的问题章节讲了如何解决.</p>
+</blockquote>
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_function.png"></p>
+<h2 id="5-优化布局"><a href="#5-优化布局" class="headerlink" title="5. 优化布局"></a>5. 优化布局</h2><h3 id="5-1-LazyVGrid"><a href="#5-1-LazyVGrid" class="headerlink" title="5.1 LazyVGrid"></a>5.1 LazyVGrid</h3><p>为了让这些卡片看起来比较正常，我们需要用<code>LazyVGrid</code>替代<code>HStack</code>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">120</span>))]) &#123;</span><br><span class="line">        <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">            <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    .foregroundColor(.orange)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>LazyVGrid</code> 和 <code>LazyHGrid</code> 分别是垂直的网格布局、水平网格布局。<code>LazyVGrid</code> 通过制定列的数量然后来填充布局。<code>GridItem</code> 通过设置 Size 来控制格子的宽度：</p>
+<ol>
+<li><code>fixed</code> 通过指定固定大小来确定格子宽度</li>
+<li><code>flexible </code> 弹性大小，会和其他 flexible 的格子分割剩余的空间，可以设置期望的最大和最小值。如果指定的最小值过大可能会超出屏幕</li>
+<li><code>adaptive</code> 自适应分布, 这个尺寸会提供一个或者多个格子。需要指定一个最小值, 也可以设置最大值，然后根据最小值在把自身占用的区域平分成若干个满足最小值最大值的的格子。可以理解 adaptive 为一个 flexible 大格子，获得空间后再把这个大格子平分成若干个满足设置定值的小格子。</li>
+</ol>
+</blockquote>
+<p>我们需要在<code>cards</code> 和 <code>cardCountAdjusters</code>之间添加一个<code>Spacer()</code>，这样它们不会挤到一起去。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">VStack</span> &#123;</span><br><span class="line">        cards</span><br><span class="line">        <span class="type">Spacer</span>()</span><br><span class="line">        cardCountAdjusters</span><br><span class="line">    &#125;</span><br><span class="line">    .padding()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于<code>LazyVGrid</code>会使用尽可能少的空间，因此，当两张卡片都为背面时会被挤压到一起去。</p>
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_lazyVGrid.png"></p>
+<h3 id="5-2-opacity"><a href="#5-2-opacity" class="headerlink" title="5.2 .opacity"></a>5.2 <code>.opacity</code></h3><p>我们需要修改<code>CardView</code>的逻辑</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> content: <span class="type">String</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> base <span class="operator">=</span> <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>)</span><br><span class="line">            <span class="type">Group</span> &#123;</span><br><span class="line">                base.foregroundColor(.white)</span><br><span class="line">                base.strokeBorder(lineWidth: <span class="number">2</span>)</span><br><span class="line">                <span class="type">Text</span>(content).font(.largeTitle)</span><br><span class="line">            &#125;</span><br><span class="line">            .opacity(isFaceUp <span class="operator">?</span> <span class="number">1</span> : <span class="number">0</span>)</span><br><span class="line">            base.fill().opacity(isFaceUp <span class="operator">?</span> <span class="number">0</span> : <span class="number">1</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">            isFaceUp.toggle()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题解决！</p>
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_opacity.png"></p>
+<h3 id="5-3-aspectRatio"><a href="#5-3-aspectRatio" class="headerlink" title="5.3 .aspectRatio"></a>5.3 <code>.aspectRatio</code></h3><p>使用 <code>aspectRatio</code> 控制视图的宽高比</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">120</span>))]) &#123;</span><br><span class="line">        <span class="type">ForEach</span>(<span class="number">0</span><span class="operator">..&lt;</span>cardCount, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">            <span class="type">CardView</span>(content: emojis[index])</span><br><span class="line">                .aspectRatio(<span class="number">2</span><span class="operator">/</span><span class="number">3</span>, contentMode: .fit)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    .foregroundColor(.orange)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/11/21/Stanford-cs193p-02%EF%BD%9CMore-SwiftUI/cs193p02_aspectRatio.png"></p>
+<h3 id="5-4-ScrollView"><a href="#5-4-ScrollView" class="headerlink" title="5.4 ScrollView"></a>5.4 ScrollView</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">    <span class="type">VStack</span> &#123;</span><br><span class="line">        <span class="type">ScrollView</span> &#123;</span><br><span class="line">            cards</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">Spacer</span>()</span><br><span class="line">        cardCountAdjusters</span><br><span class="line">    &#125;</span><br><span class="line">    .padding()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Serein 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Serein 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/21/Stanford-cs193p-01%EF%BD%9C%E8%AF%BE%E7%A8%8B%E7%AE%80%E4%BB%8B%E5%8F%8ASwiftUI%E5%85%A5%E9%97%A8/" rel="prev" title="Stanford cs193p 01 | 课程简介及SwiftUI入门">
+      <i class="fa fa-chevron-left"></i> Stanford cs193p 01 | 课程简介及SwiftUI入门
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/12/06/Stanford-cs193p-03%EF%BD%9CMVVM/" rel="next" title="Stanford cs193p 03｜MVVM">
+      Stanford cs193p 03｜MVVM <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-CardView-struct"><span class="nav-text">1. 创建一个 CardView struct</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-some-View"><span class="nav-text">1.1 some View</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%B0%BE%E9%9A%8F%E9%97%AD%E5%8C%85-Trailing-closure-syntax"><span class="nav-text">1.2 尾随闭包 (Trailing closure syntax)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-RoundedRectangle"><span class="nav-text">1.3 RoundedRectangle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-Local-Variable"><span class="nav-text">1.4 局部变量 (Local Variable)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%AD-Type-Inference"><span class="nav-text">1.5 类型推断 (Type Inference)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-onTapGesture"><span class="nav-text">1.6 .onTapGesture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-State"><span class="nav-text">1.7 @State</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%94%9F%E6%88%90%E4%B8%80%E7%BB%84-Card"><span class="nav-text">2. 生成一组 Card</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%95%B0%E7%BB%84-Array"><span class="nav-text">2.1 数组(Array)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-ForEach-%E5%BE%AA%E7%8E%AF"><span class="nav-text">2.2 ForEach 循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%8E%A7%E5%88%B6-Card-%E4%B8%AA%E6%95%B0"><span class="nav-text">3. 控制 Card 个数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%8C%89%E9%92%AE"><span class="nav-text">3.1 按钮</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-1-%E6%96%87%E6%9C%AC%E6%8C%89%E9%92%AE"><span class="nav-text">3.1.1 文本按钮</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-2-%E5%9B%BE%E6%A0%87%E6%8C%89%E9%92%AE"><span class="nav-text">3.1.2 图标按钮</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%B6%85%E5%87%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">3.2 超出索引的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%95%B4%E7%90%86%E4%BB%A3%E7%A0%81"><span class="nav-text">4. 整理代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E4%BC%98%E5%8C%96%E4%BB%A3%E7%A0%81%E5%8F%AF%E8%AF%BB%E6%80%A7"><span class="nav-text">4.1 优化代码可读性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E9%9A%90%E5%BC%8F%E8%BF%94%E5%9B%9E%E5%80%BC-Implicit-return"><span class="nav-text">4.2 隐式返回值 (Implicit return)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%87%BD%E6%95%B0-Function"><span class="nav-text">4.3 函数 (Function)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%BC%98%E5%8C%96%E5%B8%83%E5%B1%80"><span class="nav-text">5. 优化布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-LazyVGrid"><span class="nav-text">5.1 LazyVGrid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-opacity"><span class="nav-text">5.2 .opacity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-aspectRatio"><span class="nav-text">5.3 .aspectRatio</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-ScrollView"><span class="nav-text">5.4 ScrollView</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Serein"
+      src="/uploads/avatar.JPEG">
+  <p class="site-author-name" itemprop="name">Serein</p>
+  <div class="site-description" itemprop="description">Crazy learning, crazy sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Aricyq0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Aricyq0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ari.cyq@gmail.com" title="E-Mail → mailto:ari.cyq@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Serein</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">122k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:51</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

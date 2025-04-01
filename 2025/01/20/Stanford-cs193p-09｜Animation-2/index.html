@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aricyq0.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文是斯坦福大学 cs193p 公开课程第 09 集的相关笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stanford-cs193p-09｜Animation-2">
+<meta property="og:url" content="https://aricyq0.github.io/2025/01/20/Stanford-cs193p-09%EF%BD%9CAnimation-2/index.html">
+<meta property="og:site_name" content="Serein">
+<meta property="og:description" content="本文是斯坦福大学 cs193p 公开课程第 09 集的相关笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-20T14:46:23.000Z">
+<meta property="article:modified_time" content="2025-01-20T14:51:43.426Z">
+<meta property="article:author" content="Serein">
+<meta property="article:tag" content="cs193p">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://aricyq0.github.io/2025/01/20/Stanford-cs193p-09%EF%BD%9CAnimation-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Stanford-cs193p-09｜Animation-2 | Serein</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Serein</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/aricyq0" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aricyq0.github.io/2025/01/20/Stanford-cs193p-09%EF%BD%9CAnimation-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.JPEG">
+      <meta itemprop="name" content="Serein">
+      <meta itemprop="description" content="Crazy learning, crazy sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Serein">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Stanford-cs193p-09｜Animation-2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-01-20 22:46:23 / 修改时间：22:51:43" itemprop="dateCreated datePublished" datetime="2025-01-20T22:46:23+08:00">2025-01-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文是斯坦福大学 cs193p 公开课程第 09 集的相关笔记。</p>
+<span id="more"></span>
+
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p>The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.).</p>
+</blockquote>
+<p>cs193p 课程网址: [<a target="_blank" rel="noopener" href="https://cs193p.sites.stanford.edu/2023]">https://cs193p.sites.stanford.edu/2023]</a></p>
+<h2 id="1-Demo-onAppear-animation"><a href="#1-Demo-onAppear-animation" class="headerlink" title="1. Demo: onAppear animation"></a>1. Demo: onAppear animation</h2><blockquote>
+<p><strong>flying score change indications (incl. Property Observer and Tuples)</strong></p>
+</blockquote>
+<p>为了同时观察当前卡片，和当前卡片得分的变化，我们使用 tuple <code>lastScoreChange = (scoreChange:Int,causeByCardId:&quot;&quot;)</code> 来记录。在 <code>withAnimation</code> 中制定卡片得分变化的动画规则。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AspectVGrid</span>(items: viewModel.cards, aspectRatio: aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">            <span class="type">CardView</span>(card)</span><br><span class="line">                .aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">                .padding(<span class="number">4</span>)</span><br><span class="line">                .overlay(<span class="type">FlyingNumber</span>(number: scoreChange(causedBy: card)))</span><br><span class="line">                .onTapGesture &#123;</span><br><span class="line">                    withAnimation &#123;</span><br><span class="line">                        <span class="keyword">let</span> scoreBeforeChoosing <span class="operator">=</span> viewModel.score</span><br><span class="line">                        viewModel.choose(card)</span><br><span class="line">                        <span class="keyword">let</span> scoreChange <span class="operator">=</span> viewModel.score <span class="operator">-</span> scoreBeforeChoosing</span><br><span class="line">                        lastScoreChange <span class="operator">=</span> (scoreChange, causedByCardId:card.id)</span><br><span class="line">                        <span class="comment">// 等同于：lastScoreChange = (scoreChange,card.id)，但为了代码的易读性，更推荐上一种写法</span></span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> lastScoreChange <span class="operator">=</span> (<span class="number">0</span>,causedByCardId:<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">scoreChange</span>(<span class="params">causedBy</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-1-tuple-解构"><a href="#1-1-tuple-解构" class="headerlink" title="1.1 tuple 解构"></a>1.1 tuple 解构</h3><p>解构 <code>tuple</code>：我们可以通过名称或者索引解构 <code>tuple</code>，例如</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person <span class="operator">=</span> (name: <span class="string">&quot;Alice&quot;</span>, age: <span class="number">25</span>)</span><br><span class="line"><span class="built_in">print</span>(person.age)  <span class="comment">// 输出：25</span></span><br><span class="line"><span class="built_in">print</span>(person.<span class="number">0</span>)  <span class="comment">// 输出：25</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 也可以同时解构并赋值给另一个变量</span></span><br><span class="line"><span class="keyword">let</span> (name01,age01) <span class="operator">=</span> person</span><br><span class="line"><span class="built_in">print</span>(name01) <span class="comment">// 输出：Alice</span></span><br><span class="line"><span class="built_in">print</span>(age01) <span class="comment">// 输出:25</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改 tuple 值同理</span></span><br><span class="line">person.age <span class="operator">=</span> <span class="number">27</span></span><br><span class="line"><span class="built_in">print</span>(person.age) <span class="comment">//输出 27</span></span><br></pre></td></tr></table></figure>
+
+<p>通常使用名称解构使代码易读性更好。</p>
+<p>在 <code>scoreChange</code> 中对 <code>lastScoreChange</code> 解构并赋值，获取当前卡片得分。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">   <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> lastScoreChange <span class="operator">=</span> (<span class="number">0</span>,causedByCardId:<span class="string">&quot;&quot;</span>)</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">scoreChange</span>(<span class="params">causedBy</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> (amount,id) <span class="operator">=</span> lastScoreChange</span><br><span class="line">        <span class="keyword">return</span> card.id <span class="operator">==</span> id <span class="operator">?</span> amount : <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-number-sign-startegy-always"><a href="#1-2-number-sign-startegy-always" class="headerlink" title="1.2 .number.sign(startegy:.always())"></a>1.2 <code>.number.sign(startegy:.always())</code></h3><p>此时在匹配时会有数字显示，但不明显。我们让数字更清晰一些。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  FlyingNumber.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FlyingNumber</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> number: <span class="type">Int</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> number <span class="operator">!=</span> <span class="number">0</span> &#123;</span><br><span class="line">            <span class="type">Text</span>(number,format: .number.sign(strategy: .always()))</span><br><span class="line">                .font(.largeTitle)</span><br><span class="line">                .foregroundColor(number <span class="operator">&lt;</span> <span class="number">0</span> <span class="operator">?</span> .red : .green)</span><br><span class="line">                .shadow(color: .black, radius: <span class="number">1.5</span>, x: <span class="number">1</span>, y: <span class="number">1</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>.number.sign(startegy:.always())</code> 确保数字始终显示一个符号，正数显示 <code>+</code> 符号，负数显示 <code>-</code> 符号。</p>
+<h3 id="1-3-offset、onAppear、onDisappear"><a href="#1-3-offset、onAppear、onDisappear" class="headerlink" title="1.3 offset、onAppear、onDisappear"></a>1.3 offset、onAppear、onDisappear</h3><p>现在来制作这个数字的偏移动画。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  FlyingNumber.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">FlyingNumber</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> offset : <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> number <span class="operator">!=</span> <span class="number">0</span> &#123;</span><br><span class="line">            <span class="type">Text</span>(number,format: .number.sign(strategy: .always()))</span><br><span class="line">                .font(.largeTitle)</span><br><span class="line">                .foregroundColor(number <span class="operator">&lt;</span> <span class="number">0</span> <span class="operator">?</span> .red : .green)</span><br><span class="line">                .shadow(color: .black, radius: <span class="number">1.5</span>, x: <span class="number">1</span>, y: <span class="number">1</span>)</span><br><span class="line">                .offset(x : <span class="number">0</span>, y : offset)</span><br><span class="line">                .opacity(offset <span class="operator">!=</span> <span class="number">0</span> <span class="operator">?</span> <span class="number">0</span> : <span class="number">1</span>)</span><br><span class="line">                .onAppear &#123;</span><br><span class="line">                    withAnimation(.easeOut(duration: <span class="number">2.0</span>))&#123;</span><br><span class="line">                        offset <span class="operator">=</span> number <span class="operator">&lt;</span> <span class="number">0</span> <span class="operator">?</span> <span class="number">200</span>: <span class="operator">-</span><span class="number">200</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                .onDisappear &#123;</span><br><span class="line">                    offset <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>offset</code> 是相对于当前位置的绝对位置偏移</li>
+<li><code>.onAppear</code> 设置当这个数字出现时产生的动画。</li>
+<li><code>.onDisappear</code> 设置当数字消失时让其回到原来的位置，否则下一次数字出现时会在上一次偏移后的位置。</li>
+</ul>
+<h4 id="1-4-zIndex"><a href="#1-4-zIndex" class="headerlink" title="1.4 zIndex"></a>1.4 <code>zIndex</code></h4><p>上面的代码有一个问题，在点击两张不匹配的卡片时，负分在飞行时会在其他卡片下方不能正常显示。因为后生成的 Card 层级会 overlay 前边生成的 Card 层级。</p>
+<p>为确保分数始终能在所有卡片上方飞过，使用 <code>zIndex</code> 来手动调整 FlyingNumber card 的层级。当 <code>scoreChange</code> 不为 0 时，则让其位于最上方。</p>
+<p>我们将 <code>onTApGesture</code> 中的交互动作提取为一个私有函数 <code>choose</code> 以使函数更易读。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AspectVGrid</span>(items: viewModel.cards, aspectRatio: aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">            <span class="type">CardView</span>(card)</span><br><span class="line">                .aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">                .padding(<span class="number">4</span>)</span><br><span class="line">                .overlay(<span class="type">FlyingNumber</span>(number: scoreChange(causedBy: card)))</span><br><span class="line">                .zIndex(scoreChange(causedBy: card) <span class="operator">!=</span> <span class="number">0</span> <span class="operator">?</span> <span class="number">100</span> : <span class="number">0</span>)</span><br><span class="line">                .onTapGesture &#123;</span><br><span class="line">                	choose(card)</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>:<span class="type">Card</span>) &#123;</span><br><span class="line">		withAnimation &#123;</span><br><span class="line">			<span class="keyword">let</span> scoreBeforeChoosing <span class="operator">=</span> viewModel.score</span><br><span class="line">			viewModel.choose(card)</span><br><span class="line">			<span class="keyword">let</span> scoreChange <span class="operator">=</span> viewModel.score <span class="operator">-</span> scoreBeforeChoosing</span><br><span class="line">			lastScoreChange <span class="operator">=</span> (scoreChange, causedByCardId:card.id)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> lastScoreChange <span class="operator">=</span> (<span class="number">0</span>,causedByCardId:<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">scoreChange</span>(<span class="params">causedBy</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> (amount,id) <span class="operator">=</span> lastScoreChange</span><br><span class="line">        <span class="keyword">return</span> card.id <span class="operator">==</span> id <span class="operator">?</span> amount : <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-Demo-TimelineView"><a href="#2-Demo-TimelineView" class="headerlink" title="2. Demo: TimelineView"></a>2. Demo: TimelineView</h2><blockquote>
+<p><strong>animation our pie shaped countdown timer</strong></p>
+</blockquote>
+<p>倒计时部分新增 model 代码，在每次牌朝上时使用奖励时间，在每次卡牌面朝下时停止奖励时间，如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemoryGame.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MemoryGame</span>&lt;<span class="type">CardContent</span>&gt; <span class="keyword">where</span> <span class="type">CardContent</span>: <span class="type">Equatable</span> &#123;</span><br><span class="line">  	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> chosenIndex <span class="operator">=</span> cards.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> card.id &#125;) &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="operator">!</span>cards[chosenIndex].isFaceUp <span class="operator">&amp;&amp;</span> <span class="operator">!</span>cards[chosenIndex].isMatched &#123;</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">let</span> potentialMatchIndex <span class="operator">=</span> indexOfTheOneAndOnlyFaceUpCard &#123;</span><br><span class="line">                    <span class="keyword">if</span> cards[chosenIndex].content <span class="operator">==</span> cards[potentialMatchIndex].content &#123;</span><br><span class="line">                        cards[chosenIndex].isMatched <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                        cards[potentialMatchIndex].isMatched <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                        score <span class="operator">+=</span> <span class="number">2</span> <span class="operator">+</span> cards[chosenIndex].bonus <span class="operator">+</span> cards[potentialMatchIndex].bonus</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> cards[chosenIndex].hasBeenSeen &#123;</span><br><span class="line">                            score <span class="operator">-=</span> <span class="number">1</span></span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">if</span> cards[potentialMatchIndex].hasBeenSeen &#123;</span><br><span class="line">                            score <span class="operator">-=</span> <span class="number">1</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    indexOfTheOneAndOnlyFaceUpCard <span class="operator">=</span> chosenIndex</span><br><span class="line">                &#125;</span><br><span class="line">                cards[chosenIndex].isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Card</span>: <span class="title class_ inherited__">Equatable</span>, <span class="title class_ inherited__">Identifiable</span>, <span class="title class_ inherited__">CustomStringConvertible</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">false</span> &#123;</span><br><span class="line">            <span class="keyword">didSet</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> isFaceUp &#123;</span><br><span class="line">                    startUsingBonusTime()</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    stopUsingBonusTime()</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> oldValue <span class="operator">&amp;&amp;</span> <span class="operator">!</span>isFaceUp &#123;</span><br><span class="line">                    hasBeenSeen <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> hasBeenSeen <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">var</span> isMatched <span class="operator">=</span> <span class="literal">false</span> &#123;</span><br><span class="line">            <span class="keyword">didSet</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> isMatched &#123;</span><br><span class="line">                    stopUsingBonusTime()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">let</span> content: <span class="type">CardContent</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> id: <span class="type">String</span></span><br><span class="line">        <span class="keyword">var</span> description: <span class="type">String</span> &#123;</span><br><span class="line">            <span class="string">&quot;<span class="subst">\(id)</span>: <span class="subst">\(content)</span> <span class="subst">\(isFaceUp <span class="operator">?</span> <span class="string">&quot;up&quot;</span> : <span class="string">&quot;down&quot;</span>)</span><span class="subst">\(isMatched <span class="operator">?</span> <span class="string">&quot; matched&quot;</span> : <span class="string">&quot;&quot;</span>)</span>&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// MARK: - Bonus Time</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// call this when the card transitions to face up state</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">startUsingBonusTime</span>() &#123;</span><br><span class="line">            <span class="keyword">if</span> isFaceUp <span class="operator">&amp;&amp;</span> <span class="operator">!</span>isMatched <span class="operator">&amp;&amp;</span> bonusPercentRemaining <span class="operator">&gt;</span> <span class="number">0</span>, lastFaceUpDate <span class="operator">==</span> <span class="literal">nil</span> &#123;</span><br><span class="line">                lastFaceUpDate <span class="operator">=</span> <span class="type">Date</span>()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// call this when the card goes back face down or gets matched</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">stopUsingBonusTime</span>() &#123;</span><br><span class="line">            pastFaceUpTime <span class="operator">=</span> faceUpTime</span><br><span class="line">            lastFaceUpDate <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// the bonus earned so far (one point for every second of the bonusTimeLimit that was not used)</span></span><br><span class="line">        <span class="comment">// this gets smaller and smaller the longer the card remains face up without being matched</span></span><br><span class="line">        <span class="keyword">var</span> bonus: <span class="type">Int</span> &#123;</span><br><span class="line">            <span class="type">Int</span>(bonusTimeLimit <span class="operator">*</span> bonusPercentRemaining)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// percentage of the bonus time remaining</span></span><br><span class="line">        <span class="keyword">var</span> bonusPercentRemaining: <span class="type">Double</span> &#123;</span><br><span class="line">            bonusTimeLimit <span class="operator">&gt;</span> <span class="number">0</span> <span class="operator">?</span> <span class="built_in">max</span>(<span class="number">0</span>, bonusTimeLimit <span class="operator">-</span> faceUpTime)<span class="operator">/</span>bonusTimeLimit : <span class="number">0</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// how long this card has ever been face up and unmatched during its lifetime</span></span><br><span class="line">        <span class="comment">// basically, pastFaceUpTime + time since lastFaceUpDate</span></span><br><span class="line">        <span class="keyword">var</span> faceUpTime: <span class="type">TimeInterval</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">let</span> lastFaceUpDate &#123;</span><br><span class="line">                <span class="keyword">return</span> pastFaceUpTime <span class="operator">+</span> <span class="type">Date</span>().timeIntervalSince(lastFaceUpDate)</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> pastFaceUpTime</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// can be zero which would mean &quot;no bonus available&quot; for matching this card quickly</span></span><br><span class="line">        <span class="keyword">var</span> bonusTimeLimit: <span class="type">TimeInterval</span> <span class="operator">=</span> <span class="number">6</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// the last time this card was turned face up</span></span><br><span class="line">        <span class="keyword">var</span> lastFaceUpDate: <span class="type">Date</span>?</span><br><span class="line"></span><br><span class="line">        <span class="comment">// the accumulated time this card was face up in the past</span></span><br><span class="line">        <span class="comment">// (i.e. not including the current time it&#x27;s been face up if it is currently so)</span></span><br><span class="line">        <span class="keyword">var</span> pastFaceUpTime: <span class="type">TimeInterval</span> <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-TimelineView"><a href="#2-1-TimelineView" class="headerlink" title="2.1 TimelineView"></a>2.1 <code>TimelineView</code></h3><p><code>TimeLineView</code> 是一个可以根据时间变化更新视图的组件。我们将动画时间间隔设置为 1&#x2F;5 秒，意味着每 200 毫秒会更新一次视图。</p>
+<p>另外将 overlay 里边的视图提取为 <code>cardContent</code>，使代码更易读。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  CardView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">TimelineView</span>(.animation(minimumInterval: <span class="number">1</span> <span class="operator">/</span> <span class="number">5</span>)) &#123; timeline <span class="keyword">in</span></span><br><span class="line">			<span class="type">Pie</span>(endAngle: .degrees(card.bonusPercentRemaining <span class="operator">*</span> <span class="number">360</span>))</span><br><span class="line">				.opacity(<span class="type">Constants</span>.<span class="type">Pie</span>.opacity)</span><br><span class="line">				.overlay(</span><br><span class="line">					cardContents.padding(<span class="type">Constants</span>.<span class="type">Pie</span>.in<span class="keyword">set</span>)</span><br><span class="line">				)</span><br><span class="line">				.padding(<span class="type">Constants</span>.in<span class="keyword">set</span>)</span><br><span class="line">				.cardify(isFaceUp: card.isFaceUp)</span><br><span class="line">				.opacity(card.isFaceup <span class="operator">||</span> <span class="operator">!</span>card.isMatched <span class="operator">?</span> <span class="number">1</span> : <span class="number">0</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> cardContents: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	        <span class="type">Text</span>(card.content)</span><br><span class="line">	            .font(.system(size: <span class="type">Constants</span>.<span class="type">FontSize</span>.largest))</span><br><span class="line">	            .minimumScaleFactor(<span class="type">Constants</span>.<span class="type">FontSize</span>.scaleFactor)</span><br><span class="line">	            .multilineTextAlignment(.center)</span><br><span class="line">	            .aspectRatio(<span class="number">1</span>, contentMode: .fit)</span><br><span class="line">	            .padding(<span class="type">Constants</span>.<span class="type">Pie</span>.in<span class="keyword">set</span>)</span><br><span class="line">	            .rotationEffect(.degrees(card.isMatched <span class="operator">?</span> <span class="number">360</span> : <span class="number">0</span>))</span><br><span class="line">	            .animation(.spin(duration: <span class="number">1</span>), value: card.isMatched)</span><br><span class="line">	    &#125;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-Demo-transitions"><a href="#3-Demo-transitions" class="headerlink" title="3. Demo: transitions"></a>3. Demo: transitions</h2><blockquote>
+<p><strong>animation the arrival and departure of Views</strong></p>
+</blockquote>
+<p>当匹配卡片消失时，仍然是翻转动画，但此时希望让匹配的卡片消失而非翻转。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  CardView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">TimelineView</span>(.animation(minimumInterval: <span class="number">1</span> <span class="operator">/</span> <span class="number">5</span>)) &#123; timeline i</span><br><span class="line">			<span class="keyword">if</span> card.isFaceUp <span class="operator">||</span> <span class="operator">!</span>card.isMatched &#123;</span><br><span class="line">				<span class="type">Pie</span>(endAngle: .degrees(card.bonusPercentRemaining <span class="operator">*</span> <span class="number">360</span>))</span><br><span class="line">					.opacity(<span class="type">Constants</span>.<span class="type">Pie</span>.opacity)</span><br><span class="line">					.overlay(</span><br><span class="line">						cardContents.padding(<span class="type">Constants</span>.<span class="type">Pie</span>.in<span class="keyword">set</span>)</span><br><span class="line">					)</span><br><span class="line">					.padding(<span class="type">Constants</span>.in<span class="keyword">set</span>)</span><br><span class="line">					.cardify(isFaceUp: card.isFaceUp)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-Color-clear-、transition"><a href="#3-1-Color-clear-、transition" class="headerlink" title="3.1 Color.clear 、transition"></a>3.1 <code>Color.clear</code> 、<code>transition</code></h3><p>此时，卡牌朝下且卡牌匹配时，view 为空，<code>AspectVGrid</code> 会认为此时没有 view，后边的卡片会挤压至前边来。为避免这种情况，使用 <code>Color.clear</code> 来保留一个看不到矩形空间。</p>
+<p>在卡片消失时添加 <code>transition(.scale)</code> 动画。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  CardView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CardView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">TimelineView</span>(.animation(minimumInterval: <span class="number">1</span> <span class="operator">/</span> <span class="number">5</span>)) &#123; timeline i</span><br><span class="line">			<span class="keyword">if</span> card.isFaceUp <span class="operator">||</span> <span class="operator">!</span>card.isMatched &#123;</span><br><span class="line">				<span class="type">Pie</span>(endAngle: .degrees(card.bonusPercentRemaining <span class="operator">*</span> <span class="number">360</span>))</span><br><span class="line">					.opacity(<span class="type">Constants</span>.<span class="type">Pie</span>.opacity)</span><br><span class="line">					.overlay(</span><br><span class="line">						cardContents.padding(<span class="type">Constants</span>.<span class="type">Pie</span>.in<span class="keyword">set</span>)</span><br><span class="line">					)</span><br><span class="line">					.padding(<span class="type">Constants</span>.in<span class="keyword">set</span>)</span><br><span class="line">					.cardify(isFaceUp: card.isFaceUp)</span><br><span class="line">					.transition(.scale)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="type">Color</span>.clear</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Demo-matchedGeometryEffect"><a href="#4-Demo-matchedGeometryEffect" class="headerlink" title="4. Demo: matchedGeometryEffect"></a>4. Demo: matchedGeometryEffect</h2><blockquote>
+<p><strong>dealing our cards out</strong></p>
+</blockquote>
+<p>怎么发牌？我们需要首先让卡牌的容器视图 <code>Aspect</code> 出现在屏幕中，当卡牌容器一出现则开始发牌。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">	<span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">	        <span class="type">AspectVGrid</span>(items: viewModel.cards, aspectRatio: aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">	            <span class="keyword">if</span> isDealt(card)&#123;</span><br><span class="line">	                <span class="type">CardView</span>(card)</span><br><span class="line">	                    .aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">	                    .padding(<span class="number">8</span>)</span><br><span class="line">	                    .overlay(<span class="type">FlyingNumber</span>(number: scoreChange(causedBy: card)))</span><br><span class="line">	                    .zIndex(scoreChange(causedBy: card) <span class="operator">!=</span> <span class="number">0</span> <span class="operator">?</span> <span class="number">100</span> : <span class="number">0</span>)</span><br><span class="line">	                    .onTapGesture &#123;</span><br><span class="line">	                        choose(card)</span><br><span class="line">	                    &#125;</span><br><span class="line">	                    .transition(.offset(</span><br><span class="line">	                    	x: <span class="type">CGFloat</span>.random(in: <span class="operator">-</span><span class="number">1000</span><span class="operator">...</span><span class="number">1000</span>),</span><br><span class="line">	                    	y: <span class="type">CGFloat</span>.random(in: <span class="operator">-</span><span class="number">1000</span><span class="operator">...</span><span class="number">1000</span>)</span><br><span class="line">	                    ))</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	        .onAppear&#123;</span><br><span class="line">	            <span class="comment">// deal the cards</span></span><br><span class="line">	            withAnimation(.easeInOut(duration: <span class="number">2</span>)) &#123;</span><br><span class="line">	                <span class="keyword">for</span> card <span class="keyword">in</span> viewModel.cards &#123;</span><br><span class="line">	                    dealt.insert(card.id)</span><br><span class="line">	                &#125;</span><br><span class="line">	            &#125;</span><br><span class="line">	        &#125;</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    <span class="meta">@State</span> <span class="keyword">private</span> <span class="keyword">var</span> dealt <span class="operator">=</span> <span class="type">Set</span>&lt;<span class="type">Card</span>.<span class="type">ID</span>&gt;()</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">isDealt</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">	        dealt.contains(card.id)</span><br><span class="line">	    &#125;</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">private</span> <span class="keyword">var</span> undealtCards: [<span class="type">Card</span>] &#123;</span><br><span class="line">	        viewModel.cards.filter&#123;<span class="operator">!</span>isDealt(<span class="variable">$0</span>)&#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>由于发牌这一动画只与 UI 有关，与 model 和 viewModel 都无关，所以可以创建一个私有的 <code>@State</code> 变量 <code>dealt</code> 来管理发牌的状态。</li>
+<li>我们创建一个函数 <code>isDealt</code> 来判断卡片是否发牌，<code>undealtCards</code> 用于获取未发牌的卡片。</li>
+<li>为卡片的出现添加 transition（从随机位置飞至卡片位置）</li>
+<li>卡片容器视图中只出现发牌状态为 <code>true</code> 的卡片。</li>
+</ul>
+<p>使用预览无法观察 <code>onAppear</code> 的效果，这里需要使用模拟器进行观察。</p>
+<p>我们希望卡片不是直接呈现在屏幕上，而是通过点击某一个地方，开始随机发牌。创建一个 <code>deck</code> 用于触发发牌事件。并将 <code>cards.onAppear()</code> 中的动作放置在 <code>deck.onTapGesture()</code> 中。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            cards.foregroundColor(viewModel.color)</span><br><span class="line">            <span class="type">HStack</span> &#123;</span><br><span class="line">                score</span><br><span class="line">                <span class="type">Spacer</span>()</span><br><span class="line">                deck</span><br><span class="line">                <span class="type">Spacer</span>()</span><br><span class="line">                shuffle</span><br><span class="line">            &#125;</span><br><span class="line">            .font(.largeTitle)</span><br><span class="line">        &#125;</span><br><span class="line">        .padding()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AspectVGrid</span>(items: viewModel.cards, aspectRatio: aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">if</span> isDealt(card)&#123;</span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">                    .aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">                    .padding(<span class="number">8</span>)</span><br><span class="line">                    .overlay(<span class="type">FlyingNumber</span>(number: scoreChange(causedBy: card)))</span><br><span class="line">                    .zIndex(scoreChange(causedBy: card) <span class="operator">!=</span> <span class="number">0</span> <span class="operator">?</span> <span class="number">100</span> : <span class="number">0</span>)</span><br><span class="line">                    .onTapGesture &#123;</span><br><span class="line">                        choose(card)</span><br><span class="line">                    &#125;</span><br><span class="line">                    .transition(.offset(</span><br><span class="line">                        x: <span class="type">CGFloat</span>.random(in: <span class="operator">-</span><span class="number">1000</span><span class="operator">...</span><span class="number">1000</span>),</span><br><span class="line">                        y: <span class="type">CGFloat</span>.random(in: <span class="operator">-</span><span class="number">1000</span><span class="operator">...</span><span class="number">1000</span>)</span><br><span class="line">                    ))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> deck: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="type">ForEach</span>(undealtCards) &#123; card <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .frame(width: deckWidth, height: deckWidth <span class="operator">/</span> aspectRatio)</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">            <span class="comment">// deal the cards</span></span><br><span class="line">            withAnimation(.easeInOut(duration: <span class="number">2</span>)) &#123;</span><br><span class="line">                <span class="keyword">for</span> card <span class="keyword">in</span> viewModel.cards &#123;</span><br><span class="line">                    dealt.insert(card.id)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> deckWidth: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">50</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-1-matchedGeometryEffect"><a href="#4-1-matchedGeometryEffect" class="headerlink" title="4.1 matchedGeometryEffect"></a>4.1 <code>matchedGeometryEffect</code></h3><p>我们想要卡片从 <code>deck</code> 消失后，出现在 <code>AspectVGrid</code> 中。通过在 <code>deck</code> 和 <code>AspectVGrid</code> 两个地方添加 <code>matchedGeometryEffect</code> 来实现这个动画。</p>
+<p>在发牌的过程中，我们发现卡片在发出时为黑色的，我们不希望它是黑色的。当我们不希望出现某个动画时。</p>
+<p>这里使用 <code>.transition(.asymmetric(insertion: .identity, removal: .identity) </code> 来清楚消失和出现时的动画效果，其中：</p>
+<ul>
+<li><code>.asymmetric</code> 表示插入和移除的动画效果不同。</li>
+<li><code>insertion: .identity</code> 表示插入时没有额外的动画效果（即视图将立即出现在屏幕上）。</li>
+<li><code>removal: .identity</code> 意味着在移除时同样没有任何动画效果。</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> SwiftUI</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">AspectVGrid</span>(items: viewModel.cards, aspectRatio: aspectRatio) &#123; card <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">if</span> isDealt(card)&#123;</span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)</span><br><span class="line">                    .transition(.asymmetric(insertion: .identity, removal: .identity))</span><br><span class="line">                    .aspectRatio(aspectRatio, contentMode: .fit)</span><br><span class="line">                    .padding(<span class="number">8</span>)</span><br><span class="line">                    .overlay(<span class="type">FlyingNumber</span>(number: scoreChange(causedBy: card)))</span><br><span class="line">                    .zIndex(scoreChange(causedBy: card) <span class="operator">!=</span> <span class="number">0</span> <span class="operator">?</span> <span class="number">100</span> : <span class="number">0</span>)</span><br><span class="line">                    .onTapGesture &#123;</span><br><span class="line">                        choose(card)</span><br><span class="line">                    &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Namespace</span> <span class="keyword">private</span> <span class="keyword">var</span> dealingNamespace</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> deck: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="type">ForEach</span>(undealtCards) &#123; card <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)</span><br><span class="line">                    .transition(.asymmetric(insertion: .identity, removal: .identity))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .frame(width: deckWidth, height: deckWidth <span class="operator">/</span> aspectRatio)</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">            <span class="comment">// deal the cards</span></span><br><span class="line">            withAnimation(.easeInOut(duration: <span class="number">2</span>)) &#123;</span><br><span class="line">                <span class="keyword">for</span> card <span class="keyword">in</span> viewModel.cards &#123;</span><br><span class="line">                    dealt.insert(card.id)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> deckWidth: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">50</span></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通常在发牌时，不会一次性发出，因此我们为发牌添加一些延迟。每一张牌间隔 0.15 s 发出。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> deck: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="type">ForEach</span>(undealtCards) &#123; card <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .frame(width: deckWidth, height: deckWidth <span class="operator">/</span> aspectRatio)</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">            <span class="comment">// deal the cards</span></span><br><span class="line">            <span class="keyword">var</span> delay :<span class="type">TimeInterval</span> <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> card <span class="keyword">in</span> viewModel.cards &#123;</span><br><span class="line">            	withAnimation(.easeInOut(duration: <span class="number">1</span>).delay(delay)) &#123;</span><br><span class="line">                    <span class="keyword">_</span> <span class="operator">=</span> dealt.insert(card.id)</span><br><span class="line">                &#125;</span><br><span class="line">                delay <span class="operator">+=</span> <span class="number">0.15</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> deckWidth: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">50</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-代码优化"><a href="#4-2-代码优化" class="headerlink" title="4.2 代码优化"></a>4.2 代码优化</h3><p>提取 constants 变量和动画效果，<code>onTapGesture</code> 交互动作。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="keyword">typealias</span> <span class="type">Card</span> <span class="operator">=</span> <span class="type">MemoryGame</span>&lt;<span class="type">String</span>&gt;.<span class="type">Card</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@ObservedObject</span> <span class="keyword">var</span> viewModel: <span class="type">EmojiMemoryGame</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> aspectRatio: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">2</span> <span class="operator">/</span> <span class="number">3</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> spacing: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">4</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> delayInterval <span class="operator">=</span> <span class="number">0.15</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> deckWidth: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">50</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> dealAnimation: <span class="type">Animation</span> <span class="operator">=</span> .easeInOut(duration: <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Namespace</span> <span class="keyword">private</span> <span class="keyword">var</span> dealingNamespace</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> deck: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="type">ForEach</span>(undealtCards) &#123; card <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)</span><br><span class="line">                    .transition(.asymmetric(insertion: .identity, removal: .identity))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .frame(width: deckWidth, height: deckWidth <span class="operator">/</span> aspectRatio)</span><br><span class="line">        .onTapGesture &#123;</span><br><span class="line">            deal()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">deal</span>() &#123;</span><br><span class="line">        <span class="keyword">var</span> delay: <span class="type">TimeInterval</span> <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> card <span class="keyword">in</span> viewModel.cards &#123;</span><br><span class="line">            withAnimation(dealAnimation.delay(delay)) &#123;</span><br><span class="line">                <span class="keyword">_</span> <span class="operator">=</span> dealt.insert(card.id)</span><br><span class="line">            &#125;</span><br><span class="line">            delay <span class="operator">+=</span> <span class="number">0.15</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Serein 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Serein 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/01/20/Stanford-cs193p-08%EF%BD%9CAnimation/" rel="prev" title="Stanford-cs193p-08｜Animation">
+      <i class="fa fa-chevron-left"></i> Stanford-cs193p-08｜Animation
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/01/24/Stanford-cs193p-10%EF%BD%9CEmojiArt/" rel="next" title="Stanford-cs193p-10｜EmojiArt">
+      Stanford-cs193p-10｜EmojiArt <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Demo-onAppear-animation"><span class="nav-text">1. Demo: onAppear animation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-tuple-%E8%A7%A3%E6%9E%84"><span class="nav-text">1.1 tuple 解构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-number-sign-startegy-always"><span class="nav-text">1.2 .number.sign(startegy:.always())</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-offset%E3%80%81onAppear%E3%80%81onDisappear"><span class="nav-text">1.3 offset、onAppear、onDisappear</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-zIndex"><span class="nav-text">1.4 zIndex</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Demo-TimelineView"><span class="nav-text">2. Demo: TimelineView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-TimelineView"><span class="nav-text">2.1 TimelineView</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Demo-transitions"><span class="nav-text">3. Demo: transitions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Color-clear-%E3%80%81transition"><span class="nav-text">3.1 Color.clear 、transition</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Demo-matchedGeometryEffect"><span class="nav-text">4. Demo: matchedGeometryEffect</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-matchedGeometryEffect"><span class="nav-text">4.1 matchedGeometryEffect</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="nav-text">4.2 代码优化</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Serein"
+      src="/uploads/avatar.JPEG">
+  <p class="site-author-name" itemprop="name">Serein</p>
+  <div class="site-description" itemprop="description">Crazy learning, crazy sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Aricyq0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Aricyq0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ari.cyq@gmail.com" title="E-Mail → mailto:ari.cyq@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Serein</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">122k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:51</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

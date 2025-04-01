@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aricyq0.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文是斯坦福大学 cs193p 公开课程第 05 集的相关笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stanford cs193p 05 | Protocol Enum Optional">
+<meta property="og:url" content="https://aricyq0.github.io/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/index.html">
+<meta property="og:site_name" content="Serein">
+<meta property="og:description" content="本文是斯坦福大学 cs193p 公开课程第 05 集的相关笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aricyq0.github.io/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/cs193p05-1.png">
+<meta property="og:image" content="https://aricyq0.github.io/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/cs193p05-2.jpg">
+<meta property="article:published_time" content="2024-12-20T01:42:27.000Z">
+<meta property="article:modified_time" content="2025-04-01T04:04:50.197Z">
+<meta property="article:author" content="Serein">
+<meta property="article:tag" content="cs193p">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aricyq0.github.io/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/cs193p05-1.png">
+
+<link rel="canonical" href="https://aricyq0.github.io/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Stanford cs193p 05 | Protocol Enum Optional | Serein</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Serein</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/aricyq0" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aricyq0.github.io/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.JPEG">
+      <meta itemprop="name" content="Serein">
+      <meta itemprop="description" content="Crazy learning, crazy sharing.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Serein">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Stanford cs193p 05 | Protocol Enum Optional
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-20 09:42:27" itemprop="dateCreated datePublished" datetime="2024-12-20T09:42:27+08:00">2024-12-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-04-01 12:04:50" itemprop="dateModified" datetime="2025-04-01T12:04:50+08:00">2025-04-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/code/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文是斯坦福大学 cs193p 公开课程第 05 集的相关笔记。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>本文主要内容转载于：<a target="_blank" rel="noopener" href="https://nwdan.com/my-learning/stanford-cs193p-5.html">闻者通达的个人博客</a></p>
+</blockquote>
+<p>cs193p 课程介绍:</p>
+<blockquote>
+<p>The lectures for the Spring 2023 version of Stanford University’s course CS193p (Developing Applications for iOS using SwiftUI) were given in person but, unfortunately, were not video recorded. However, we did capture the laptop screen of the presentations and demos as well as the associated audio. You can watch these screen captures using the links below. You’ll also find links to supporting material that was distributed to students during the quarter (homework, demo code, etc.).</p>
+</blockquote>
+<p>cs193p 课程网址: <a target="_blank" rel="noopener" href="https://cs193p.sites.stanford.edu/2023">https://cs193p.sites.stanford.edu/2023</a></p>
+<hr>
+<h2 id="1-Equatable-Protocol"><a href="#1-Equatable-Protocol" class="headerlink" title="1. Equatable Protocol"></a>1. Equatable Protocol</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EmojiMemoryGameView</span>: <span class="title class_ inherited__">View</span> &#123;</span><br><span class="line">    <span class="meta">@ObservedObject</span> <span class="keyword">var</span> viewModel: <span class="type">EmojiMemoryGame</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">VStack</span> &#123;</span><br><span class="line">            <span class="type">ScrollView</span> &#123;</span><br><span class="line">                cards</span><br><span class="line">                    .animation(.default, value: )</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">Button</span>(<span class="string">&quot;Shuffle&quot;</span>) &#123;</span><br><span class="line">                viewModel.shuffle()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .padding()</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过添加 <code>.animation</code> 视图修饰符来制作动画。<code>value</code> 表示它只会在此值更改时进行动画处理。</p>
+<p>但是，这会导致错误 “Referencing instance method ‘animation(:value:)’ on ‘Array’ requires that ‘MemoryGame&lt;String&gt;.Card’ conform to ‘Equatable’”。这表明，如果某些内容发生更改，动画将复制该更改。当某些内容也发生变化时，它需要另一个副本。仅当两个副本不相等时，动画才会进行动画处理。因此，我们需要使 <code>Card</code> 遵循 <code>Equatable</code> 协议（protocol）。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Card</span>: <span class="title class_ inherited__">Equatable</span> &#123;</span><br><span class="line">    	<span class="comment">// 为了实现 Equatable 协议，此处需要编写一个静态函数如下：</span></span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">func</span> <span class="title function_">==</span> (<span class="params">lhs</span>: <span class="type">Card</span>, <span class="params">rhs</span>: <span class="type">Card</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> lhs.isFaceUp <span class="operator">==</span> rhs.isFaceUp <span class="operator">&amp;&amp;</span></span><br><span class="line">            lhs.isMatched <span class="operator">==</span> rhs.isMatched <span class="operator">&amp;&amp;</span></span><br><span class="line">            lhs.content <span class="operator">==</span> rhs.content</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">var</span> isMatched <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">let</span> content: <span class="type">CardContent</span></span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>为了实现 <code>Equatable</code> 协议，我们需要编写一个静态函数，该函数接受一个函数并返回一个 <code>Bool</code>。该函数需要两个参数，一个左侧 <code>Card</code> 和一个右侧 <code>Card</code>。</p>
+<p>但是，错误信息 <code>“Referencing operator function &#39;==&#39; on &#39;Equatable&#39; requires that &#39;CardContent&#39; conform to &#39;Equatable&#39;”</code> 表示我们需要使 <code>CardContent</code> 相等。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MemoryGame</span>&lt;<span class="type">CardContent</span>&gt; <span class="keyword">where</span> <span class="type">CardContent</span>: <span class="type">Equatable</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">    <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Card</span>: <span class="title class_ inherited__">Equatable</span> &#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">func</span> <span class="title function_">==</span> (<span class="params">lhs</span>: <span class="type">Card</span>, <span class="params">rhs</span>: <span class="type">Card</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> lhs.isFaceUp <span class="operator">==</span> rhs.isFaceUp <span class="operator">&amp;&amp;</span></span><br><span class="line">            lhs.isMatched <span class="operator">==</span> rhs.isMatched <span class="operator">&amp;&amp;</span></span><br><span class="line">            lhs.content <span class="operator">==</span> rhs.content</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">var</span> isMatched <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">let</span> content: <span class="type">CardContent</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了使我们的 <code>CardContent</code> 相等，我们使用 <code>where CardContent: Equatable</code> 来实现它。这意味着，我们对 <code>Card</code> 还是有所限制的。另外，Swift 中另一个很酷的特性是，如果我们像上面这样对 <code>CardContent</code> 比较每件事，我们就可以直接删除之前在 <code>Card</code> 结构体中添加的静态函数。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MemoryGame</span>&lt;<span class="type">CardContent</span>&gt; <span class="keyword">where</span> <span class="type">CardContent</span>: <span class="type">Equatable</span> &#123;</span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">      <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Card</span>: <span class="title class_ inherited__">Equatable</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">var</span> isMatched <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">let</span> content: <span class="type">CardContent</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它确实有效，但卡片的动画效果为淡入淡出，看起来不像洗牌。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">85</span>), spacing: <span class="number">0</span>)], spacing: <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">ForEach</span>(viewModel.cards.indices, id: \.<span class="keyword">self</span>) &#123; index <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(viewModel.cards[index])</span><br><span class="line">                    .aspectRatio(<span class="number">2</span><span class="operator">/</span><span class="number">3</span>, contentMode: .fit)</span><br><span class="line">                    .padding(<span class="number">4</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .foregroundColor(.orange)</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>因为我们的 ForEach 迭代数组的索引。它从卡 0、1、2、3 …并为每个 API 创建 Card 视图。例如，当我们洗牌时，我们会将牌从 0 号移动到 7 号。但是 ForEach 仍然显示从 0、1、2…</p>
+<p>我们想要移动卡片本身，即 Card 视图。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">85</span>), spacing: <span class="number">0</span>)], spacing: <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">ForEach</span>(viewModel.cards, id: \.<span class="keyword">self</span>) &#123; card <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">                    .aspectRatio(<span class="number">2</span><span class="operator">/</span><span class="number">3</span>, contentMode: .fit)</span><br><span class="line">                    .padding(<span class="number">4</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .foregroundColor(.orange)</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们对 <code>ForEach</code> 做了一些改变。上面的代码将产生错误 <code>&quot;Referencing initializer &#39;init(\_:id:content:)&#39; on &#39;ForEach&#39; requires that &#39;MemoryGame\\&lt;String\\&gt;.Card&#39; conform to &#39;Hashable&#39;&quot;</code>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">85</span>), spacing: <span class="number">0</span>)], spacing: <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">ForEach</span>(viewModel.cards) &#123; card <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">                    .aspectRatio(<span class="number">2</span><span class="operator">/</span><span class="number">3</span>, contentMode: .fit)</span><br><span class="line">                    .padding(<span class="number">4</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .foregroundColor(.orange)</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>现在，是时候谈谈 <code>id: \.self</code> 了，用来识别这些 <code>cards</code>。</p>
+<p>在这里，我们想让 <code>id</code> 唯一，即对某张 <code>Card</code> 具有唯一 <code>id</code> 且不会变化，但通过 <code>id:\.self</code> 无法实现，因为 <code>Card</code> 包括 <code>isFaceUp</code> 、<code>isMatch</code> 属性，当我们单击卡片时，这些属性会发生变化，<code>id</code> 就会发生变化。</p>
+<p>我们需要一些其他东西来识别 <code>Card</code>。</p>
+<h2 id="2-Identifiable-Protocol"><a href="#2-Identifiable-Protocol" class="headerlink" title="2. Identifiable Protocol"></a>2. Identifiable Protocol</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MemoryGame</span>&lt;<span class="type">CardContent</span>&gt; <span class="keyword">where</span> <span class="type">CardContent</span>: <span class="type">Equatable</span> &#123;</span><br><span class="line">    <span class="keyword">private(set)</span> <span class="keyword">var</span> cards: <span class="type">Array</span>&lt;<span class="type">Card</span>&gt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">init</span>(<span class="params">numberOfPairsOfCards</span>: <span class="type">Int</span>, <span class="params">cardContentFactory</span>: (<span class="type">Int</span>) -&gt; <span class="type">CardContent</span>) &#123;</span><br><span class="line">        cards <span class="operator">=</span> []</span><br><span class="line">        <span class="comment">// add numberOfParisOfCards x 2 cards</span></span><br><span class="line">        <span class="keyword">for</span> pairIndex <span class="keyword">in</span> <span class="number">0</span><span class="operator">..&lt;</span><span class="built_in">max</span>(<span class="number">2</span>, numberOfPairsOfCards) &#123;</span><br><span class="line">            <span class="keyword">let</span> content <span class="operator">=</span> cardContentFactory(pairIndex)</span><br><span class="line">            cards.append(<span class="type">Card</span>(content: content, id: <span class="string">&quot;<span class="subst">\(pairIndex<span class="operator">+</span><span class="number">1</span>)</span>a&quot;</span>))</span><br><span class="line">            cards.append(<span class="type">Card</span>(content: content, id: <span class="string">&quot;<span class="subst">\(pairIndex<span class="operator">+</span><span class="number">1</span>)</span>b&quot;</span>))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">      <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Card</span>: <span class="title class_ inherited__">Equatable</span>, <span class="title class_ inherited__">Identifiable</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">var</span> isMatched <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">let</span> content: <span class="type">CardContent</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> id: <span class="type">String</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们添加了一个键入为 String 的 id，并在创建新卡时分配该 id。id 看起来像 1a、1b、2a、2b、3a、3b 等……</p>
+<h2 id="3-CustomDebugStringConvertible"><a href="#3-CustomDebugStringConvertible" class="headerlink" title="3. CustomDebugStringConvertible"></a>3. CustomDebugStringConvertible</h2><p><img src="/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/cs193p05-1.png"></p>
+<p>我们当前的印刷信息相当复杂。所以，我们可以让它变得更好。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Card</span>: <span class="title class_ inherited__">Equatable</span>, <span class="title class_ inherited__">Identifiable</span>, <span class="title class_ inherited__">CustomDebugStringConvertible</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">var</span> isMatched <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">let</span> content: <span class="type">CardContent</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> id: <span class="type">String</span></span><br><span class="line">        <span class="keyword">var</span> debugDescription: <span class="type">String</span> &#123;</span><br><span class="line">            <span class="string">&quot;<span class="subst">\(id)</span>: <span class="subst">\(content)</span> <span class="subst">\(isFaceUp <span class="operator">?</span> <span class="string">&quot;up&quot;</span> : <span class="string">&quot;down&quot;</span>)</span> <span class="subst">\(isMatched <span class="operator">?</span> <span class="string">&quot;matched&quot;</span>: <span class="string">&quot;&quot;</span>)</span>&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们为 Card 实施 <code>CustomDebugStringConvertible</code> protocol 协议，并定义 debugDescription。</p>
+<p>现在，它变得更简洁了。</p>
+<p><img src="/2024/12/20/Stanford-cs193p-05%EF%BD%9CProtocol-Enum-Optional/cs193p05-2.jpg"></p>
+<h2 id="4-ViewModel-Intent-Part-1：翻转卡片"><a href="#4-ViewModel-Intent-Part-1：翻转卡片" class="headerlink" title="4. ViewModel Intent - Part 1：翻转卡片"></a>4. ViewModel Intent - Part 1：翻转卡片</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> cards: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">LazyVGrid</span>(columns: [<span class="type">GridItem</span>(.adaptive(minimum: <span class="number">85</span>), spacing: <span class="number">0</span>)], spacing: <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="type">ForEach</span>(viewModel.cards) &#123; card <span class="keyword">in</span></span><br><span class="line">                <span class="type">CardView</span>(card)</span><br><span class="line">                    .aspectRatio(<span class="number">2</span><span class="operator">/</span><span class="number">3</span>, contentMode: .fit)</span><br><span class="line">                    .padding(<span class="number">4</span>)</span><br><span class="line">                    .onTapGesture &#123;</span><br><span class="line">                        viewModel.choose(card)</span><br><span class="line">                    &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        .foregroundColor(.orange)</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) &#123;</span><br><span class="line">        card.isFaceUp.toggle()</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>现在，我们开始实现用户的意图（翻转卡片）。</p>
+<p>我们可以使用 <code>.onTapGesture</code> 和 <code>.toggle()</code> 来在用户触摸屏幕时翻转卡片。但是，由于卡片是值类型，当 choose 函数获取卡片的副本时，我们无法直接使用 <code>.toggle()</code> 来翻转它。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> chosenIndex <span class="operator">=</span> index(of: card)</span><br><span class="line">        cards[chosenIndex].isFaceUp.toggle()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">index</span>(<span class="params">of</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="type">Int</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> index <span class="keyword">in</span> cards.indices &#123;</span><br><span class="line">            <span class="keyword">if</span> cards[index].id <span class="operator">==</span> card.id &#123;</span><br><span class="line">                <span class="keyword">return</span> index</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span> <span class="comment">// <span class="doctag">FIXME:</span> bogus!</span></span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们将直接使用卡片的索引来修改卡片数组。我们实现了一个名为 index 的函数，用于查找卡片的索引。</p>
+<p>目前，如果找不到卡片，我们将返回索引为 0 的卡片，也就是我们的第一张卡片。</p>
+<p>在这之前，需要先了解一下枚举（enum）。</p>
+<h2 id="5-Enum"><a href="#5-Enum" class="headerlink" title="5. Enum"></a>5. Enum</h2><h3 id="5-1-Enum-简介"><a href="#5-1-Enum-简介" class="headerlink" title="5.1 Enum 简介"></a>5.1 Enum 简介</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">FastFoodMenuItem</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> hamburger</span><br><span class="line">	<span class="keyword">case</span> fries</span><br><span class="line">	<span class="keyword">case</span> drink</span><br><span class="line">	<span class="keyword">case</span> cookie</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong><code>Enum</code> 是除了 <code>struct</code> 和 <code>class</code> 以外的另一种数据结构。</strong></p>
+</li>
+<li><p>它只能包含离散的状态。</p>
+</li>
+<li><p>枚举是一种值类型（如 <code>struct</code>），因此它会在传递时被复制。</p>
+</li>
+<li><p>每个状态都可以(但不是必须) 有自己的“关联数据”</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">FastFoodMenuItem</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> hamburger(numberOfPatties: <span class="type">Int</span>)</span><br><span class="line">  	<span class="keyword">case</span> fries(size: <span class="type">FryOrderSize</span>)</span><br><span class="line">  	<span class="keyword">case</span> drink(<span class="type">String</span>, ounces: <span class="type">Int</span>) <span class="comment">// the unnamed String is the brand, e.g. &quot;Coke&quot;</span></span><br><span class="line">  	<span class="keyword">case</span> cookie</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>请注意，饮料案例有 2 条关联数据（其中一条是“未命名的”）<br>在上面的示例中， <code>FryOrderSize</code> 也可能是一个枚举，例如 …</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">FryOrderSize</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> large</span><br><span class="line">  <span class="keyword">case</span> small</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="5-2-设置枚举的值"><a href="#5-2-设置枚举的值" class="headerlink" title="5.2 设置枚举的值"></a>5.2 设置枚举的值</h3><p>设置枚举的值时，如果有关联数据，必须提供关联的数据值。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> menuItem: <span class="type">FastFoodMenuItem</span> <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.hamburger(patties: <span class="number">2</span>)</span><br><span class="line"><span class="keyword">var</span> otherItem: <span class="type">FastFoodMenuItem</span> <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.cookie</span><br></pre></td></tr></table></figure>
+
+<p>Swift 可以在赋值左侧或另一侧推断类型，但不能同时。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> menuItem <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.hamburger(patties: <span class="number">2</span>)</span><br><span class="line"><span class="keyword">var</span> otherItem: <span class="type">FastFoodMenuItem</span> <span class="operator">=</span> .cookie</span><br><span class="line"></span><br><span class="line"><span class="comment">// Swift can&#x27;t figure this out</span></span><br><span class="line"><span class="keyword">var</span> yetAnotherItem <span class="operator">=</span> .cookie</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-检查枚举的状态"><a href="#5-3-检查枚举的状态" class="headerlink" title="5.3 检查枚举的状态"></a>5.3 检查枚举的状态</h3><p>通常使用 <code>switch</code> 来检查枚举的状态，尽管我们可以使用 <code>if</code> 语句，但如果有关联数据，则这种情况不常见。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> menuItem <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.hamburger(patties: <span class="number">2</span>)</span><br><span class="line"><span class="keyword">switch</span> menuItem &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">FastFoodMenuItem</span>.hamburger: <span class="built_in">print</span>(<span class="string">&quot;burger&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> <span class="type">FastFoodMenuItem</span>.fries: <span class="built_in">print</span>(<span class="string">&quot;fries&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> <span class="type">FastFoodMenuItem</span>.drink: <span class="built_in">print</span>(<span class="string">&quot;drink&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> <span class="type">FastFoodMenuItem</span>.cookie: <span class="built_in">print</span>(<span class="string">&quot;cookie&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码将在控制台上打印 “burger”。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> menuItem <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.hamburger(patties: <span class="number">2</span>)</span><br><span class="line"><span class="keyword">switch</span> menuItem &#123;</span><br><span class="line">  <span class="keyword">case</span> .hamburger: <span class="built_in">print</span>(<span class="string">&quot;burger&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .fries: <span class="built_in">print</span>(<span class="string">&quot;fries&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .drink: <span class="built_in">print</span>(<span class="string">&quot;drink&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .cookie: <span class="built_in">print</span>(<span class="string">&quot;cookie&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有必要使用完全表示的 <code>FastFoodMenuItem.fries</code> （因为 Swift 可以推断出 <code>FastFoodMenuItem</code> ）</p>
+<h3 id="5-4-break"><a href="#5-4-break" class="headerlink" title="5.4 break"></a>5.4 <code>break</code></h3><p>如果您不想在给定的情况下执行任何操作，请使用 <code>break</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> menuItem <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.hamburger(patties: <span class="number">2</span>)</span><br><span class="line"><span class="keyword">switch</span> menuItem &#123;</span><br><span class="line">  <span class="keyword">case</span> .hamburger: <span class="keyword">break</span></span><br><span class="line">  <span class="keyword">case</span> .fries: <span class="built_in">print</span>(<span class="string">&quot;fries&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .drink: <span class="built_in">print</span>(<span class="string">&quot;drink&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .cookie: <span class="built_in">print</span>(<span class="string">&quot;cookie&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该代码不会在控制台上打印任何内容。</p>
+<h3 id="5-5-Default"><a href="#5-5-Default" class="headerlink" title="5.5 Default"></a>5.5 <code>Default</code></h3><p><code>switch</code> 必须处理所有可能的情况，因此通常使用 <code>default</code> 来管理不感兴趣的状态。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> menuItem <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.cookie</span><br><span class="line"><span class="keyword">switch</span> menuItem &#123;</span><br><span class="line">  <span class="keyword">case</span> .hamburger: <span class="keyword">break</span></span><br><span class="line">  <span class="keyword">case</span> .fries: <span class="built_in">print</span>(<span class="string">&quot;fries&quot;</span>)</span><br><span class="line">  <span class="keyword">default</span>: <span class="built_in">print</span>(<span class="string">&quot;other&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果 menuItem 是一个 cookie，则上面的代码将在控制台上打印 “other”。</p>
+<p>顺便说一句，你可以 <code>switch</code> 任何类型（不仅仅是 enum），例如 <code>string</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s: <span class="type">String</span> <span class="operator">=</span> <span class="string">&quot;hello&quot;</span></span><br><span class="line"><span class="keyword">switch</span> s &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;goodbye&quot;</span>: <span class="operator">...</span></span><br><span class="line">	<span class="keyword">case</span> <span class="string">&quot;hello&quot;</span>: <span class="operator">...</span></span><br><span class="line">  	<span class="keyword">default</span>: <span class="operator">...</span> <span class="comment">// gotta have this for String because switch has to cover ALL cases</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-6-允许多行"><a href="#5-6-允许多行" class="headerlink" title="5.6 允许多行"></a>5.6 允许多行</h3><p><code>switch</code> 中的每个 case 都可以是多行，并且不会落入下一个 case …</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> menuItem <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.fries(size: <span class="type">FryOrderSize</span>.large)</span><br><span class="line"><span class="keyword">switch</span> menuItem &#123;</span><br><span class="line">  <span class="keyword">case</span> .hamburger: <span class="built_in">print</span>(<span class="string">&quot;burger&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .fries:</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;yummy&quot;</span>)</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;fries&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .drink:</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&quot;drink&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .cookie: <span class="built_in">print</span>(<span class="string">&quot;cookie&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码会在控制台上打印 “yummy” 和 “fries”，而不是 “饮料”。</p>
+<p>如果您将关键字 <code>fallthrough</code> 放在某个 <code>case</code> 的最后一行，那么它将会继续执行下一个 <code>case</code>。</p>
+<p>关于关联数据，您可以通过 <code>switch</code> 语句访问这些数据，使用 <code>let</code>语法进行解构。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> menuItem <span class="operator">=</span> <span class="type">FastFoodMenuItem</span>.drink(<span class="string">&quot;Coke&quot;</span>, ounces: <span class="number">32</span>)</span><br><span class="line"><span class="keyword">switch</span> menuItem &#123;</span><br><span class="line">  <span class="keyword">case</span> .hamburger(<span class="keyword">let</span> pattyCount): <span class="built_in">print</span>(<span class="string">&quot;a burger with <span class="subst">\(pattyCount)</span> patties&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .fries(<span class="keyword">let</span> size): <span class="built_in">print</span>(<span class="string">&quot;a <span class="subst">\(size)</span> order of fries!&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .drink(<span class="keyword">let</span> brand, <span class="keyword">let</span> ounces): <span class="built_in">print</span>(<span class="string">&quot;a <span class="subst">\(ounces)</span>oz <span class="subst">\(brand)</span>&quot;</span>)</span><br><span class="line">  <span class="keyword">case</span> .cookie: <span class="built_in">print</span>(<span class="string">&quot;a cookie!&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>请注意，检索关联数据的局部变量可以具有不同的名称</p>
+<p>（例如 <code>pattyCount</code> 与 enum 声明中的 patties 的比较）</p>
+<p>（例如，上面的 <code>brand</code> 在枚举声明中甚至没有名称）</p>
+<h3 id="5-7-有-Method-，不能有存储属性"><a href="#5-7-有-Method-，不能有存储属性" class="headerlink" title="5.7 有 Method ，不能有存储属性"></a>5.7 有 <code>Method</code> ，不能有存储属性</h3><p>枚举可以有方法（和计算属性），但不能有存储属性。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">FastFoodMenuItem</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> hamburger(numberOfPatties: <span class="type">Int</span>)</span><br><span class="line">  <span class="keyword">case</span> fries(size: <span class="type">FryOrderSize</span>)</span><br><span class="line">  <span class="keyword">case</span> drink(<span class="type">String</span>, ounces: <span class="type">Int</span>)</span><br><span class="line">  <span class="keyword">case</span> cookie</span><br><span class="line"></span><br><span class="line">  <span class="keyword">func</span> <span class="title function_">isIncludedInSpecialOrder</span>(<span class="params">number</span>: <span class="type">Int</span>) -&gt; <span class="type">Bool</span> &#123; &#125;</span><br><span class="line">  <span class="keyword">var</span> colories: <span class="type">Int</span> &#123; <span class="comment">// switch on self and calculate caloric value here &#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>colories</code> 和 <code>isIncludedInSpecialOrder</code> 分别为计算属性和方法。</p>
+<p>枚举的状态仅取决于它所处的 <code>case</code> 以及该 <code>case</code> 的关联数据.</p>
+<p>在枚举自己的方法中，你可以使用 self …</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">FastFoodMenuItem</span> &#123;</span><br><span class="line">  <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">func</span> <span class="title function_">isIncludedInSpecialOrder</span>(<span class="params">number</span>: <span class="type">Int</span>) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line">    <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> .hamburger(<span class="keyword">let</span> pettyCount): <span class="keyword">return</span> pettyCount <span class="operator">==</span> number</span><br><span class="line">      <span class="keyword">case</span> .fries, .cookie: <span class="keyword">return</span> <span class="literal">true</span> <span class="comment">// a drink and cookie in every special order</span></span><br><span class="line">      <span class="keyword">case</span> .drink(<span class="keyword">_</span>, <span class="keyword">let</span> ounces): <span class="keyword">return</span> ounces <span class="operator">==</span> <span class="number">16</span> <span class="comment">// &amp; 16oz drink of any kind</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-8-获取枚举的所有成员"><a href="#5-8-获取枚举的所有成员" class="headerlink" title="5.8 获取枚举的所有成员"></a>5.8 获取枚举的所有成员</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">TeslaModel</span>: <span class="title class_ inherited__">CaseIterable</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">X</span></span><br><span class="line">  <span class="keyword">case</span> <span class="type">S</span></span><br><span class="line">  <span class="keyword">case</span> <span class="type">Three</span></span><br><span class="line">  <span class="keyword">case</span> <span class="type">Y</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，这个枚举将有一个静态变量 <code>.allCases</code>，可以迭代。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> model <span class="keyword">in</span> <span class="type">TestlaModel</span>.allCases &#123;</span><br><span class="line">  reportSalesNumbers(for: model)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">func</span> <span class="title function_">reportSalesNumbers</span>(<span class="params">for</span> <span class="params">model</span>: <span class="type">TeslaModel</span>) &#123;</span><br><span class="line">  <span class="keyword">switch</span> model &#123; <span class="operator">...</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-optional"><a href="#6-optional" class="headerlink" title="6. optional"></a>6. <code>optional</code></h3><p><strong>optional 是一个枚举</strong>。它看起来像这样：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Optional</span>&lt;<span class="type">T</span>&gt; &#123; <span class="comment">// a generic type</span></span><br><span class="line">  <span class="keyword">case</span> none</span><br><span class="line">  <span class="keyword">case</span> <span class="keyword">some</span>(<span class="type">T</span>) <span class="comment">// the some case has associated value of type T</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>你可以看到它只能有两种值： 已设置值的 case （<code>some</code>） 或未设置值的 case（<code>none</code>）。在已设置的 case 中，它可以有一些关联值，它们是“generic type” <code>T</code> 。</p>
+<p>我们在哪些地方使用 Optional？我们可能有一个值，它有时可以是“未设置”、“未指定”或“未确定”的。这种情况经常发生。这就是 Swift 引入许多“语法糖”的原因，以便于使用可选值（Optionals）。</p>
+<h3 id="6-1-optional-声明"><a href="#6-1-optional-声明" class="headerlink" title="6.1 optional 声明"></a>6.1 optional 声明</h3><p><strong>声明</strong>一个类型为 <code>Optional&lt;T&gt;</code> 的变量可以使用语法 <code>T?</code>。然后，您可以将其赋值为 <code>nil</code>（Optional.none），或者可以将其赋值为类型 <code>T</code> 的某个值（<code>Optional.some</code>，并使得 <code>关联值 = 该值</code>）。</p>
+<p>请注意，可选值总是隐式地以 <code>nil</code> 开始。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> hello: <span class="type">String</span>?             <span class="keyword">var</span> hello: <span class="type">Optional</span>&lt;<span class="type">String</span>&gt; <span class="operator">=</span> .none</span><br><span class="line"><span class="keyword">var</span> hello: <span class="type">String</span>? <span class="operator">=</span> <span class="string">&quot;hello&quot;</span>   <span class="keyword">var</span> hello: <span class="type">Optional</span>&lt;<span class="type">String</span>&gt; <span class="operator">=</span> .some(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line"><span class="keyword">var</span> hello: <span class="type">String</span>? <span class="operator">=</span> <span class="literal">nil</span>       <span class="keyword">var</span> hello: <span class="type">Optional</span>&lt;<span class="type">String</span>&gt; <span class="operator">=</span> .none</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-optional-访问值"><a href="#6-2-optional-访问值" class="headerlink" title="6.2 optional 访问值"></a>6.2 optional 访问值</h3><ol>
+<li>你可以通过 <code>!</code> 强制访问关联值。</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> hello: <span class="type">String</span>? <span class="operator">=</span> <span class="operator">...</span></span><br><span class="line"><span class="built_in">print</span>(hello<span class="operator">!</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> hello &#123;</span><br><span class="line">  <span class="keyword">case</span> .none: <span class="comment">// raise an exception (crash)</span></span><br><span class="line">  <span class="keyword">case</span> .some(<span class="keyword">let</span> data): <span class="built_in">print</span>(data)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>或者“安全地”使用 <code>if let</code> 然后使用 <code>&#123; &#125;</code> 中安全获取的关联值。</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> safehello <span class="operator">=</span> hello &#123;</span><br><span class="line">  <span class="built_in">print</span>(safehello)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// do something else</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> hello &#123;</span><br><span class="line">  <span class="keyword">case</span> .none: <span class="comment">// raise an exception (crash)</span></span><br><span class="line">  <span class="keyword">case</span> .some(<span class="keyword">let</span> safehello): <span class="built_in">print</span>(safehello)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>您也可以使用较短的版本，同 <code>2</code>。</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> hello &#123;</span><br><span class="line">  <span class="built_in">print</span>(hello)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// do something else</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>还有 <code>??</code> 它执行 “Optional defaulting”，被称为“nil-coalescng 运算符”。</li>
+</ol>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> hello: <span class="type">String</span>? <span class="operator">=</span> <span class="operator">...</span></span><br><span class="line"><span class="keyword">let</span> y <span class="operator">=</span> x <span class="operator">??</span> <span class="string">&quot;foo&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> hello &#123;</span><br><span class="line">  <span class="keyword">case</span> .none: y <span class="operator">=</span> <span class="string">&quot;foo&quot;</span></span><br><span class="line">  <span class="keyword">case</span> .some(<span class="keyword">let</span> data): y <span class="operator">=</span> data</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在回到 Code。</p>
+<h2 id="7-ViewModel-Intent-Part-2"><a href="#7-ViewModel-Intent-Part-2" class="headerlink" title="7. ViewModel Intent - Part 2"></a>7. ViewModel Intent - Part 2</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">index</span>(<span class="params">of</span> <span class="params">card</span>: <span class="type">Card</span>) -&gt; <span class="type">Int</span>? &#123;</span><br><span class="line">        <span class="keyword">for</span> index <span class="keyword">in</span> cards.indices &#123;</span><br><span class="line">            <span class="keyword">if</span> cards[index].id <span class="operator">==</span> card.id &#123;</span><br><span class="line">                <span class="keyword">return</span> index</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>让我们使用 Optional 修复虚假信息。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> chosenIndex <span class="operator">=</span> index(of: card) &#123;</span><br><span class="line">            cards[chosenIndex].isFaceUp.toggle()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们还需要更改 choose 函数，因为 <code>chosenIndex</code> 现在是 Optional 类型。我们可以通过使用 <code>!</code>，但如果 <code>index</code> 返回 <code>nil</code> 会报错。所以，我们使用 safe unwrap。</p>
+<h3 id="7-1-函数作为参数"><a href="#7-1-函数作为参数" class="headerlink" title="7.1 函数作为参数"></a>7.1 函数作为参数</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> chosenIndex <span class="operator">=</span> cards.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> card.id &#125;) &#123;</span><br><span class="line">            cards[chosenIndex].isFaceUp.toggle()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们不必自行实现函数 <code>index</code>。我们实际上可以找到 <code>chosenIndex</code>。</p>
+<h3 id="7-2-Flip-the-cards-down-when-NOT-matched"><a href="#7-2-Flip-the-cards-down-when-NOT-matched" class="headerlink" title="7.2 Flip the cards down when NOT matched"></a>7.2 Flip the cards down when NOT matched</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> indexOfTheOneAndOnlyFaceUpCard: <span class="type">Int</span>?</span><br><span class="line"></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> chosenIndex <span class="operator">=</span> cards.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> card.id &#125;) &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="operator">!</span>cards[chosenIndex].isFaceUp <span class="operator">&amp;&amp;</span> <span class="operator">!</span>cards[chosenIndex].isMatched &#123;</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">let</span> potentialMatchIndex <span class="operator">=</span> indexOfTheOneAndOnlyFaceUpCard &#123;</span><br><span class="line">                    <span class="comment">// Two Cards Face Up</span></span><br><span class="line">                    <span class="keyword">if</span> cards[chosenIndex].content <span class="operator">==</span> cards[potentialMatchIndex].content &#123;</span><br><span class="line">                        cards[chosenIndex].isMatched <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                        cards[potentialMatchIndex].isMatched <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    indexOfTheOneAndOnlyFaceUpCard <span class="operator">=</span> <span class="literal">nil</span></span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">for</span> index <span class="keyword">in</span> cards.indices &#123;</span><br><span class="line">                        cards[index].isFaceUp <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    indexOfTheOneAndOnlyFaceUpCard <span class="operator">=</span> chosenIndex</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            cards[chosenIndex].isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们的游戏逻辑现在看起来是正确的，但是我们需要在牌匹配时隐藏它们。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  EmojiMemoryGameView.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> body: <span class="keyword">some</span> <span class="type">View</span> &#123;</span><br><span class="line">        <span class="type">ZStack</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> base <span class="operator">=</span> <span class="type">RoundedRectangle</span>(cornerRadius: <span class="number">12</span>)</span><br><span class="line">            <span class="type">Group</span> &#123;</span><br><span class="line">                base.fill(.white)</span><br><span class="line">                base.strokeBorder(lineWidth: <span class="number">2</span>)</span><br><span class="line">                <span class="type">Text</span>(card.content)</span><br><span class="line">                    .font(.system(size: <span class="number">200</span>))</span><br><span class="line">                    .minimumScaleFactor(<span class="number">0.01</span>)</span><br><span class="line">                    .aspectRatio(<span class="number">1</span>, contentMode: .fit)</span><br><span class="line">            &#125;</span><br><span class="line">            .opacity(card.isFaceUp <span class="operator">?</span> <span class="number">1</span> : <span class="number">0</span>)</span><br><span class="line">            base.fill().opacity(card.isFaceUp <span class="operator">?</span> <span class="number">0</span> : <span class="number">1</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        .opacity(card.isFaceUp <span class="operator">||</span> <span class="operator">!</span>card.isMatched <span class="operator">?</span> <span class="number">1</span> : <span class="number">0</span>)</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>所以，我们回到我们的视图，让匹配的卡片不透明度为 0。</p>
+<p>我们的主要游戏逻辑现在应该可以工作了。</p>
+<h2 id="7-3-set-get-计算属性"><a href="#7-3-set-get-计算属性" class="headerlink" title="7.3 set+get 计算属性"></a>7.3 set+get 计算属性</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">        <span class="keyword">var</span> indexOfTheOneAndOnlyFaceUpCard: <span class="type">Int</span>? &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">var</span> faceUpCardIndices <span class="operator">=</span> [<span class="type">Int</span>]()</span><br><span class="line">            <span class="keyword">for</span> index <span class="keyword">in</span> cards.indices &#123;</span><br><span class="line">                <span class="keyword">if</span> cards[index].isFaceUp &#123;</span><br><span class="line">                    faceUpCardIndices.append(index)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> faceUpCardIndices.count <span class="operator">==</span> <span class="number">1</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> faceUpCardIndices.first</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> index <span class="keyword">in</span> cards.indices &#123;</span><br><span class="line">                <span class="keyword">if</span> index <span class="operator">==</span> newValue &#123;</span><br><span class="line">                    cards[index].isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    cards[index].isFaceUp <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过将 <code>indexOfTheOneAndOnlyFaceUpCard</code> 制作成一个计算属性来优化游戏逻辑。这个计算属性在被获取时将返回其他面朝上的卡片（或 nil）。当被设置（<code>indexOfTheOneAndOnlyFaceUpCard = something </code>）时，它将把传入的卡片设置为面朝上，所有其他卡片则面朝下。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">mutating</span> <span class="keyword">func</span> <span class="title function_">choose</span>(<span class="keyword">_</span> <span class="params">card</span>: <span class="type">Card</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> chosenIndex <span class="operator">=</span> cards.firstIndex(where: &#123; <span class="variable">$0</span>.id <span class="operator">==</span> card.id &#125;) &#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="operator">!</span>cards[chosenIndex].isFaceUp <span class="operator">&amp;&amp;</span> <span class="operator">!</span>cards[chosenIndex].isMatched &#123;</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">let</span> potentialMatchIndex <span class="operator">=</span> indexOfTheOneAndOnlyFaceUpCard &#123;</span><br><span class="line">                    <span class="comment">// Two Cards Face Up</span></span><br><span class="line">                    <span class="keyword">if</span> cards[chosenIndex].content <span class="operator">==</span> cards[potentialMatchIndex].content &#123;</span><br><span class="line">                        cards[chosenIndex].isMatched <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                        cards[potentialMatchIndex].isMatched <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    indexOfTheOneAndOnlyFaceUpCard <span class="operator">=</span> chosenIndex</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            cards[chosenIndex].isFaceUp <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>我们的计算属性已经实现了很多步骤，我们可以对 <code>choose</code> 函数进行简化。</p>
+<h3 id="7-4-choose-函数优化"><a href="#7-4-choose-函数优化" class="headerlink" title="7.4 choose 函数优化"></a>7.4 <code>choose</code> 函数优化</h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line">    <span class="keyword">var</span> indexOfTheOneAndOnlyFaceUpCard: <span class="type">Int</span>? &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> faceUpCardIndices <span class="operator">=</span> cards.indices.filter &#123; index <span class="keyword">in</span> cards[index].isFaceUp &#125;</span><br><span class="line">            <span class="keyword">return</span> faceUpCardIndices.count <span class="operator">==</span> <span class="number">1</span> <span class="operator">?</span> faceUpCardIndices.first : <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            cards.indices.forEach &#123; cards[<span class="variable">$0</span>].isFaceUp <span class="operator">=</span> (newValue <span class="operator">==</span> <span class="variable">$0</span>) &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="operator">...</span></span><br></pre></td></tr></table></figure>
+
+<p>现在，我们使用 functional programming 来优化我们的代码。我们还可以使用 <code>extension</code> 使代码变得更好。</p>
+<h3 id="7-5-extension"><a href="#7-5-extension" class="headerlink" title="7.5 extension"></a>7.5 <code>extension</code></h3><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  MemorizeGame.swift</span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">MemoryGame</span>&lt;<span class="type">CardContent</span>&gt; <span class="keyword">where</span> <span class="type">CardContent</span>: <span class="type">Equatable</span> &#123;</span><br><span class="line">    <span class="keyword">private(set)</span> <span class="keyword">var</span> cards: <span class="type">Array</span>&lt;<span class="type">Card</span>&gt;</span><br><span class="line"></span><br><span class="line">        <span class="operator">...</span></span><br><span class="line">      <span class="operator">...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> indexOfTheOneAndOnlyFaceUpCard: <span class="type">Int</span>? &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123; cards.indices.filter &#123; index <span class="keyword">in</span> cards[index].isFaceUp &#125;.only &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123; cards.indices.forEach &#123; cards[<span class="variable">$0</span>].isFaceUp <span class="operator">=</span> (newValue <span class="operator">==</span> <span class="variable">$0</span>) &#125; &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="operator">...</span></span><br><span class="line">      <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">Array</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> only: <span class="type">Element</span>? &#123;</span><br><span class="line">        count <span class="operator">==</span> <span class="number">1</span> <span class="operator">?</span> first : <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们对 <code>array</code> 类型添加 <code>extension</code>，以便在我们的 <code>indexOfTheOneAndOnlyFaceUpCard</code> 计算属性中使用 <code>.only</code>。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Serein 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="Serein 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/cs193p/" rel="tag"><i class="fa fa-tag"></i> cs193p</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/12/09/Stanford-cs193p-04%EF%BD%9CMVVM-%E5%BA%94%E7%94%A8/" rel="prev" title="Stanford cs193p 04｜MVVM 应用">
+      <i class="fa fa-chevron-left"></i> Stanford cs193p 04｜MVVM 应用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/12/31/Stanford-cs193p-06-Layout-ViewBuilder/" rel="next" title="Stanford cs193p 06 | Layout @ViewBuilder">
+      Stanford cs193p 06 | Layout @ViewBuilder <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Equatable-Protocol"><span class="nav-text">1. Equatable Protocol</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Identifiable-Protocol"><span class="nav-text">2. Identifiable Protocol</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CustomDebugStringConvertible"><span class="nav-text">3. CustomDebugStringConvertible</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-ViewModel-Intent-Part-1%EF%BC%9A%E7%BF%BB%E8%BD%AC%E5%8D%A1%E7%89%87"><span class="nav-text">4. ViewModel Intent - Part 1：翻转卡片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Enum"><span class="nav-text">5. Enum</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Enum-%E7%AE%80%E4%BB%8B"><span class="nav-text">5.1 Enum 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E8%AE%BE%E7%BD%AE%E6%9E%9A%E4%B8%BE%E7%9A%84%E5%80%BC"><span class="nav-text">5.2 设置枚举的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E6%A3%80%E6%9F%A5%E6%9E%9A%E4%B8%BE%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-text">5.3 检查枚举的状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-break"><span class="nav-text">5.4 break</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-Default"><span class="nav-text">5.5 Default</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-%E5%85%81%E8%AE%B8%E5%A4%9A%E8%A1%8C"><span class="nav-text">5.6 允许多行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-7-%E6%9C%89-Method-%EF%BC%8C%E4%B8%8D%E8%83%BD%E6%9C%89%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7"><span class="nav-text">5.7 有 Method ，不能有存储属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-8-%E8%8E%B7%E5%8F%96%E6%9E%9A%E4%B8%BE%E7%9A%84%E6%89%80%E6%9C%89%E6%88%90%E5%91%98"><span class="nav-text">5.8 获取枚举的所有成员</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-optional"><span class="nav-text">6. optional</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-optional-%E5%A3%B0%E6%98%8E"><span class="nav-text">6.1 optional 声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-optional-%E8%AE%BF%E9%97%AE%E5%80%BC"><span class="nav-text">6.2 optional 访问值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-ViewModel-Intent-Part-2"><span class="nav-text">7. ViewModel Intent - Part 2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0"><span class="nav-text">7.1 函数作为参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-Flip-the-cards-down-when-NOT-matched"><span class="nav-text">7.2 Flip the cards down when NOT matched</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-set-get-%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7"><span class="nav-text">7.3 set+get 计算属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-choose-%E5%87%BD%E6%95%B0%E4%BC%98%E5%8C%96"><span class="nav-text">7.4 choose 函数优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-5-extension"><span class="nav-text">7.5 extension</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Serein"
+      src="/uploads/avatar.JPEG">
+  <p class="site-author-name" itemprop="name">Serein</p>
+  <div class="site-description" itemprop="description">Crazy learning, crazy sharing.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Aricyq0" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Aricyq0" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ari.cyq@gmail.com" title="E-Mail → mailto:ari.cyq@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Serein</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">122k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:51</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
