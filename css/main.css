@@ -1240,7 +1240,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #8efafb;
+  background: #ffb993;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2155,6 +2155,54 @@ pre .javascript .function {
   to {
     transform: rotateZ(-30deg);
   }
+}
+#wechat:hover p {
+  animation: roll 0.1s infinite linear;
+  -webkit-animation: roll 0.1s infinite linear;
+  -moz-animation: roll 0.1s infinite linear;
+}
+#alipay:hover p {
+  animation: roll 0.1s infinite linear;
+  -webkit-animation: roll 0.1s infinite linear;
+  -moz-animation: roll 0.1s infinite linear;
+}
+.followme {
+  align-items: center;
+  background: var(--card-bg-color);
+  border-left: 3px solid #ff2a2a;
+  color: #bbb;
+  margin: 2em 0 1em 0;
+  padding: 1em 1.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.followme .social-list {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+.followme .social-list .social-item {
+  margin: 0.5em 2em;
+}
+@media (max-width: 991px) {
+  .followme .social-list .social-item {
+    margin: 0.5em 0.75em;
+  }
+}
+.followme .social-list .social-link {
+  border: 0;
+  display: inline-block;
+  text-align: center;
+}
+.followme .social-list .social-link .icon {
+  font-size: 1.75em;
+  height: 1.75em;
+  width: 1.75em;
+}
+.followme .social-list .social-link .label {
+  display: block;
+  font-size: 14px;
 }
 .category-all-page .category-all-title {
   text-align: center;
